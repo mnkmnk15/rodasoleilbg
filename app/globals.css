@@ -1,0 +1,109 @@
+@import "tailwindcss";
+
+:root {
+  /* Elegant neutral base - like Hero */
+  --background: #ffffff;
+  --foreground: #1a1a1a;
+
+  /* Subtle warm accents - not too orange */
+  --primary: #fdfaf7;
+  --primary-light: #ffffff;
+  --primary-medium: #f8f5f2;
+
+  /* Gentle warm highlights - barely there */
+  --accent: #d4a574;
+  --accent-light: #e8d4b8;
+  --accent-medium: #c9986a;
+
+  /* Soft warm tones for hover/active states */
+  --warm-accent: #b89968;
+  --warm-light: #f5ebe0;
+  --warm-hover: #a68759;
+
+  /* Very subtle warm backgrounds */
+  --sand: #fdfaf7;
+  --warm-beige: #fefcfa;
+  --soft-cream: #f9f6f3;
+
+  /* Header glassmorphism */
+  --header-bg: rgba(255, 245, 236, 0.22);
+  --header-border: rgba(255, 255, 255, 0.12);
+
+  /* Clean white sections */
+  --light-bg: #ffffff;
+  --lighter-bg: #fdfaf7;
+
+  /* Soft neutral shadows */
+  --shadow-soft: rgba(0, 0, 0, 0.04);
+  --shadow-medium: rgba(0, 0, 0, 0.08);
+  --shadow-strong: rgba(0, 0, 0, 0.12);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-light: var(--primary-light);
+  --color-primary-dark: var(--primary-dark);
+  --color-accent: var(--accent);
+  --color-accent-light: var(--accent-light);
+  --color-accent-dark: var(--accent-dark);
+  --color-sand: var(--sand);
+  --color-warm-beige: var(--warm-beige);
+  --color-soft-bronze: var(--soft-bronze);
+  --color-champagne: var(--champagne);
+  --color-champagne-glow: var(--champagne-glow);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-raleway), -apple-system, BlinkMacSystemFont, sans-serif;
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--neutral);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--accent);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--primary);
+}
+
+/* Font utilities */
+.font-cormorant {
+  font-family: var(--font-cormorant), Georgia, serif;
+}
+
+.font-raleway {
+  font-family: var(--font-raleway), -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.font-playfair {
+  font-family: var(--font-playfair), Georgia, serif;
+}
+
+.font-montserrat {
+  font-family: var(--font-montserrat), -apple-system, BlinkMacSystemFont, sans-serif;
+}

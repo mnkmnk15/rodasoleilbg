@@ -1,0 +1,16 @@
+# Placeholder для изображений
+
+Добавьте сюда следующие файлы:
+
+- hero-poster.jpg - Постер для Hero видео (1920x1080)
+- background-pattern.jpg - Фон для параллакс секции
+- model-swimwear.jpg - Модель в купальнике (800x1200)
+- product-1.jpg - Товар 1 (600x800)
+- product-2.jpg - Товар 2 (600x800)
+- product-3.jpg - Товар 3 (600x800)
+- product-4.jpg - Товар 4 (600x800)
+- payment-visa.svg - Логотип Visa
+- payment-mastercard.svg - Логотип Mastercard
+- payment-paypal.svg - Логотип PayPal
+
+Или используйте Sanity CMS для управления изображениями.

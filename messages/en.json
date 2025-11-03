@@ -1,0 +1,79 @@
+{
+  "header": {
+    "logo": "RoDaSoleil Bulgaria",
+    "search": "Search",
+    "cart": "Cart",
+    "profile": "Profile"
+  },
+  "hero": {
+    "badge": "PREMIUM QUALITY",
+    "title": "RODA Soleil",
+    "subtitle": "Tan Without Lines\nTechnology and beauty combined\nUnique swimwear with tan-through technology",
+    "feature1": "No Tan Lines",
+    "feature2": "Italian Materials",
+    "feature3": "Unique Design"
+  },
+  "catalog": {
+    "title": "Our Collection",
+    "viewAll": "View All",
+    "bestseller": "Bestseller"
+  },
+  "features": {
+    "unique": "Unique Swimwear",
+    "title": "Why Choose RoDaSoleil?",
+    "subtitle": "Every swimsuit is a work of art, created with love and attention to detail",
+    "tanThrough": {
+      "title": "Tan Without Lines",
+      "description": "Innovative tan-through technology for an even tan without lines. The fabric allows sunlight through, letting your skin achieve a natural tan."
+    },
+    "fastDrying": {
+      "title": "Fast Drying",
+      "description": "Quick-drying and breathable materials for all-day comfort. The perfect combination of elasticity and durability for complete freedom of movement."
+    },
+    "uvProtection": {
+      "title": "UV Protection",
+      "description": "Effective UV protection that allows your skin to breathe and achieve a natural, even tan without compromising safety."
+    },
+    "chlorineResistant": {
+      "title": "Chlorine Resistant",
+      "description": "Shop the best in chlorine resistant technology for long-lasting performance"
+    },
+    "antibacterial": {
+      "title": "Antibacterial Net",
+      "description": "Experience maximum hygiene with our anti-bacterial inner net"
+    },
+    "recycled": {
+      "title": "Recycled",
+      "description": "Eco-friendly goods made from recycled materials"
+    },
+    "madeInItaly": {
+      "title": "100% Made in Italy",
+      "description": "Discover unmatched quality with authentic made in Italy products"
+    },
+    "cta_button": "View Collection"
+  },
+  "parallax": {
+    "title": "Elegance and Comfort",
+    "description": "Our swimwear is created for women who value quality and style. Each model is carefully crafted to provide perfect fit and unparalleled confidence.",
+    "feature1": "Unique Design",
+    "feature2": "UV-transmitting Fabric",
+    "cta": "View Collection",
+    "badge": "Protection"
+  },
+  "beigeBanner": {
+    "text": "The perfect tan without lines. Unique swimwear that lets the sun touch your skin."
+  },
+  "dualImage": {
+    "badge": "Summer Collection 2025",
+    "title": "Elegance by the Sea",
+    "description": "Italian design and tan-through technology in perfect harmony."
+  },
+  "footer": {
+    "about": "About Us",
+    "contact": "Contact",
+    "shipping": "Shipping",
+    "returns": "Returns",
+    "privacy": "Privacy",
+    "terms": "Terms"
+  }
+}
