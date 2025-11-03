@@ -127,7 +127,7 @@ export default function Features() {
                   className="relative w-[650px] h-[1020px] xl:w-[750px] xl:h-[1160px] mx-auto"
                 >
                   <Image
-                    src="/images/features/MODEL.PNG"
+                    src="/images/features/MODEL.png"
                     alt="RoDaSoleil Model"
                     fill
                     className="object-contain drop-shadow-2xl"
@@ -184,7 +184,7 @@ export default function Features() {
             className="relative w-full max-w-md mx-auto h-[600px] mb-8"
           >
             <Image
-              src="/images/features/MODEL.PNG"
+              src="/images/features/MODEL.png"
               alt="RoDaSoleil Model"
               fill
               className="object-contain drop-shadow-2xl"
