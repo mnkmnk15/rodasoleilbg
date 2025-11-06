@@ -49,8 +49,8 @@ export default function Features() {
       hotspot: { x: '55%', y: '25%' }
     },
     {
-      title: t('madeInItaly.title'),
-      description: t('madeInItaly.description'),
+      title: t('exclusivePrints.title'),
+      description: t('exclusivePrints.description'),
       side: 'right',
       scrollRange: [0.6, 0.9],
       hotspot: { x: '50%', y: '70%' }

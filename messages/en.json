@@ -31,8 +31,8 @@
       "description": "Quick-drying and breathable materials for all-day comfort. The perfect combination of elasticity and durability for complete freedom of movement."
     },
     "uvProtection": {
-      "title": "UV Protection",
-      "description": "Effective UV protection that allows your skin to breathe and achieve a natural, even tan without compromising safety."
+      "title": "UV Protection SPF 35+",
+      "description": "Effective protection against harmful sun rays with SPF 35+ factor that allows your skin to breathe and achieve a natural, even tan without compromising safety."
     },
     "chlorineResistant": {
       "title": "Chlorine Resistant",
@@ -46,9 +46,9 @@
       "title": "Recycled",
       "description": "Eco-friendly goods made from recycled materials"
     },
-    "madeInItaly": {
-      "title": "100% Made in Italy",
-      "description": "Discover unmatched quality with authentic made in Italy products"
+    "exclusivePrints": {
+      "title": "Exclusive Prints",
+      "description": "Unique designer prints and patterns that will make you stand out on the beach. Each model is a work of art with an unmistakable style"
     },
     "cta_button": "View Collection"
   },
@@ -68,6 +68,23 @@
     "title": "Elegance by the Sea",
     "description": "Italian design and tan-through technology in perfect harmony."
   },
+  "categorySection": {
+    "women": {
+      "title": "Women's Swimwear",
+      "description": "Elegant collection of swimwear, pants, skirts, shorts, robes and scarves",
+      "button": "View Collection"
+    },
+    "men": {
+      "title": "Men's Swimwear",
+      "description": "Stylish men's swimwear with tan-through technology",
+      "button": "View Collection"
+    },
+    "kids": {
+      "title": "Kids' Swimwear",
+      "description": "Bright and comfortable swimwear for children",
+      "button": "View Collection"
+    }
+  },
   "footer": {
     "about": "About Us",
     "contact": "Contact",
@@ -75,5 +92,43 @@
     "returns": "Returns",
     "privacy": "Privacy",
     "terms": "Terms"
+  },
+  "shippingReturns": {
+    "title": "Shipping & Returns",
+    "subtitle": "Convenient shipping options and flexible return policy",
+    "freeBulgaria": {
+      "title": "Free Shipping in Bulgaria",
+      "description": "We offer free delivery of smart swimwear to any location in Bulgaria. Get your order quickly and conveniently without any extra charges."
+    },
+    "tryOn": {
+      "title": "Try-On Option",
+      "description": "We deliver your smart swimsuit with the option to try it on, allowing you to choose from several models and sizes to find the one you like best (or even purchase more than one)."
+    },
+    "returns": {
+      "title": "Easy Returns Within 7 Days",
+      "description": "If you're not satisfied with your purchase, you can return the swimsuit within 7 days of receiving it. Your satisfaction is our priority."
+    },
+    "details": {
+      "title": "Delivery Details",
+      "description": "If you're confident in the size and model, you can opt for standard delivery through a transport company. In this case, you can return the swimsuit on your own within 7 days of receiving it if it doesn't meet your expectations."
+    }
+  },
+  "faq": {
+    "title": "F.A.Q.",
+    "subtitle": "Answers to the most common questions about our products",
+    "tanSpeed": {
+      "question": "How fast will you get tan?",
+      "answer": "The speed and intensity of your tan in a smart swimsuit depend on various factors, with the main one being the melanin content in your skin. For the areas not covered by the swimsuit, we recommend using a higher SPF sunscreen (up to 50) in the first few days of sun exposure to allow your body to acclimate to the sun, especially if some areas have never tanned before. In rare cases, it may take longer than usual for the tan to even out."
+    },
+    "transparent": {
+      "question": "Are swimsuits transparent?",
+      "answer": "No, smart swimsuits are almost not transparent. They are designed to be nearly opaque due to the density of the fabric and carefully chosen prints. However, the fabric itself is relatively thin because of the presence of numerous tiny pores that allow sunlight to pass through."
+    },
+    "serviceLife": {
+      "question": "What is the service life of swimsuits?",
+      "answer": "The service life of any swimsuit, including ours, directly depends on proper care. Formally, swimsuits are designed for one season of use, but our products can easily last for 2 or 3 seasons and continue to bring joy to their owners. Even the most expensive and high-quality models, when exposed to external factors and UV protection..."
+    },
+    "expandedInfo": "Read More...",
+    "moreQuestions": "Have questions? Contact us and we'll be happy to help!"
   }
 }

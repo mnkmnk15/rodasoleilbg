@@ -7,13 +7,34 @@ import Image from 'next/image';
 import Link from 'next/link';
 
 export default function DualImageSection() {
-  const t = useTranslations('dualImage');
+  const t = useTranslations('categorySection');
   const locale = useLocale();
 
   const [ref, inView] = useInView({
     triggerOnce: true,
-    threshold: 0.15
+    threshold: 0.1
   });
+
+  const categories = [
+    {
+      key: 'women',
+      image: '/images/category-women.jpg',
+      href: `/${locale}/catalog?category=women`,
+      objectPosition: 'center center'
+    },
+    {
+      key: 'men',
+      image: '/images/category-men.jpg',
+      href: `/${locale}/catalog?category=men`,
+      objectPosition: 'center 5%'
+    },
+    {
+      key: 'kids',
+      image: '/images/category-kids.jpg',
+      href: `/${locale}/catalog?category=kids`,
+      objectPosition: 'center 0%'
+    }
+  ];
 
   return (
     <section
@@ -24,117 +45,95 @@ export default function DualImageSection() {
       }}
     >
       <div className="w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-0">
-          {/* Left Image - Narrower, Full Opacity with Zoom Effect */}
-          <div
-            className="lg:col-span-5 relative h-[500px] md:h-[650px] lg:h-[750px] z-20"
-          >
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-0 relative">
+          {categories.map((category, index) => (
             <motion.div
-              initial={{ opacity: 0, x: -30 }}
-              animate={inView ? { opacity: 1, x: 0 } : {}}
-              transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-              className="w-full h-full"
+              key={category.key}
+              initial={{ opacity: 0, y: 30 }}
+              animate={inView ? { opacity: 1, y: 0 } : {}}
+              transition={{
+                duration: 0.8,
+                ease: [0.16, 1, 0.3, 1],
+                delay: index * 0.15
+              }}
+              className="relative h-[600px] md:h-[700px] lg:h-[800px] overflow-hidden group"
+              style={{
+                borderRight: index < 2 ? '1px solid rgba(255, 255, 255, 0.15)' : 'none'
+              }}
             >
-              <Link href={`/${locale}/catalog`} className="block w-full h-full overflow-visible group">
-                <div className="relative w-full h-full overflow-visible">
+              <Link href={category.href} className="block w-full h-full cursor-pointer">
+                <div className="relative w-full h-full">
+                  {/* Background Image */}
                   <Image
-                    src="/images/2slidemodelL.png"
-                    alt="Women's Collection"
+                    src={category.image}
+                    alt={t(`${category.key}.title`)}
                     fill
-                    className="object-contain object-bottom transition-transform duration-700 ease-out group-hover:scale-110"
-                    sizes="(max-width: 1024px) 100vw, 42vw"
-                    priority
-                    quality={95}
+                    className="object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:brightness-75"
+                    sizes="(max-width: 1024px) 100vw, 33vw"
+                    priority={index === 0}
+                    quality={90}
+                    style={{ objectPosition: category.objectPosition }}
                   />
+
+                  {/* Gradient Overlay */}
+                  <div
+                    className="absolute inset-0 transition-all duration-500 group-hover:bg-black/20"
+                    style={{
+                      background: 'linear-gradient(to top, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.2) 40%, transparent 100%)'
+                    }}
+                  />
+
+                  {/* Text Content - positioned at bottom left */}
+                  <div className="absolute bottom-0 left-0 px-8 md:px-10 lg:px-12 pb-8 md:pb-10 lg:pb-12 z-10">
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={inView ? { opacity: 1, y: 0 } : {}}
+                      transition={{ duration: 0.8, delay: index * 0.15 + 0.3 }}
+                      className="space-y-3"
+                    >
+                      {/* Title */}
+                      <h2
+                        className="text-2xl md:text-3xl lg:text-4xl text-white font-cormorant"
+                        style={{
+                          fontWeight: 300,
+                          letterSpacing: '0.03em',
+                          lineHeight: '1.2'
+                        }}
+                      >
+                        {t(`${category.key}.title`)}
+                      </h2>
+
+                      {/* Description */}
+                      <p
+                        className="text-xs md:text-sm text-white/85 font-montserrat max-w-xs"
+                        style={{
+                          fontWeight: 300,
+                          letterSpacing: '0.02em',
+                          lineHeight: '1.5'
+                        }}
+                      >
+                        {t(`${category.key}.description`)}
+                      </p>
+
+                      {/* Link with underline and arrow */}
+                      <motion.div
+                        whileHover={{ x: 5 }}
+                        transition={{ duration: 0.2 }}
+                        className="pt-2 inline-flex items-center gap-2 text-white font-montserrat text-xs md:text-sm border-b border-white/60 pb-1 cursor-pointer"
+                        style={{
+                          fontWeight: 400,
+                          letterSpacing: '0.05em'
+                        }}
+                      >
+                        <span className="uppercase">{t(`${category.key}.button`)}</span>
+                        <span className="text-base">→</span>
+                      </motion.div>
+                    </motion.div>
+                  </div>
                 </div>
               </Link>
             </motion.div>
-          </div>
-
-          {/* Right Image - Wider, Darkened with Text Overlay */}
-          <motion.div
-            initial={{ opacity: 0, x: 30 }}
-            animate={inView ? { opacity: 1, x: 0 } : {}}
-            transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1], delay: 0.2 }}
-            className="lg:col-span-7 relative h-[500px] md:h-[650px] lg:h-[750px] overflow-hidden z-10"
-          >
-            <Link href={`/${locale}/catalog`} className="block w-full h-full group">
-              <div className="relative w-full h-full">
-                <Image
-                  src="/images/2slidemodelR.png"
-                  alt="Summer Collection"
-                  fill
-                  className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
-                  sizes="(max-width: 1024px) 100vw, 58vw"
-                  style={{ filter: 'brightness(0.7)' }}
-                  priority
-                />
-
-                {/* Text Content Overlay */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center px-8 md:px-16 lg:px-24 text-center z-10 pointer-events-none">
-                  <motion.div
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={inView ? { opacity: 1, y: 0 } : {}}
-                    transition={{ duration: 0.8, delay: 0.5 }}
-                    className="max-w-2xl"
-                  >
-                    {/* Small Badge */}
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={inView ? { opacity: 1, scale: 1 } : {}}
-                      transition={{ duration: 0.6, delay: 0.6 }}
-                      className="inline-block px-6 py-2 mb-6 rounded-full"
-                      style={{
-                        background: 'rgba(255, 255, 255, 0.15)',
-                        backdropFilter: 'blur(10px)',
-                        WebkitBackdropFilter: 'blur(10px)',
-                        border: '1px solid rgba(255, 255, 255, 0.2)',
-                      }}
-                    >
-                      <span className="text-xs md:text-sm font-medium text-white uppercase tracking-wider font-montserrat">
-                        {t('badge')}
-                      </span>
-                    </motion.div>
-
-                    {/* Main Title */}
-                    <h2
-                      className="text-4xl md:text-5xl lg:text-6xl xl:text-7xl text-white font-cormorant mb-6 leading-tight"
-                      style={{
-                        fontWeight: 300,
-                        letterSpacing: '0.02em',
-                        textShadow: '0 4px 20px rgba(0, 0, 0, 0.3)',
-                      }}
-                    >
-                      {t('title')}
-                    </h2>
-
-                    {/* Description */}
-                    <p
-                      className="text-lg md:text-xl lg:text-2xl text-white/95 font-montserrat leading-relaxed max-w-xl mx-auto"
-                      style={{
-                        fontWeight: 300,
-                        letterSpacing: '0.03em',
-                        textShadow: '0 2px 15px rgba(0, 0, 0, 0.4)',
-                      }}
-                    >
-                      {t('description')}
-                    </p>
-
-                    {/* Decorative Line */}
-                    <motion.div
-                      initial={{ width: 0, opacity: 0 }}
-                      animate={inView ? { width: '100px', opacity: 1 } : {}}
-                      transition={{ duration: 0.8, delay: 0.8 }}
-                      className="h-[1px] mx-auto mt-8"
-                      style={{
-                        background: 'linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.6) 50%, transparent 100%)',
-                      }}
-                    />
-                  </motion.div>
-                </div>
-              </div>
-            </Link>
-          </motion.div>
+          ))}
         </div>
       </div>
     </section>

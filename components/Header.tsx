@@ -84,20 +84,20 @@ export default function Header() {
     <header
       className="fixed top-0 left-0 right-0 z-50"
       style={{
-        background: isInHero ? 'transparent' : 'rgba(249, 246, 243, 0.95)',
+        background: isInHero ? 'transparent' : '#ffffff',
         backdropFilter: isInHero ? 'none' : 'blur(20px) saturate(180%)',
         WebkitBackdropFilter: isInHero ? 'none' : 'blur(20px) saturate(180%)',
         transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
         transition: 'background 0.3s linear, transform 0.5s linear, backdrop-filter 0.3s linear',
       }}
     >
-      <div className="max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="flex items-center justify-between h-[75px]">
+      <div className="max-w-[1600px] mx-auto px-6 lg:px-8 xl:px-12">
+        <div className="flex items-center justify-between h-[80px]">
           {/* Left Navigation */}
-          <nav className="hidden md:flex items-center space-x-12 flex-1">
+          <nav className="hidden lg:flex items-center space-x-8 xl:space-x-10 flex-1">
             <a
               href={`/${locale}`}
-              className="hover:opacity-100 font-light cursor-pointer text-[17px] tracking-[0.08em] py-2 uppercase"
+              className="hover:opacity-100 font-light cursor-pointer text-[15px] xl:text-[16px] tracking-[0.08em] py-2 uppercase whitespace-nowrap"
               style={{ fontWeight: 300, color: isInHero ? '#FFFFFF' : '#d06634', transition: 'all 0.3s linear' }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = isInHero ? 'rgba(208, 102, 52, 0.9)' : '#E89970';
@@ -112,7 +112,7 @@ export default function Header() {
             </a>
             <a
               href={`/${locale}/catalog`}
-              className="hover:opacity-100 font-light cursor-pointer text-[17px] tracking-[0.08em] py-2 uppercase"
+              className="hover:opacity-100 font-light cursor-pointer text-[15px] xl:text-[16px] tracking-[0.08em] py-2 uppercase whitespace-nowrap"
               style={{ fontWeight: 300, color: isInHero ? '#FFFFFF' : '#d06634', transition: 'all 0.3s linear' }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = isInHero ? 'rgba(208, 102, 52, 0.9)' : '#E89970';
@@ -127,7 +127,7 @@ export default function Header() {
             </a>
             <a
               href={`/${locale}/about`}
-              className="hover:opacity-100 font-light cursor-pointer text-[17px] tracking-[0.08em] py-2 uppercase"
+              className="hover:opacity-100 font-light cursor-pointer text-[15px] xl:text-[16px] tracking-[0.08em] py-2 uppercase whitespace-nowrap"
               style={{ fontWeight: 300, color: isInHero ? '#FFFFFF' : '#d06634', transition: 'all 0.3s linear' }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = isInHero ? 'rgba(208, 102, 52, 0.9)' : '#E89970';
@@ -140,18 +140,81 @@ export default function Header() {
             >
               {locale === 'bg' ? 'За нас' : locale === 'ru' ? 'О нас' : 'About'}
             </a>
+            <a
+              href={`/${locale}/contacts`}
+              className="hover:opacity-100 font-light cursor-pointer text-[15px] xl:text-[16px] tracking-[0.08em] py-2 uppercase whitespace-nowrap"
+              style={{ fontWeight: 300, color: isInHero ? '#FFFFFF' : '#d06634', transition: 'all 0.3s linear' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = isInHero ? 'rgba(208, 102, 52, 0.9)' : '#E89970';
+                e.currentTarget.style.opacity = '1';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = isInHero ? '#FFFFFF' : '#d06634';
+                e.currentTarget.style.opacity = '1';
+              }}
+            >
+              {locale === 'bg' ? 'Контакти' : locale === 'ru' ? 'Контакты' : 'Contacts'}
+            </a>
           </nav>
 
-          {/* Center Logo */}
-          <div className="flex-shrink-0 absolute left-1/2 transform -translate-x-1/2">
-            <a href={`/${locale}`} className="flex flex-col items-center cursor-pointer gap-0.5 group">
-              <h1 className="text-[32px] md:text-[42px] leading-none font-cormorant" style={{ letterSpacing: '0.02em' }}>
-                <span className="font-semibold group-hover:opacity-100" style={{ fontWeight: 600, color: isInHero ? '#fff6e9' : '#d06634', transition: 'all 0.5s linear' }}>RODA</span>
-                <span className="font-light group-hover:opacity-100 ml-2" style={{ fontWeight: 300, color: isInHero ? '#fff6e9' : '#d06634', transition: 'all 0.5s linear' }}>Soleil</span>
+          {/* Center Logo - абсолютное центрирование */}
+          <div className="absolute left-1/2 -translate-x-1/2">
+            <a
+              href={`/${locale}`}
+              className="flex flex-col items-center cursor-pointer gap-1 group relative"
+              style={{ transition: 'transform 0.3s ease-out' }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-2px)';
+                const roda = e.currentTarget.querySelector('.logo-roda') as HTMLElement;
+                const soleil = e.currentTarget.querySelector('.logo-soleil') as HTMLElement;
+                const bulgaria = e.currentTarget.querySelector('.logo-bulgaria') as HTMLElement;
+
+                if (roda) {
+                  roda.style.color = isInHero ? 'rgba(208, 102, 52, 0.95)' : '#E89970';
+                  roda.style.textShadow = isInHero
+                    ? '0 0 20px rgba(208, 102, 52, 0.4), 0 0 40px rgba(208, 102, 52, 0.2)'
+                    : '0 0 15px rgba(232, 153, 112, 0.5)';
+                }
+                if (soleil) {
+                  soleil.style.color = isInHero ? 'rgba(208, 102, 52, 0.9)' : '#E89970';
+                  soleil.style.textShadow = isInHero
+                    ? '0 0 20px rgba(208, 102, 52, 0.3), 0 0 40px rgba(208, 102, 52, 0.15)'
+                    : '0 0 15px rgba(232, 153, 112, 0.4)';
+                }
+                if (bulgaria) {
+                  bulgaria.style.color = isInHero ? 'rgba(208, 102, 52, 0.85)' : 'rgba(232, 153, 112, 0.9)';
+                  bulgaria.style.textShadow = '0 0 12px rgba(208, 102, 52, 0.3)';
+                  bulgaria.style.letterSpacing = '0.40em';
+                }
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+                const roda = e.currentTarget.querySelector('.logo-roda') as HTMLElement;
+                const soleil = e.currentTarget.querySelector('.logo-soleil') as HTMLElement;
+                const bulgaria = e.currentTarget.querySelector('.logo-bulgaria') as HTMLElement;
+
+                if (roda) {
+                  roda.style.color = isInHero ? '#fff6e9' : '#d06634';
+                  roda.style.textShadow = 'none';
+                }
+                if (soleil) {
+                  soleil.style.color = isInHero ? '#fff6e9' : '#d06634';
+                  soleil.style.textShadow = 'none';
+                }
+                if (bulgaria) {
+                  bulgaria.style.color = isInHero ? 'rgba(255, 255, 255, 0.7)' : 'rgba(208, 102, 52, 0.6)';
+                  bulgaria.style.textShadow = 'none';
+                  bulgaria.style.letterSpacing = '0.38em';
+                }
+              }}
+            >
+              <h1 className="text-[36px] md:text-[44px] leading-none font-cormorant" style={{ letterSpacing: '0.03em' }}>
+                <span className="logo-roda font-semibold" style={{ fontWeight: 600, color: isInHero ? '#fff6e9' : '#d06634', transition: 'all 0.4s ease-out' }}>RODA</span>
+                <span className="logo-soleil font-light ml-2.5" style={{ fontWeight: 300, color: isInHero ? '#fff6e9' : '#d06634', transition: 'all 0.4s ease-out' }}>Soleil</span>
               </h1>
               <span
-                className="text-[13px] md:text-[14px] font-light group-hover:opacity-100 uppercase font-raleway -mt-0.5"
-                style={{ letterSpacing: '0.35em', fontWeight: 300, color: isInHero ? 'rgba(255, 255, 255, 0.7)' : 'rgba(208, 102, 52, 0.6)', transition: 'all 0.5s linear' }}
+                className="logo-bulgaria text-[12px] md:text-[13px] font-light uppercase font-raleway"
+                style={{ letterSpacing: '0.38em', fontWeight: 300, color: isInHero ? 'rgba(255, 255, 255, 0.7)' : 'rgba(208, 102, 52, 0.6)', transition: 'all 0.4s ease-out' }}
               >
                 Bulgaria
               </span>
@@ -160,31 +223,31 @@ export default function Header() {
 
           {/* Right Icons */}
           <div className="flex items-center space-x-3 flex-1 justify-end">
-            {/* Language Selector with Glassmorphism */}
+            {/* Language Selector */}
             <div className="relative">
               <button
                 onClick={() => setIsLangOpen(!isLangOpen)}
-                className="flex items-center space-x-2 px-4 py-2.5 rounded-full transition-all cursor-pointer"
+                className="flex items-center space-x-1.5 px-3 py-2 rounded-full transition-all cursor-pointer"
                 style={{
-                  background: 'rgba(229, 217, 207, 0.1)',
-                  backdropFilter: 'blur(12px)',
-                  WebkitBackdropFilter: 'blur(12px)',
-                  border: '1px solid rgba(255, 255, 255, 0.12)',
+                  background: 'rgba(229, 217, 207, 0.08)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(10px)',
+                  border: '1px solid rgba(255, 255, 255, 0.1)',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(208, 102, 52, 0.15)';
-                  e.currentTarget.style.borderColor = 'rgba(208, 102, 52, 0.3)';
-                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(208, 102, 52, 0.2)';
+                  e.currentTarget.style.background = 'rgba(208, 102, 52, 0.12)';
+                  e.currentTarget.style.borderColor = 'rgba(208, 102, 52, 0.25)';
+                  e.currentTarget.style.boxShadow = '0 4px 12px rgba(208, 102, 52, 0.15)';
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(229, 217, 207, 0.1)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                  e.currentTarget.style.background = 'rgba(229, 217, 207, 0.08)';
+                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
                   e.currentTarget.style.boxShadow = 'none';
                 }}
                 aria-label="Select language"
               >
-                <Globe className="w-[17px] h-[17px]" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
-                <span className="font-light text-[14px]" style={{ letterSpacing: '0.05em', color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }}>{currentLang?.name}</span>
+                <Globe className="w-4 h-4" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
+                <span className="font-light text-[13px]" style={{ letterSpacing: '0.05em', color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }}>{currentLang?.name}</span>
               </button>
 
               <AnimatePresence>
@@ -242,52 +305,52 @@ export default function Header() {
 
             {/* Search Icon */}
             <button
-              className="p-2.5 rounded-full transition-all cursor-pointer"
+              className="p-2 rounded-full transition-all cursor-pointer"
               style={{
                 background: 'rgba(229, 217, 207, 0.08)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(208, 102, 52, 0.15)';
-                e.currentTarget.style.borderColor = 'rgba(208, 102, 52, 0.3)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(208, 102, 52, 0.18)';
+                e.currentTarget.style.background = 'rgba(208, 102, 52, 0.12)';
+                e.currentTarget.style.borderColor = 'rgba(208, 102, 52, 0.25)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(208, 102, 52, 0.15)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'rgba(229, 217, 207, 0.08)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
                 e.currentTarget.style.boxShadow = 'none';
               }}
               aria-label="Search"
             >
-              <Search className="w-[20px] h-[20px]" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
+              <Search className="w-[18px] h-[18px]" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
             </button>
 
             {/* Cart Icon with Counter */}
             <button
-              className="p-2.5 rounded-full transition-all relative cursor-pointer"
+              className="p-2 rounded-full transition-all relative cursor-pointer"
               style={{
                 background: 'rgba(229, 217, 207, 0.08)',
-                border: '1px solid rgba(255, 255, 255, 0.12)',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(208, 102, 52, 0.15)';
-                e.currentTarget.style.borderColor = 'rgba(208, 102, 52, 0.3)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(208, 102, 52, 0.18)';
+                e.currentTarget.style.background = 'rgba(208, 102, 52, 0.12)';
+                e.currentTarget.style.borderColor = 'rgba(208, 102, 52, 0.25)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(208, 102, 52, 0.15)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'rgba(229, 217, 207, 0.08)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.12)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)';
                 e.currentTarget.style.boxShadow = 'none';
               }}
               aria-label="Shopping Cart"
             >
-              <ShoppingCart className="w-[20px] h-[20px]" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
+              <ShoppingCart className="w-[18px] h-[18px]" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
               <span
-                className="absolute -top-1 -right-1 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
+                className="absolute -top-1 -right-1 text-white text-[10px] rounded-full w-[18px] h-[18px] flex items-center justify-center"
                 style={{
                   background: 'linear-gradient(135deg, #E89970 0%, #d06634 100%)',
                   fontWeight: 600,
-                  boxShadow: '0 2px 8px rgba(208, 102, 52, 0.3)',
+                  boxShadow: '0 2px 6px rgba(208, 102, 52, 0.3)',
                 }}
               >
                 0

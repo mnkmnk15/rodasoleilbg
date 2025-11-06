@@ -128,7 +128,7 @@ export default function Hero() {
 
           {/* First line of subtitle - larger, under title with more breathing space */}
           <motion.p
-            className="text-3xl md:text-5xl lg:text-6xl font-cormorant mb-8"
+            className="text-4xl md:text-6xl lg:text-7xl font-cormorant mb-8"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 1.2, delay: 0.4, ease: [0.22, 1, 0.36, 1] }}
@@ -140,7 +140,7 @@ export default function Hero() {
               textShadow: '0 4px 24px rgba(0, 0, 0, 0.3), 0 2px 8px rgba(0, 0, 0, 0.3)',
             }}
           >
-            {locale === 'bg' ? 'Загар без линии' : locale === 'ru' ? 'Загар без линий' : 'Tan Without Lines'}
+            {locale === 'bg' ? 'Умни бански' : locale === 'ru' ? 'Умные купальники' : 'Smart Swimwear'}
           </motion.p>
 
           {/* Decorative Divider - Less transparent */}

@@ -16,9 +16,9 @@ export default function BeigeBanner() {
   return (
     <section
       ref={ref}
-      className="relative w-full py-6 md:py-8 overflow-hidden"
+      className="relative w-full py-4 md:py-6 overflow-hidden"
       style={{
-        background: 'linear-gradient(to bottom, #FFFFFF 0%, #F7F5F0 100%)',
+        background: '#FFFFFF',
       }}
     >
       <div className="max-w-4xl mx-auto px-6 text-center">
@@ -29,7 +29,7 @@ export default function BeigeBanner() {
           className="text-lg md:text-xl lg:text-2xl font-montserrat"
           style={{
             color: '#2A2422',
-            fontWeight: 300,
+            fontWeight: 400,
             letterSpacing: '0.05em',
             lineHeight: 1.8 /* +10% воздуха */
           }}

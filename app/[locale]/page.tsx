@@ -4,6 +4,8 @@ import BeigeBanner from '@/components/BeigeBanner';
 import DualImageSection from '@/components/DualImageSection';
 import ProductCatalog from '@/components/ProductCatalog';
 import Features from '@/components/Features';
+import ShippingReturns from '@/components/ShippingReturns';
+import FAQ from '@/components/FAQ';
 import InstagramSection from '@/components/InstagramSection';
 import Footer from '@/components/Footer';
 import CookieConsent from '@/components/CookieConsent';
@@ -18,6 +20,8 @@ export default function HomePage() {
       <ProductCatalog />
       <InstagramSection />
       <Features />
+      <ShippingReturns />
+      <FAQ />
       <Footer />
       <CookieConsent />
     </main>
