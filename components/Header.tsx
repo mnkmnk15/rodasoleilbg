@@ -84,9 +84,11 @@ export default function Header() {
     <header
       className="fixed top-0 left-0 right-0 z-50"
       style={{
-        background: isInHero ? 'transparent' : '#1a1a1a',
+        background: isInHero ? 'transparent' : 'rgba(249, 246, 243, 0.95)',
+        backdropFilter: isInHero ? 'none' : 'blur(20px) saturate(180%)',
+        WebkitBackdropFilter: isInHero ? 'none' : 'blur(20px) saturate(180%)',
         transform: isVisible ? 'translateY(0)' : 'translateY(-100%)',
-        transition: 'background 0.3s linear, transform 0.5s linear',
+        transition: 'background 0.3s linear, transform 0.5s linear, backdrop-filter 0.3s linear',
       }}
     >
       <div className="max-w-7xl mx-auto px-6 lg:px-8">
@@ -96,12 +98,14 @@ export default function Header() {
             <a
               href={`/${locale}`}
               className="hover:opacity-100 font-light cursor-pointer text-[17px] tracking-[0.08em] py-2 uppercase"
-              style={{ fontWeight: 300, color: '#FFFFFF', transition: 'all 0.3s linear' }}
+              style={{ fontWeight: 300, color: isInHero ? '#FFFFFF' : '#d06634', transition: 'all 0.3s linear' }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#cfad5b';
+                e.currentTarget.style.color = isInHero ? 'rgba(208, 102, 52, 0.9)' : '#E89970';
+                e.currentTarget.style.opacity = '1';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = '#FFFFFF';
+                e.currentTarget.style.color = isInHero ? '#FFFFFF' : '#d06634';
+                e.currentTarget.style.opacity = '1';
               }}
             >
               {locale === 'bg' ? 'Начало' : locale === 'ru' ? 'Главная' : 'Home'}
@@ -109,12 +113,14 @@ export default function Header() {
             <a
               href={`/${locale}/catalog`}
               className="hover:opacity-100 font-light cursor-pointer text-[17px] tracking-[0.08em] py-2 uppercase"
-              style={{ fontWeight: 300, color: '#FFFFFF', transition: 'all 0.3s linear' }}
+              style={{ fontWeight: 300, color: isInHero ? '#FFFFFF' : '#d06634', transition: 'all 0.3s linear' }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#cfad5b';
+                e.currentTarget.style.color = isInHero ? 'rgba(208, 102, 52, 0.9)' : '#E89970';
+                e.currentTarget.style.opacity = '1';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = '#FFFFFF';
+                e.currentTarget.style.color = isInHero ? '#FFFFFF' : '#d06634';
+                e.currentTarget.style.opacity = '1';
               }}
             >
               {locale === 'bg' ? 'Каталог' : locale === 'ru' ? 'Каталог' : 'Catalog'}
@@ -122,12 +128,14 @@ export default function Header() {
             <a
               href={`/${locale}/about`}
               className="hover:opacity-100 font-light cursor-pointer text-[17px] tracking-[0.08em] py-2 uppercase"
-              style={{ fontWeight: 300, color: '#FFFFFF', transition: 'all 0.3s linear' }}
+              style={{ fontWeight: 300, color: isInHero ? '#FFFFFF' : '#d06634', transition: 'all 0.3s linear' }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.color = '#cfad5b';
+                e.currentTarget.style.color = isInHero ? 'rgba(208, 102, 52, 0.9)' : '#E89970';
+                e.currentTarget.style.opacity = '1';
               }}
               onMouseLeave={(e) => {
-                e.currentTarget.style.color = '#FFFFFF';
+                e.currentTarget.style.color = isInHero ? '#FFFFFF' : '#d06634';
+                e.currentTarget.style.opacity = '1';
               }}
             >
               {locale === 'bg' ? 'За нас' : locale === 'ru' ? 'О нас' : 'About'}
@@ -138,12 +146,12 @@ export default function Header() {
           <div className="flex-shrink-0 absolute left-1/2 transform -translate-x-1/2">
             <a href={`/${locale}`} className="flex flex-col items-center cursor-pointer gap-0.5 group">
               <h1 className="text-[32px] md:text-[42px] leading-none font-cormorant" style={{ letterSpacing: '0.02em' }}>
-                <span className="font-semibold group-hover:opacity-100" style={{ fontWeight: 600, color: '#fff6e9', transition: 'all 0.5s linear' }}>RODA</span>
-                <span className="font-light group-hover:opacity-100 ml-2" style={{ fontWeight: 300, color: '#fff6e9', transition: 'all 0.5s linear' }}>Soleil</span>
+                <span className="font-semibold group-hover:opacity-100" style={{ fontWeight: 600, color: isInHero ? '#fff6e9' : '#d06634', transition: 'all 0.5s linear' }}>RODA</span>
+                <span className="font-light group-hover:opacity-100 ml-2" style={{ fontWeight: 300, color: isInHero ? '#fff6e9' : '#d06634', transition: 'all 0.5s linear' }}>Soleil</span>
               </h1>
               <span
                 className="text-[13px] md:text-[14px] font-light group-hover:opacity-100 uppercase font-raleway -mt-0.5"
-                style={{ letterSpacing: '0.35em', fontWeight: 300, color: 'rgba(255, 255, 255, 0.7)', transition: 'all 0.5s linear' }}
+                style={{ letterSpacing: '0.35em', fontWeight: 300, color: isInHero ? 'rgba(255, 255, 255, 0.7)' : 'rgba(208, 102, 52, 0.6)', transition: 'all 0.5s linear' }}
               >
                 Bulgaria
               </span>
@@ -164,9 +172,9 @@ export default function Header() {
                   border: '1px solid rgba(255, 255, 255, 0.12)',
                 }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(213, 181, 121, 0.15)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(213, 181, 121, 0.2)';
+                  e.currentTarget.style.background = 'rgba(208, 102, 52, 0.15)';
+                  e.currentTarget.style.borderColor = 'rgba(208, 102, 52, 0.3)';
+                  e.currentTarget.style.boxShadow = '0 4px 16px rgba(208, 102, 52, 0.2)';
                 }}
                 onMouseLeave={(e) => {
                   e.currentTarget.style.background = 'rgba(229, 217, 207, 0.1)';
@@ -175,8 +183,8 @@ export default function Header() {
                 }}
                 aria-label="Select language"
               >
-                <Globe className="w-[17px] h-[17px]" style={{ color: '#FFFFFF' }} />
-                <span className="font-light text-[14px]" style={{ letterSpacing: '0.05em', color: '#FFFFFF' }}>{currentLang?.name}</span>
+                <Globe className="w-[17px] h-[17px]" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
+                <span className="font-light text-[14px]" style={{ letterSpacing: '0.05em', color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }}>{currentLang?.name}</span>
               </button>
 
               <AnimatePresence>
@@ -192,7 +200,7 @@ export default function Header() {
                       backdropFilter: 'blur(24px)',
                       WebkitBackdropFilter: 'blur(24px)',
                       border: '1px solid rgba(255, 255, 255, 0.12)',
-                      boxShadow: '0 12px 40px rgba(186, 143, 111, 0.15), inset 0 1px 2px rgba(255, 245, 236, 0.3)',
+                      boxShadow: '0 12px 40px rgba(208, 102, 52, 0.15), inset 0 1px 2px rgba(255, 245, 236, 0.3)',
                     }}
                   >
                     {languages.map((lang, index) => (
@@ -205,14 +213,14 @@ export default function Header() {
                             : ''
                         } ${index !== languages.length - 1 ? 'border-b border-white/10' : ''}`}
                         style={{
-                          background: locale === lang.code ? 'rgba(213, 181, 121, 0.12)' : 'transparent',
+                          background: locale === lang.code ? 'rgba(208, 102, 52, 0.12)' : 'transparent',
                           color: '#FFFFFF',
                           fontWeight: locale === lang.code ? 500 : 300,
                           transition: 'all 0.3s linear'
                         }}
                         onMouseEnter={(e) => {
                           if (locale !== lang.code) {
-                            e.currentTarget.style.background = 'rgba(213, 181, 121, 0.08)';
+                            e.currentTarget.style.background = 'rgba(208, 102, 52, 0.08)';
                           }
                         }}
                         onMouseLeave={(e) => {
@@ -240,9 +248,9 @@ export default function Header() {
                 border: '1px solid rgba(255, 255, 255, 0.12)',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(213, 181, 121, 0.15)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(213, 181, 121, 0.18)';
+                e.currentTarget.style.background = 'rgba(208, 102, 52, 0.15)';
+                e.currentTarget.style.borderColor = 'rgba(208, 102, 52, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(208, 102, 52, 0.18)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'rgba(229, 217, 207, 0.08)';
@@ -251,7 +259,7 @@ export default function Header() {
               }}
               aria-label="Search"
             >
-              <Search className="w-[20px] h-[20px]" style={{ color: '#FFFFFF' }} />
+              <Search className="w-[20px] h-[20px]" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
             </button>
 
             {/* Cart Icon with Counter */}
@@ -262,9 +270,9 @@ export default function Header() {
                 border: '1px solid rgba(255, 255, 255, 0.12)',
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.background = 'rgba(213, 181, 121, 0.15)';
-                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(213, 181, 121, 0.18)';
+                e.currentTarget.style.background = 'rgba(208, 102, 52, 0.15)';
+                e.currentTarget.style.borderColor = 'rgba(208, 102, 52, 0.3)';
+                e.currentTarget.style.boxShadow = '0 4px 12px rgba(208, 102, 52, 0.18)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.background = 'rgba(229, 217, 207, 0.08)';
@@ -273,13 +281,13 @@ export default function Header() {
               }}
               aria-label="Shopping Cart"
             >
-              <ShoppingCart className="w-[20px] h-[20px]" style={{ color: '#FFFFFF' }} />
+              <ShoppingCart className="w-[20px] h-[20px]" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
               <span
                 className="absolute -top-1 -right-1 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center"
                 style={{
-                  background: 'linear-gradient(135deg, #C69054 0%, #B9854A 100%)',
+                  background: 'linear-gradient(135deg, #E89970 0%, #d06634 100%)',
                   fontWeight: 600,
-                  boxShadow: '0 2px 8px rgba(198, 144, 84, 0.3)',
+                  boxShadow: '0 2px 8px rgba(208, 102, 52, 0.3)',
                 }}
               >
                 0

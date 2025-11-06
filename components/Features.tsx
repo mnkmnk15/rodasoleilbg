@@ -60,15 +60,18 @@ export default function Features() {
   return (
     <section
       ref={containerRef}
-      className="relative pt-32 pb-0 bg-gradient-to-b from-[#1a1a1a] via-[#252525] to-[#1a1a1a] overflow-hidden"
+      className="relative pt-32 pb-0 overflow-hidden"
+      style={{
+        background: 'linear-gradient(to bottom, #FFFFFF 0%, #F7F5F0 50%, #FFFFFF 100%)'
+      }}
     >
-      {/* Элегантное свечение */}
-      <div className="absolute inset-0 opacity-20">
-        <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full blur-[120px]"
-          style={{ background: 'radial-gradient(circle, rgba(201, 152, 106, 0.4) 0%, transparent 70%)' }}
+      {/* Мягкое свечение золотистых акцентов */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] rounded-full blur-[140px]"
+          style={{ background: 'radial-gradient(circle, rgba(208, 102, 52, 0.3) 0%, transparent 70%)' }}
         />
-        <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] rounded-full blur-[120px]"
-          style={{ background: 'radial-gradient(circle, rgba(201, 152, 106, 0.4) 0%, transparent 70%)' }}
+        <div className="absolute bottom-1/3 right-1/4 w-[500px] h-[500px] rounded-full blur-[140px]"
+          style={{ background: 'radial-gradient(circle, rgba(208, 102, 52, 0.3) 0%, transparent 70%)' }}
         />
       </div>
 
@@ -80,10 +83,17 @@ export default function Features() {
           viewport={{ once: true }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light text-white mb-4 font-cormorant tracking-wide">
+          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light mb-4 font-cormorant tracking-wide"
+            style={{ color: '#2A2422' }}
+          >
             {t('title')}
           </h2>
-          <p className="text-lg md:text-xl text-white/60 font-raleway max-w-2xl mx-auto px-4">
+          <p className="text-lg md:text-xl font-raleway max-w-2xl mx-auto px-4"
+            style={{
+              color: 'rgba(42, 36, 34, 0.7)',
+              lineHeight: 1.8
+            }}
+          >
             {t('subtitle')}
           </p>
         </motion.div>
@@ -108,13 +118,20 @@ export default function Features() {
                   transition={{ duration: 0.7, ease: "easeOut" }}
                   className="text-right pr-8"
                 >
-                  <h3 className="text-3xl xl:text-[2.75rem] font-light text-white mb-4 font-cormorant tracking-wide leading-tight">
+                  <h3 className="text-3xl xl:text-[2.75rem] font-light mb-4 font-cormorant tracking-wide leading-tight"
+                    style={{ color: '#2A2422' }}
+                  >
                     {feature.title}
                   </h3>
-                  <p className="text-lg xl:text-xl text-white/90 leading-relaxed font-raleway">
+                  <p className="text-lg xl:text-xl font-raleway"
+                    style={{
+                      color: 'rgba(42, 36, 34, 0.8)',
+                      lineHeight: 1.8
+                    }}
+                  >
                     {feature.description}
                   </p>
-                  <div className="h-[1px] w-20 bg-gradient-to-l from-[#c9986a] to-transparent ml-auto mt-6" />
+                  <div className="h-[1px] w-20 bg-gradient-to-l from-[#d06634] to-transparent ml-auto mt-6" />
                 </motion.div>
               ))}
             </div>
@@ -149,13 +166,20 @@ export default function Features() {
                   transition={{ duration: 0.7, ease: "easeOut", delay: 0.15 }}
                   className="text-left pl-8"
                 >
-                  <h3 className="text-3xl xl:text-[2.75rem] font-light text-white mb-4 font-cormorant tracking-wide leading-tight">
+                  <h3 className="text-3xl xl:text-[2.75rem] font-light mb-4 font-cormorant tracking-wide leading-tight"
+                    style={{ color: '#2A2422' }}
+                  >
                     {feature.title}
                   </h3>
-                  <p className="text-lg xl:text-xl text-white/90 leading-relaxed font-raleway">
+                  <p className="text-lg xl:text-xl font-raleway"
+                    style={{
+                      color: 'rgba(42, 36, 34, 0.8)',
+                      lineHeight: 1.8
+                    }}
+                  >
                     {feature.description}
                   </p>
-                  <div className="h-[1px] w-20 bg-gradient-to-r from-[#c9986a] to-transparent mt-6" />
+                  <div className="h-[1px] w-20 bg-gradient-to-r from-[#d06634] to-transparent mt-6" />
                 </motion.div>
               ))}
             </div>
@@ -170,7 +194,8 @@ export default function Features() {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
-            className="text-3xl md:text-4xl font-light text-white mb-8 font-cormorant text-center"
+            className="text-3xl md:text-4xl font-light mb-8 font-cormorant text-center"
+            style={{ color: '#2A2422' }}
           >
             {t('title')}
           </motion.h2>
@@ -211,7 +236,7 @@ export default function Features() {
               >
                 {/* Пульсирующий эффект */}
                 <motion.div
-                  className="absolute inset-0 rounded-full bg-[#c9986a]/30"
+                  className="absolute inset-0 rounded-full bg-[#d06634]/30"
                   animate={{
                     scale: [1, 1.5, 1],
                     opacity: [0.5, 0, 0.5]
@@ -226,13 +251,13 @@ export default function Features() {
                 {/* Основная точка */}
                 <div className={`relative w-full h-full rounded-full border-2 transition-all duration-300 ${
                   activeHotspot === index
-                    ? 'bg-[#c9986a] border-[#c9986a] scale-110'
-                    : 'bg-white/90 border-white/90 group-hover:bg-[#c9986a] group-hover:border-[#c9986a]'
+                    ? 'bg-[#d06634] border-[#d06634] scale-110'
+                    : 'bg-white/90 border-white/90 group-hover:bg-[#d06634] group-hover:border-[#d06634]'
                 }`}>
                   {/* Внутренний круг */}
-                  <div className="absolute inset-[6px] rounded-full bg-[#1a1a1a]" />
+                  <div className="absolute inset-[6px] rounded-full" style={{ backgroundColor: '#FAF8F4' }} />
                   {/* Номер фичи */}
-                  <span className="absolute inset-0 flex items-center justify-center text-white text-xs font-bold">
+                  <span className="absolute inset-0 flex items-center justify-center text-xs font-bold" style={{ color: '#2A2422' }}>
                     {index + 1}
                   </span>
                 </div>
@@ -251,14 +276,26 @@ export default function Features() {
                 transition={{ duration: 0.3 }}
                 className="px-6 mb-8"
               >
-                <div className="bg-gradient-to-br from-[#2a2a2a] to-[#1a1a1a] rounded-2xl p-6 border border-[#c9986a]/20 shadow-2xl">
-                  <h3 className="text-2xl md:text-3xl font-light text-white mb-4 font-cormorant">
+                <div className="bg-white rounded-2xl p-6 border shadow-2xl"
+                  style={{
+                    borderColor: 'rgba(208, 102, 52, 0.2)',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)'
+                  }}
+                >
+                  <h3 className="text-2xl md:text-3xl font-light mb-4 font-cormorant"
+                    style={{ color: '#2A2422' }}
+                  >
                     {features[activeHotspot].title}
                   </h3>
-                  <p className="text-base md:text-lg text-white/80 leading-relaxed font-raleway">
+                  <p className="text-base md:text-lg font-raleway"
+                    style={{
+                      color: 'rgba(42, 36, 34, 0.8)',
+                      lineHeight: 1.8
+                    }}
+                  >
                     {features[activeHotspot].description}
                   </p>
-                  <div className="h-[1px] w-20 bg-gradient-to-r from-[#c9986a] to-transparent mt-6" />
+                  <div className="h-[1px] w-20 bg-gradient-to-r from-[#d06634] to-transparent mt-6" />
                 </div>
               </motion.div>
             )}
@@ -270,7 +307,8 @@ export default function Features() {
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
             transition={{ delay: 1.5 }}
-            className="text-center text-white/50 text-sm font-raleway px-6"
+            className="text-center text-sm font-raleway px-6"
+            style={{ color: 'rgba(42, 36, 34, 0.5)' }}
           >
             {activeHotspot === null ? 'Нажмите на точки, чтобы узнать больше' : 'Нажмите еще раз, чтобы скрыть'}
           </motion.p>

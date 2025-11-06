@@ -92,11 +92,11 @@ export default function Hero() {
         </div>
       </motion.div>
 
-      {/* Subtle gradient overlay for depth - Dior/Jacquemus style */}
+      {/* Теплый haze overlay 10-15% для читабельности текста */}
       <div
         className="absolute inset-0 z-[8] pointer-events-none"
         style={{
-          background: 'linear-gradient(to top, rgba(0, 0, 0, 0.15) 0%, rgba(0, 0, 0, 0.05) 30%, transparent 70%)',
+          background: 'linear-gradient(to top, rgba(208, 102, 52, 0.12) 0%, rgba(208, 102, 52, 0.08) 40%, rgba(255, 246, 233, 0.05) 70%, transparent 100%)',
         }}
       />
 
@@ -108,14 +108,14 @@ export default function Hero() {
           transition={{ duration: 0.8, ease: 'linear' }}
           className="max-w-7xl w-full"
         >
-          {/* Main Heading - RODA Soleil */}
+          {/* Main Heading - RODA Soleil - увеличен на 10-15% + улучшен letter-spacing */}
           <motion.h1
-            className="text-6xl md:text-8xl lg:text-9xl font-cormorant whitespace-pre-line"
+            className="text-6xl md:text-8xl lg:text-[10rem] font-cormorant whitespace-pre-line"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1.2, delay: 0.2, ease: [0.22, 1, 0.36, 1] }}
+            transition={{ duration: 0.8, delay: 0.2, ease: [0.55, 0.07, 0.31, 0.98] }}
             style={{
-              letterSpacing: '0.06em',
+              letterSpacing: '0.03em',
               lineHeight: 1.1,
               marginBottom: '-0.5rem',
               color: '#FFFFFF',
@@ -175,46 +175,51 @@ export default function Hero() {
               : 'Technology and beauty combined\nUnique swimwear with tan-through technology'}
           </motion.p>
 
-          {/* Luxury Tan-Gold CTA Button */}
+          {/* CTA: Elegant minimalist button with glow effect */}
           <motion.a
             href={`/${locale}/catalog`}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.6, ease: 'linear' }}
-            className="inline-block px-14 py-5 cursor-pointer"
+            transition={{ duration: 1.0, delay: 1.0, ease: [0.22, 1, 0.36, 1] }}
+            className="inline-block px-12 py-4 cursor-pointer relative group font-montserrat"
             style={{
-              background: 'linear-gradient(135deg, rgba(219, 202, 162, 0.35) 0%, rgba(207, 190, 150, 0.4) 100%)',
-              backdropFilter: 'blur(20px) saturate(130%)',
-              WebkitBackdropFilter: 'blur(20px) saturate(130%)',
-              border: '1px solid rgba(219, 202, 162, 0.3)',
-              borderRadius: '48px',
+              background: 'transparent',
+              border: '2px solid rgba(255, 255, 255, 0.85)',
+              borderRadius: '32px',
               color: '#FFFFFF',
-              fontSize: '17px',
-              fontWeight: 400,
-              letterSpacing: '0.12em',
+              fontSize: '15px',
+              fontWeight: 500,
+              letterSpacing: '0.15em',
               textTransform: 'uppercase',
-              boxShadow: '0 8px 32px rgba(219, 202, 162, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)',
+              textShadow: '0 2px 12px rgba(0, 0, 0, 0.3)',
               transform: 'scale(1)',
-              transition: 'transform 0.5s ease-out, box-shadow 0.5s ease-out, background 0.5s ease-out',
+              transition: 'all 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              boxShadow: '0 0 15px rgba(255, 255, 255, 0.12), 0 4px 16px rgba(0, 0, 0, 0.2)',
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(200, 165, 100, 0.55) 0%, rgba(185, 150, 85, 0.6) 100%)';
-              e.currentTarget.style.transform = 'scale(1.02)';
-              e.currentTarget.style.boxShadow = '0 12px 40px rgba(200, 165, 100, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.3)';
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.15)';
+              e.currentTarget.style.color = '#FFFFFF';
+              e.currentTarget.style.transform = 'scale(1.03) translateY(-1px)';
+              e.currentTarget.style.border = '2px solid rgba(255, 255, 255, 1)';
+              e.currentTarget.style.boxShadow = '0 0 30px rgba(255, 255, 255, 0.25), 0 6px 20px rgba(0, 0, 0, 0.25)';
+              e.currentTarget.style.textShadow = '0 2px 16px rgba(0, 0, 0, 0.4)';
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'linear-gradient(135deg, rgba(219, 202, 162, 0.35) 0%, rgba(207, 190, 150, 0.4) 100%)';
+              e.currentTarget.style.background = 'transparent';
+              e.currentTarget.style.color = '#FFFFFF';
               e.currentTarget.style.transform = 'scale(1)';
-              e.currentTarget.style.boxShadow = '0 8px 32px rgba(219, 202, 162, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.2)';
+              e.currentTarget.style.border = '2px solid rgba(255, 255, 255, 0.85)';
+              e.currentTarget.style.boxShadow = '0 0 15px rgba(255, 255, 255, 0.12), 0 4px 16px rgba(0, 0, 0, 0.2)';
+              e.currentTarget.style.textShadow = '0 2px 12px rgba(0, 0, 0, 0.3)';
             }}
             onMouseDown={(e) => {
-              e.currentTarget.style.transform = 'scale(0.98)';
+              e.currentTarget.style.transform = 'scale(1.01) translateY(-0.5px)';
             }}
             onMouseUp={(e) => {
-              e.currentTarget.style.transform = 'scale(1.02)';
+              e.currentTarget.style.transform = 'scale(1.03) translateY(-1px)';
             }}
           >
-            {locale === 'bg' ? 'Каталог' : locale === 'ru' ? 'Каталог' : 'Catalog'}
+            {locale === 'bg' ? 'Разгледай Колекцията' : locale === 'ru' ? 'Посмотреть Коллекцию' : 'View Collection'}
           </motion.a>
         </motion.div>
       </div>

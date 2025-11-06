@@ -111,10 +111,13 @@ function ProductCard({ product, index }: ProductCardProps) {
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
-      {/* Product Image Container */}
-      <div className="relative aspect-[2/3] overflow-hidden bg-[#f8f8f8]"
+      {/* Product Image Container - белый фон + soft shadow + micro-hover lift */}
+      <div className="relative aspect-[2/3] overflow-hidden bg-white rounded-sm"
         style={{
-          transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)'
+          transition: 'all 0.5s cubic-bezier(0.4, 0, 0.2, 1)',
+          boxShadow: isHovered ? '0 8px 30px rgba(0, 0, 0, 0.08)' : '0 4px 20px rgba(0, 0, 0, 0.06)',
+          transform: isHovered ? 'translateY(-4px)' : 'translateY(0)',
+          border: isHovered ? '1px solid rgba(208, 102, 52, 0.18)' : '1px solid transparent'
         }}
       >
         {/* Front Image */}
@@ -261,7 +264,7 @@ export default function ProductCatalog() {
       ref={ref}
       className="py-16 lg:py-20 relative"
       style={{
-        background: '#f9f9f9'
+        background: '#FFFFFF'
       }}
     >
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">

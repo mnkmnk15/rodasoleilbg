@@ -1,42 +1,46 @@
 @import "tailwindcss";
 
 :root {
-  /* Elegant neutral base - like Hero */
-  --background: #ffffff;
-  --foreground: #1a1a1a;
+  /* Fresh Luxury Coastal Color System - RODA Soleil */
 
-  /* Subtle warm accents - not too orange */
-  --primary: #fdfaf7;
-  --primary-light: #ffffff;
-  --primary-medium: #f8f5f2;
+  /* Base background: почти белый с 5% warmth - главная база сайта */
+  --background: #FAF8F4;
+  --foreground: #2A2422; /* deep cocoa - не черный */
 
-  /* Gentle warm highlights - barely there */
-  --accent: #d4a574;
-  --accent-light: #e8d4b8;
-  --accent-medium: #c9986a;
+  /* Pure white blocks для контраста */
+  --pure-white: #FFFFFF;
 
-  /* Soft warm tones for hover/active states */
-  --warm-accent: #b89968;
-  --warm-light: #f5ebe0;
-  --warm-hover: #a68759;
+  /* Subtle gold - используется с opacity 15-30% для акцентов */
+  --subtle-gold: #d06634;
+  --line-gold: rgba(208, 102, 52, 0.25);
 
-  /* Very subtle warm backgrounds */
-  --sand: #fdfaf7;
-  --warm-beige: #fefcfa;
-  --soft-cream: #f9f6f3;
+  /* Soft shadow - очень мягкие тени */
+  --shadow-soft: rgba(0, 0, 0, 0.06);
 
-  /* Header glassmorphism */
-  --header-bg: rgba(255, 245, 236, 0.22);
-  --header-border: rgba(255, 255, 255, 0.12);
+  /* Legacy поддержка старых переменных */
+  --primary: #FAF8F4;
+  --primary-light: #FFFFFF;
+  --primary-medium: #F7F5F0;
+
+  /* Accent colors - всегда деликатные */
+  --accent: #d06634;
+  --accent-light: rgba(208, 102, 52, 0.3);
+  --accent-medium: rgba(208, 102, 52, 0.5);
+
+  /* Header glassmorphism - свежий и воздушный */
+  --header-bg: rgba(255, 255, 255, 0.75);
+  --header-blur: blur(20px) saturate(180%);
+  --header-border: rgba(208, 102, 52, 0.18);
 
   /* Clean white sections */
-  --light-bg: #ffffff;
-  --lighter-bg: #fdfaf7;
+  --light-bg: #FFFFFF;
+  --lighter-bg: #FAF8F4;
+  --gradient-light: #F7F5F0;
 
-  /* Soft neutral shadows */
-  --shadow-soft: rgba(0, 0, 0, 0.04);
-  --shadow-medium: rgba(0, 0, 0, 0.08);
-  --shadow-strong: rgba(0, 0, 0, 0.12);
+  /* Shadows - всегда soft */
+  --shadow-micro: 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-medium: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --shadow-strong: 0 8px 30px rgba(0, 0, 0, 0.08);
 }
 
 @theme inline {
@@ -63,6 +67,7 @@ body {
   padding: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  line-height: 1.7; /* Increased airiness +6% */
 }
 
 * {
