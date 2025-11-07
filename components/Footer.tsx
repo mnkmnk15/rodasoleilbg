@@ -8,12 +8,12 @@ export default function Footer() {
   const locale = useLocale();
 
   return (
-    <footer className="relative pt-20 pb-10 overflow-hidden" style={{ background: 'linear-gradient(to bottom, #FAF8F4 0%, #F7F5F0 100%)' }}>
+    <footer className="relative pt-12 md:pt-16 lg:pt-20 pb-8 md:pb-10 overflow-hidden" style={{ background: 'linear-gradient(to bottom, #FAF8F4 0%, #F7F5F0 100%)' }}>
       {/* Мягкое терракотовое свечение */}
       <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-[600px] h-[300px] rounded-full blur-3xl opacity-10" style={{ background: 'radial-gradient(circle, rgba(208, 102, 52, 0.3) 0%, transparent 70%)' }} />
 
-      <div className="max-w-7xl mx-auto px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 mb-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-12 mb-12 md:mb-16">
           {/* Brand Section */}
           <div>
             <h3 className="text-3xl font-cormorant mb-5" style={{ color: '#d06634', fontWeight: 400, letterSpacing: '0.02em' }}>

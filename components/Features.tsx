@@ -32,35 +32,35 @@ export default function Features() {
       description: t('tanThrough.description'),
       side: 'left',
       scrollRange: [0.15, 0.5],
-      hotspot: { x: '65%', y: '35%' }
+      hotspot: { x: '75%', y: '35%' }
     },
     {
       title: t('fastDrying.title'),
       description: t('fastDrying.description'),
       side: 'right',
       scrollRange: [0.3, 0.65],
-      hotspot: { x: '45%', y: '50%' }
+      hotspot: { x: '30%', y: '50%' }
     },
     {
       title: t('uvProtection.title'),
       description: t('uvProtection.description'),
       side: 'left',
       scrollRange: [0.45, 0.8],
-      hotspot: { x: '55%', y: '25%' }
+      hotspot: { x: '65%', y: '25%' }
     },
     {
       title: t('exclusivePrints.title'),
       description: t('exclusivePrints.description'),
       side: 'right',
       scrollRange: [0.6, 0.9],
-      hotspot: { x: '50%', y: '70%' }
+      hotspot: { x: '35%', y: '70%' }
     }
   ];
 
   return (
     <section
       ref={containerRef}
-      className="relative pt-32 pb-0 overflow-hidden"
+      className="relative pt-16 md:pt-24 lg:pt-32 pb-0 overflow-hidden"
       style={{
         background: 'linear-gradient(to bottom, #FFFFFF 0%, #F7F5F0 50%, #FFFFFF 100%)'
       }}
@@ -76,19 +76,19 @@ export default function Features() {
       </div>
 
       {/* Элегантный заголовок */}
-      <div className="relative z-10 text-center mb-20">
+      <div className="relative z-10 text-center mb-12 md:mb-16 lg:mb-20">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
         >
-          <h2 className="text-4xl md:text-5xl lg:text-6xl font-light mb-4 font-cormorant tracking-wide"
+          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light mb-3 md:mb-4 font-cormorant tracking-wide px-4"
             style={{ color: '#2A2422' }}
           >
             {t('title')}
           </h2>
-          <p className="text-lg md:text-xl font-raleway max-w-2xl mx-auto px-4"
+          <p className="text-base sm:text-lg md:text-xl font-raleway max-w-2xl mx-auto px-4"
             style={{
               color: 'rgba(42, 36, 34, 0.7)',
               lineHeight: 1.8
@@ -188,17 +188,53 @@ export default function Features() {
 
         {/* Мобильная версия - интерактивные точки */}
         <div className="lg:hidden py-10">
-          {/* Заголовок для мобильной версии */}
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
+          {/* Подсказка */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-3xl md:text-4xl font-light mb-8 font-cormorant text-center"
-            style={{ color: '#2A2422' }}
+            transition={{ delay: 1.5 }}
+            className="text-center text-sm font-raleway px-6 mb-6"
+            style={{ color: 'rgba(42, 36, 34, 0.5)' }}
           >
-            {t('title')}
-          </motion.h2>
+            {activeHotspot === null ? t('clickDots') : t('clickToHide')}
+          </motion.p>
+
+          {/* Информационная карточка при клике на точку - перемещена ПЕРЕД изображением */}
+          <AnimatePresence mode="wait">
+            {activeHotspot !== null && (
+              <motion.div
+                key={activeHotspot}
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{ duration: 0.3 }}
+                className="px-6 mb-8"
+              >
+                <div className="bg-white rounded-2xl p-6 border shadow-2xl"
+                  style={{
+                    borderColor: 'rgba(208, 102, 52, 0.2)',
+                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)'
+                  }}
+                >
+                  <h3 className="text-2xl md:text-3xl font-light mb-4 font-cormorant"
+                    style={{ color: '#2A2422' }}
+                  >
+                    {features[activeHotspot].title}
+                  </h3>
+                  <p className="text-base md:text-lg font-raleway"
+                    style={{
+                      color: 'rgba(42, 36, 34, 0.8)',
+                      lineHeight: 1.8
+                    }}
+                  >
+                    {features[activeHotspot].description}
+                  </p>
+                  <div className="h-[1px] w-20 bg-gradient-to-r from-[#d06634] to-transparent mt-6" />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Центральное изображение с интерактивными точками */}
           <motion.div
@@ -206,7 +242,7 @@ export default function Features() {
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
-            className="relative w-full max-w-md mx-auto h-[600px] mb-8"
+            className="relative w-full max-w-md mx-auto h-[600px]"
           >
             <Image
               src="/images/features/MODEL.png"
@@ -264,54 +300,6 @@ export default function Features() {
               </motion.button>
             ))}
           </motion.div>
-
-          {/* Информационная карточка при клике на точку */}
-          <AnimatePresence mode="wait">
-            {activeHotspot !== null && (
-              <motion.div
-                key={activeHotspot}
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-                className="px-6 mb-8"
-              >
-                <div className="bg-white rounded-2xl p-6 border shadow-2xl"
-                  style={{
-                    borderColor: 'rgba(208, 102, 52, 0.2)',
-                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)'
-                  }}
-                >
-                  <h3 className="text-2xl md:text-3xl font-light mb-4 font-cormorant"
-                    style={{ color: '#2A2422' }}
-                  >
-                    {features[activeHotspot].title}
-                  </h3>
-                  <p className="text-base md:text-lg font-raleway"
-                    style={{
-                      color: 'rgba(42, 36, 34, 0.8)',
-                      lineHeight: 1.8
-                    }}
-                  >
-                    {features[activeHotspot].description}
-                  </p>
-                  <div className="h-[1px] w-20 bg-gradient-to-r from-[#d06634] to-transparent mt-6" />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
-          {/* Подсказка */}
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ delay: 1.5 }}
-            className="text-center text-sm font-raleway px-6"
-            style={{ color: 'rgba(42, 36, 34, 0.5)' }}
-          >
-            {activeHotspot === null ? 'Нажмите на точки, чтобы узнать больше' : 'Нажмите еще раз, чтобы скрыть'}
-          </motion.p>
         </div>
       </div>
     </section>

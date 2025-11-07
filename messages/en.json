@@ -8,8 +8,8 @@
   "hero": {
     "badge": "PREMIUM QUALITY",
     "title": "RODA Soleil",
-    "subtitle": "Tan Without Lines\nTechnology and beauty combined\nUnique swimwear with tan-through technology",
-    "feature1": "No Tan Lines",
+    "subtitle": "Even Tan Without Traces\nTechnology and beauty combined\nUnique swimwear with tan-through technology",
+    "feature1": "Even Tan Without Traces",
     "feature2": "Italian Materials",
     "feature3": "Unique Design"
   },
@@ -50,7 +50,9 @@
       "title": "Exclusive Prints",
       "description": "Unique designer prints and patterns that will make you stand out on the beach. Each model is a work of art with an unmistakable style"
     },
-    "cta_button": "View Collection"
+    "cta_button": "View Collection",
+    "clickDots": "Click on the dots to learn more",
+    "clickToHide": "Click again to hide"
   },
   "parallax": {
     "title": "Elegance and Comfort",

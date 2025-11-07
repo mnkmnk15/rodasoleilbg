@@ -141,7 +141,7 @@ function ProductCard({ product, index }: ProductCardProps) {
         />
 
         {/* Minimal Badges */}
-        {product.isNew && (
+        {product.isNew && !product.bestseller && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -160,13 +160,13 @@ function ProductCard({ product, index }: ProductCardProps) {
 
         {product.bestseller && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
+            initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute top-5 left-5 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.15em]"
+            className="absolute bottom-2 left-2 px-2 py-1 text-[9px] font-medium uppercase tracking-[0.12em] z-20"
             style={{
               background: '#1a1a1a',
               color: '#ffffff',
-              letterSpacing: '0.15em'
+              letterSpacing: '0.12em'
             }}
           >
             {t('bestseller')}
@@ -230,20 +230,20 @@ function ProductCard({ product, index }: ProductCardProps) {
         </motion.button>
       </div>
 
-      {/* Product Info - Improved Typography */}
-      <div className="mt-7 space-y-2">
+      {/* Product Info - адаптивная типографика */}
+      <div className="mt-5 md:mt-7 space-y-1.5 md:space-y-2">
         <h3
-          className="text-[17px] md:text-lg font-semibold text-[#1a1a1a] uppercase tracking-wide font-raleway"
+          className="text-base sm:text-[17px] md:text-lg font-semibold text-[#1a1a1a] uppercase tracking-wide font-raleway"
           style={{
             letterSpacing: '0.08em'
           }}
         >
           {product.name[locale as keyof typeof product.name]}
         </h3>
-        <p className="text-[15px] md:text-base font-normal text-[#666666] font-raleway">
+        <p className="text-sm sm:text-[15px] md:text-base font-normal text-[#666666] font-raleway">
           {product.description[locale as keyof typeof product.description]}
         </p>
-        <p className="text-lg md:text-xl font-medium text-[#1a1a1a] font-raleway pt-1">
+        <p className="text-base sm:text-lg md:text-xl font-medium text-[#1a1a1a] font-raleway pt-0.5 md:pt-1">
           €{product.price.toFixed(2)}
         </p>
       </div>
@@ -262,23 +262,23 @@ export default function ProductCatalog() {
   return (
     <section
       ref={ref}
-      className="py-16 lg:py-20 relative"
+      className="py-12 md:py-16 lg:py-20 relative"
       style={{
         background: '#FFFFFF'
       }}
     >
       <div className="max-w-[1800px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        {/* Section Header - Minimalist */}
+        {/* Section Header - адаптивный */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
-          className="mb-14 lg:mb-16"
+          className="mb-10 md:mb-14 lg:mb-16"
         >
           <div className="flex items-center justify-between">
             <div>
               <h2
-                className="text-3xl md:text-4xl lg:text-5xl font-light text-[#1a1a1a] font-cormorant"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl font-light text-[#1a1a1a] font-cormorant"
                 style={{
                   fontWeight: 300,
                   letterSpacing: '0.01em',
@@ -311,8 +311,8 @@ export default function ProductCatalog() {
           </div>
         </motion.div>
 
-        {/* Products Grid - Larger, More Impactful */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8 lg:gap-10 xl:gap-12 mb-20">
+        {/* Products Grid - адаптивная сетка */}
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8 lg:gap-10 xl:gap-12 mb-12 md:mb-16 lg:mb-20">
           {mockProducts.map((product, index) => (
             <ProductCard key={product.id} product={product} index={index} />
           ))}

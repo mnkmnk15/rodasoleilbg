@@ -112,3 +112,49 @@ html {
 .font-montserrat {
   font-family: var(--font-montserrat), -apple-system, BlinkMacSystemFont, sans-serif;
 }
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+  /* Улучшение читаемости текста на мобильных */
+  body {
+    font-size: 16px;
+    line-height: 1.6;
+  }
+
+  /* Предотвращение горизонтального скролла */
+  html, body {
+    overflow-x: hidden;
+    max-width: 100vw;
+  }
+
+  /* Оптимизация отступов на мобильных */
+  h1, h2, h3, h4, h5, h6 {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+  }
+
+  /* Улучшение кликабельности кнопок на мобильных */
+  button, a {
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+}
+
+/* Tablet improvements */
+@media (min-width: 768px) and (max-width: 1024px) {
+  body {
+    font-size: 16px;
+  }
+}
+
+/* Prevent text selection on interactive elements */
+button, a {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-touch-callout: none;
+  user-select: none;
+}
+
+/* Smooth transitions for all interactive elements */
+a, button, input, select, textarea {
+  transition: all 0.3s ease;
+}
