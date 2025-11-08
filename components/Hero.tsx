@@ -227,8 +227,8 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Mobile Hero - 16:9 ratio */}
-      <div className="md:hidden relative w-full" style={{ aspectRatio: '16/9' }}>
+      {/* Mobile Hero - компактная высота */}
+      <div className="md:hidden relative w-full" style={{ height: '350px' }}>
         <video
           autoPlay
           loop

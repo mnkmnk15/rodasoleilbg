@@ -93,7 +93,7 @@ export default function DualImageSection() {
                     >
                       {/* Title */}
                       <h2
-                        className="text-2xl md:text-3xl lg:text-4xl text-white font-cormorant"
+                        className="text-3xl md:text-3xl lg:text-4xl text-white font-cormorant"
                         style={{
                           fontWeight: 300,
                           letterSpacing: '0.03em',
@@ -105,7 +105,7 @@ export default function DualImageSection() {
 
                       {/* Description */}
                       <p
-                        className="text-xs md:text-sm text-white/85 font-montserrat max-w-xs"
+                        className="text-sm md:text-sm text-white/85 font-montserrat max-w-xs"
                         style={{
                           fontWeight: 300,
                           letterSpacing: '0.02em',
@@ -119,7 +119,7 @@ export default function DualImageSection() {
                       <motion.div
                         whileHover={{ x: 5 }}
                         transition={{ duration: 0.2 }}
-                        className="pt-2 inline-flex items-center gap-2 text-white font-montserrat text-xs md:text-sm border-b border-white/60 pb-1 cursor-pointer"
+                        className="pt-2 inline-flex items-center gap-2 text-white font-montserrat text-sm md:text-sm border-b border-white/60 pb-1 cursor-pointer"
                         style={{
                           fontWeight: 400,
                           letterSpacing: '0.05em'

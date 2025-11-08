@@ -40,7 +40,7 @@ export default function ShippingReturns() {
           className="grid md:grid-cols-3 gap-8 md:gap-12 mb-10"
         >
           <div className="text-center md:text-left">
-            <h3 className="text-xl md:text-2xl font-light mb-3 font-cormorant"
+            <h3 className="text-xl md:text-2xl font-medium mb-3 font-cormorant"
               style={{ color: '#2A2422' }}
             >
               {t('freeBulgaria.title')}
@@ -53,7 +53,7 @@ export default function ShippingReturns() {
           </div>
 
           <div className="text-center md:text-left">
-            <h3 className="text-xl md:text-2xl font-light mb-3 font-cormorant"
+            <h3 className="text-xl md:text-2xl font-medium mb-3 font-cormorant"
               style={{ color: '#2A2422' }}
             >
               {t('tryOn.title')}
@@ -66,7 +66,7 @@ export default function ShippingReturns() {
           </div>
 
           <div className="text-center md:text-left">
-            <h3 className="text-xl md:text-2xl font-light mb-3 font-cormorant"
+            <h3 className="text-xl md:text-2xl font-medium mb-3 font-cormorant"
               style={{ color: '#2A2422' }}
             >
               {t('returns.title')}

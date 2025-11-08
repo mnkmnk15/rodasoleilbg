@@ -32,28 +32,28 @@ export default function Features() {
       description: t('tanThrough.description'),
       side: 'left',
       scrollRange: [0.15, 0.5],
-      hotspot: { x: '75%', y: '35%' }
+      hotspot: { x: '72%', y: '48%' }
     },
     {
       title: t('fastDrying.title'),
       description: t('fastDrying.description'),
       side: 'right',
       scrollRange: [0.3, 0.65],
-      hotspot: { x: '30%', y: '50%' }
+      hotspot: { x: '28%', y: '52%' }
     },
     {
       title: t('uvProtection.title'),
       description: t('uvProtection.description'),
       side: 'left',
       scrollRange: [0.45, 0.8],
-      hotspot: { x: '65%', y: '25%' }
+      hotspot: { x: '68%', y: '32%' }
     },
     {
       title: t('exclusivePrints.title'),
       description: t('exclusivePrints.description'),
       side: 'right',
       scrollRange: [0.6, 0.9],
-      hotspot: { x: '35%', y: '70%' }
+      hotspot: { x: '32%', y: '68%' }
     }
   ];
 
@@ -200,42 +200,6 @@ export default function Features() {
             {activeHotspot === null ? t('clickDots') : t('clickToHide')}
           </motion.p>
 
-          {/* Информационная карточка при клике на точку - перемещена ПЕРЕД изображением */}
-          <AnimatePresence mode="wait">
-            {activeHotspot !== null && (
-              <motion.div
-                key={activeHotspot}
-                initial={{ opacity: 0, y: 20, scale: 0.95 }}
-                animate={{ opacity: 1, y: 0, scale: 1 }}
-                exit={{ opacity: 0, y: -20, scale: 0.95 }}
-                transition={{ duration: 0.3 }}
-                className="px-6 mb-8"
-              >
-                <div className="bg-white rounded-2xl p-6 border shadow-2xl"
-                  style={{
-                    borderColor: 'rgba(208, 102, 52, 0.2)',
-                    boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)'
-                  }}
-                >
-                  <h3 className="text-2xl md:text-3xl font-light mb-4 font-cormorant"
-                    style={{ color: '#2A2422' }}
-                  >
-                    {features[activeHotspot].title}
-                  </h3>
-                  <p className="text-base md:text-lg font-raleway"
-                    style={{
-                      color: 'rgba(42, 36, 34, 0.8)',
-                      lineHeight: 1.8
-                    }}
-                  >
-                    {features[activeHotspot].description}
-                  </p>
-                  <div className="h-[1px] w-20 bg-gradient-to-r from-[#d06634] to-transparent mt-6" />
-                </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
-
           {/* Центральное изображение с интерактивными точками */}
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}
@@ -243,63 +207,131 @@ export default function Features() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
             className="relative w-full max-w-md mx-auto h-[600px]"
+            style={{ overflow: 'visible' }}
           >
-            <Image
-              src="/images/features/MODEL.png"
-              alt="RoDaSoleil Model"
-              fill
-              className="object-contain drop-shadow-2xl"
-              sizes="(max-width: 768px) 100vw, 448px"
-              priority
-            />
+            <div className="absolute inset-0" style={{ zIndex: 1 }}>
+              <Image
+                src="/images/features/MODEL.png"
+                alt="RoDaSoleil Model"
+                fill
+                className="object-contain drop-shadow-2xl"
+                sizes="(max-width: 768px) 100vw, 448px"
+                priority
+              />
+            </div>
 
             {/* Интерактивные точки на модели */}
             {features.map((feature, index) => (
-              <motion.button
-                key={`hotspot-${index}`}
-                onClick={() => setActiveHotspot(activeHotspot === index ? null : index)}
-                className="absolute w-12 h-12 -ml-6 -mt-6 cursor-pointer group"
+              <div
+                key={`hotspot-container-${index}`}
+                className="absolute"
                 style={{
                   left: feature.hotspot?.x,
                   top: feature.hotspot?.y,
+                  width: '48px',
+                  height: '48px',
+                  marginLeft: '-24px',
+                  marginTop: '-24px',
+                  zIndex: 50
                 }}
-                initial={{ scale: 0 }}
-                whileInView={{ scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ delay: 0.8 + index * 0.15, duration: 0.4 }}
-                whileHover={{ scale: 1.2 }}
-                whileTap={{ scale: 0.95 }}
               >
-                {/* Пульсирующий эффект */}
+                {/* Пульсирующий эффект - одинаковая анимация для всех */}
                 <motion.div
-                  className="absolute inset-0 rounded-full bg-[#d06634]/30"
+                  key={`pulse-${index}`}
+                  className="absolute inset-0 rounded-full pointer-events-none will-change-transform"
+                  style={{
+                    backgroundColor: 'rgba(208, 102, 52, 0.3)',
+                    zIndex: 1
+                  }}
                   animate={{
-                    scale: [1, 1.5, 1],
-                    opacity: [0.5, 0, 0.5]
+                    scale: [1, 1.8, 1],
+                    opacity: [0.6, 0, 0.6],
                   }}
                   transition={{
                     duration: 2,
                     repeat: Infinity,
-                    ease: "easeInOut"
+                    ease: "easeInOut",
+                    repeatType: "loop"
                   }}
                 />
 
-                {/* Основная точка */}
-                <div className={`relative w-full h-full rounded-full border-2 transition-all duration-300 ${
-                  activeHotspot === index
-                    ? 'bg-[#d06634] border-[#d06634] scale-110'
-                    : 'bg-white/90 border-white/90 group-hover:bg-[#d06634] group-hover:border-[#d06634]'
-                }`}>
-                  {/* Внутренний круг */}
-                  <div className="absolute inset-[6px] rounded-full" style={{ backgroundColor: '#FAF8F4' }} />
-                  {/* Номер фичи */}
-                  <span className="absolute inset-0 flex items-center justify-center text-xs font-bold" style={{ color: '#2A2422' }}>
-                    {index + 1}
-                  </span>
-                </div>
-              </motion.button>
+                {/* Кликабельная кнопка */}
+                <motion.button
+                  onClick={() => setActiveHotspot(activeHotspot === index ? null : index)}
+                  className="relative w-full h-full cursor-pointer group z-10"
+                  initial={{ scale: 0 }}
+                  whileInView={{ scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: 0.8 + index * 0.15, duration: 0.4 }}
+                  whileHover={{ scale: 1.2 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  {/* Основная точка */}
+                  <div className={`relative w-full h-full rounded-full border-2 transition-all duration-300 ${
+                    activeHotspot === index
+                      ? 'bg-[#d06634] border-[#d06634] scale-110'
+                      : 'bg-white/90 border-white/90 group-hover:bg-[#d06634] group-hover:border-[#d06634]'
+                  }`}>
+                    {/* Внутренний круг */}
+                    <div className="absolute inset-[6px] rounded-full" style={{ backgroundColor: '#FAF8F4' }} />
+                    {/* Номер фичи */}
+                    <span className="absolute inset-0 flex items-center justify-center text-xs font-bold" style={{ color: '#2A2422' }}>
+                      {index + 1}
+                    </span>
+                  </div>
+                </motion.button>
+              </div>
             ))}
           </motion.div>
+
+          {/* Информационная карточка - фиксированное положение по центру экрана */}
+          <AnimatePresence mode="wait">
+            {activeHotspot !== null && (
+              <>
+                {/* Прозрачный оверлей для закрытия по клику */}
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="fixed inset-0 z-40 lg:hidden"
+                  onClick={() => setActiveHotspot(null)}
+                />
+
+                {/* Карточка */}
+                <motion.div
+                  key={activeHotspot}
+                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  animate={{ opacity: 1, scale: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
+                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md z-50 lg:hidden"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <div className="bg-white rounded-2xl p-6 border shadow-2xl"
+                    style={{
+                      borderColor: 'rgba(208, 102, 52, 0.2)',
+                      boxShadow: '0 8px 30px rgba(0, 0, 0, 0.08)'
+                    }}
+                  >
+                    <h3 className="text-2xl md:text-3xl font-light mb-4 font-cormorant"
+                      style={{ color: '#2A2422' }}
+                    >
+                      {features[activeHotspot].title}
+                    </h3>
+                    <p className="text-base md:text-lg font-raleway"
+                      style={{
+                        color: 'rgba(42, 36, 34, 0.8)',
+                        lineHeight: 1.8
+                      }}
+                    >
+                      {features[activeHotspot].description}
+                    </p>
+                    <div className="h-[1px] w-20 bg-gradient-to-r from-[#d06634] to-transparent mt-6" />
+                  </div>
+                </motion.div>
+              </>
+            )}
+          </AnimatePresence>
         </div>
       </div>
     </section>

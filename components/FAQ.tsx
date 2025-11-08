@@ -75,7 +75,7 @@ export default function FAQ() {
                 onClick={() => toggleItem(index)}
                 className="w-full text-left py-5 flex items-center justify-between gap-4 cursor-pointer group"
               >
-                <h3 className="text-lg md:text-xl font-light font-cormorant transition-colors"
+                <h3 className="text-lg md:text-xl font-medium font-cormorant transition-colors"
                   style={{ color: openIndex === index ? '#d06634' : '#2A2422' }}
                 >
                   {t(item.questionKey)}

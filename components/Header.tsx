@@ -6,6 +6,7 @@ import { usePathname } from 'next/navigation';
 import { useRouter } from '@/i18n/routing';
 import { Search, ShoppingCart, Globe, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useCart } from '@/contexts/CartContext';
 
 const languages = [
   { code: 'bg', name: 'BG', flag: '🇧🇬' },
@@ -13,15 +14,21 @@ const languages = [
   { code: 'en', name: 'EN', flag: '🇬🇧' }
 ];
 
-export default function Header() {
+interface HeaderProps {
+  forceWhite?: boolean;
+}
+
+export default function Header({ forceWhite = false }: HeaderProps) {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
+  const { cart } = useCart();
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
-  const [isInHero, setIsInHero] = useState(true);
+  const [isWhite, setIsWhite] = useState(forceWhite);
+  const [scrollY, setScrollY] = useState(0);
   const [isMobile, setIsMobile] = useState(false);
   const [buttonRect, setButtonRect] = useState<DOMRect | null>(null);
   const timeoutRef = React.useRef<NodeJS.Timeout | null>(null);
@@ -35,16 +42,19 @@ export default function Header() {
       setIsMobile(window.innerWidth < 1024);
     };
 
+    // Устанавливаем начальные значения только на клиенте
     checkMobile();
     window.addEventListener('resize', checkMobile);
 
     const currentScrollY = window.scrollY;
-    if (currentScrollY > 0) {
-      setIsInHero(false);
+    setScrollY(currentScrollY);
+    setLastScrollY(currentScrollY);
+    if (!forceWhite && currentScrollY > 300) {
+      setIsWhite(true);
     }
 
     return () => window.removeEventListener('resize', checkMobile);
-  }, []);
+  }, [forceWhite]);
 
   // Обработчик клика вне выпадающего меню
   useEffect(() => {
@@ -81,45 +91,48 @@ export default function Header() {
       // Игнорируем скролл на мобильных устройствах
       if (isMobile) return;
 
-      const currentScrollY = window.scrollY;
-
-      // Отменяем предыдущий таймер если он есть
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
-        timeoutRef.current = null;
-      }
-
-      // Если в самом верху - всегда прозрачный и видимый
-      if (currentScrollY === 0) {
-        setIsInHero(true);
+      // Если forceWhite активен, пропускаем логику изменения цвета
+      if (forceWhite) {
         setIsVisible(true);
-        setLastScrollY(currentScrollY);
         return;
       }
 
-      if (currentScrollY > lastScrollY && currentScrollY > 100) {
-        // Скроллим вниз - сначала скрываем хедер, потом меняем цвет
-        setIsVisible(false);
-        timeoutRef.current = setTimeout(() => {
-          setIsInHero(false); // Затемняем после того как хедер скрылся
-        }, 500); // Ждем завершения анимации скрытия
-      } else if (currentScrollY < lastScrollY) {
-        // Скроллим вверх - темный хедер, показываем сразу
-        setIsInHero(false);
+      const currentScrollY = window.scrollY;
+      setScrollY(currentScrollY);
+
+      // Управляем видимостью хедера
+      if (currentScrollY <= 300) {
+        // В hero зоне (0-300px) - всегда видимый и прозрачный
         setIsVisible(true);
+        setIsWhite(false);
+      } else {
+        // За пределами hero зоны - управляем видимостью по направлению скролла
+        if (currentScrollY > lastScrollY) {
+          // Скроллим вниз - скрываем хедер
+          setIsVisible(false);
+          // Меняем цвет на белый ПОСЛЕ того как хедер начал скрываться
+          if (timeoutRef.current) clearTimeout(timeoutRef.current);
+          timeoutRef.current = setTimeout(() => {
+            setIsWhite(true);
+          }, 350); // После завершения анимации скрытия
+        } else if (currentScrollY < lastScrollY) {
+          // Скроллим вверх - СНАЧАЛА ставим белый цвет (пока хедер скрыт), ПОТОМ показываем
+          setIsWhite(true);
+          setIsVisible(true);
+        }
       }
 
       setLastScrollY(currentScrollY);
     };
 
-    window.addEventListener('scroll', handleScroll);
+    window.addEventListener('scroll', handleScroll, { passive: true });
     return () => {
       window.removeEventListener('scroll', handleScroll);
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current);
       }
     };
-  }, [lastScrollY, isMobile]);
+  }, [lastScrollY, isMobile, forceWhite]);
 
   const switchLanguage = (newLocale: string) => {
     // Убираем текущую локаль из начала пути
@@ -134,13 +147,28 @@ export default function Header() {
 
   const currentLang = languages.find(lang => lang.code === locale);
 
+  // Вычисляем прогресс перехода от белого к прозрачному в зоне 0-300px
+  const getOpacity = () => {
+    if (forceWhite) return 1; // Всегда непрозрачный белый для страниц с forceWhite
+    if (scrollY <= 300 && isWhite) {
+      // Плавный переход от белого (1) к прозрачному (0) в диапазоне 300-0px
+      return Math.max(0, scrollY / 300);
+    }
+    return isWhite ? 1 : 0;
+  };
+
+  const opacity = getOpacity();
+  const backgroundColor = `rgba(255, 255, 255, ${opacity})`;
+  const blurAmount = Math.round(opacity * 20);
+  const isInHero = forceWhite ? false : opacity < 0.5;
+
   return (
     <header
       className="lg:fixed top-0 left-0 right-0 relative lg:relative-none"
       style={{
-        background: isInHero ? 'transparent' : '#ffffff',
-        backdropFilter: isInHero ? 'none' : 'blur(20px) saturate(180%)',
-        WebkitBackdropFilter: isInHero ? 'none' : 'blur(20px) saturate(180%)',
+        background: backgroundColor,
+        backdropFilter: opacity === 1 ? 'blur(20px) saturate(180%)' : 'none',
+        WebkitBackdropFilter: opacity === 1 ? 'blur(20px) saturate(180%)' : 'none',
         transform: !isMobile && isVisible ? 'translateY(0)' : !isMobile ? 'translateY(-100%)' : 'translateY(0)',
         transition: !isMobile ? 'background 0.3s linear, transform 0.5s linear, backdrop-filter 0.3s linear' : 'none',
         zIndex: 10000,
@@ -277,16 +305,18 @@ export default function Header() {
           </a>
           <button className="relative p-1.5" style={{ marginLeft: 'auto', marginRight: '10%' }} aria-label="Shopping Cart">
             <ShoppingCart className="w-5 h-5" style={{ color: '#d06634' }} />
-            <span
-              className="absolute -top-0.5 -right-0.5 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center"
-              style={{
-                background: '#d06634',
-                fontWeight: 600,
-                fontSize: '9px'
-              }}
-            >
-              0
-            </span>
+            {cart.itemCount > 0 && (
+              <span
+                className="absolute -top-0.5 -right-0.5 text-white text-[10px] rounded-full w-4 h-4 flex items-center justify-center"
+                style={{
+                  background: '#d06634',
+                  fontWeight: 600,
+                  fontSize: '9px'
+                }}
+              >
+                {cart.itemCount}
+              </span>
+            )}
           </button>
         </div>
       </div>
@@ -563,16 +593,18 @@ export default function Header() {
               aria-label="Shopping Cart"
             >
               <ShoppingCart className="w-[18px] h-[18px]" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
-              <span
-                className="absolute -top-1 -right-1 text-white text-[10px] rounded-full w-[18px] h-[18px] flex items-center justify-center"
-                style={{
-                  background: 'linear-gradient(135deg, #E89970 0%, #d06634 100%)',
-                  fontWeight: 600,
-                  boxShadow: '0 2px 6px rgba(208, 102, 52, 0.3)',
-                }}
-              >
-                0
-              </span>
+              {cart.itemCount > 0 && (
+                <span
+                  className="absolute -top-1 -right-1 text-white text-[10px] rounded-full w-[18px] h-[18px] flex items-center justify-center"
+                  style={{
+                    background: 'linear-gradient(135deg, #E89970 0%, #d06634 100%)',
+                    fontWeight: 600,
+                    boxShadow: '0 2px 6px rgba(208, 102, 52, 0.3)',
+                  }}
+                >
+                  {cart.itemCount}
+                </span>
+              )}
             </button>
           </div>
         </div>

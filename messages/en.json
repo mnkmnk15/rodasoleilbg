@@ -16,7 +16,11 @@
   "catalog": {
     "title": "Our Collection",
     "viewAll": "View All",
-    "bestseller": "Bestseller"
+    "bestseller": "Bestseller",
+    "pageTitle": "Shop",
+    "pageSubtitle": "Discover Your Perfect Style",
+    "introTitle": "Smart Swimwear for the Whole Family",
+    "introDescription": "Explore our complete range of innovative swimwear — from sophisticated women's one-pieces to vibrant children's beachwear and practical men's swim styles. Each piece combines cutting-edge tan-through technology with exceptional comfort and design, helping you enjoy every moment under the sun to the fullest."
   },
   "features": {
     "unique": "Unique Swimwear",
@@ -132,5 +136,9 @@
     },
     "expandedInfo": "Read More...",
     "moreQuestions": "Have questions? Contact us and we'll be happy to help!"
+  },
+  "instagram": {
+    "followAlong": "FOLLOW ALONG",
+    "handle": "@rodasoleil.bg"
   }
 }

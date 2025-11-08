@@ -1,0 +1,5 @@
+<!-- SVG placeholder will be created as a static asset -->
+<svg width="600" height="800" xmlns="http://www.w3.org/2000/svg">
+  <rect width="600" height="800" fill="#f5f5f5"/>
+  <text x="50%" y="50%" text-anchor="middle" fill="#999" font-size="24" font-family="Arial">Product Image</text>
+</svg>

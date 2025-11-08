@@ -3,6 +3,8 @@ import { getMessages } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import { locales } from '@/i18n';
 import { Cormorant_Garamond, Raleway, Playfair_Display, Montserrat } from 'next/font/google';
+import { CartProvider } from '@/contexts/CartContext';
+import { WishlistProvider } from '@/contexts/WishlistContext';
 import '../globals.css';
 
 const cormorant = Cormorant_Garamond({
@@ -58,7 +60,11 @@ export default async function LocaleLayout({
     <html lang={locale} className={`${cormorant.variable} ${raleway.variable} ${playfair.variable} ${montserrat.variable}`}>
       <body className={raleway.className}>
         <NextIntlClientProvider messages={messages}>
-          {children}
+          <CartProvider>
+            <WishlistProvider>
+              {children}
+            </WishlistProvider>
+          </CartProvider>
         </NextIntlClientProvider>
       </body>
     </html>

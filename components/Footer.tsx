@@ -8,19 +8,17 @@ export default function Footer() {
   const locale = useLocale();
 
   return (
-    <footer className="relative pt-12 md:pt-16 lg:pt-20 pb-8 md:pb-10 overflow-hidden" style={{ background: 'linear-gradient(to bottom, #FAF8F4 0%, #F7F5F0 100%)' }}>
-      {/* Мягкое терракотовое свечение */}
-      <div className="absolute top-0 left-1/2 transform -translate-x-1/2 w-[600px] h-[300px] rounded-full blur-3xl opacity-10" style={{ background: 'radial-gradient(circle, rgba(208, 102, 52, 0.3) 0%, transparent 70%)' }} />
+    <footer className="relative pt-8 md:pt-16 lg:pt-20 pb-6 md:pb-10 overflow-hidden" style={{ background: '#FFFFFF' }}>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-10 lg:gap-12 mb-12 md:mb-16">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10 lg:gap-12 mb-8 md:mb-16">
           {/* Brand Section */}
           <div>
-            <h3 className="text-3xl font-cormorant mb-5" style={{ color: '#d06634', fontWeight: 400, letterSpacing: '0.02em' }}>
+            <h3 className="text-2xl md:text-3xl font-cormorant mb-3 md:mb-5" style={{ color: '#d06634', fontWeight: 400, letterSpacing: '0.02em' }}>
               <span style={{ fontWeight: 600 }}>RODA</span>
               <span className="ml-1.5" style={{ fontWeight: 300 }}>Soleil</span>
             </h3>
-            <p className="mb-7 font-raleway" style={{ color: '#2A2422', opacity: 0.7, fontWeight: 300, fontSize: '15px', letterSpacing: '0.01em', lineHeight: 1.8 }}>
+            <p className="mb-4 md:mb-7 font-raleway" style={{ color: '#2A2422', opacity: 0.7, fontWeight: 300, fontSize: '14px', letterSpacing: '0.01em', lineHeight: 1.6 }}>
               {locale === 'bg'
                 ? 'Премиум бански за модерни жени, които ценят качеството и стила.'
                 : locale === 'ru'
@@ -79,33 +77,33 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-raleway mb-5" style={{ color: '#d06634', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '14px' }}>
+            <h4 className="text-lg font-raleway mb-3 md:mb-5" style={{ color: '#d06634', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '13px' }}>
               {locale === 'bg' ? 'Бързи връзки' : locale === 'ru' ? 'Быстрые ссылки' : 'Quick Links'}
             </h4>
-            <ul className="space-y-3.5">
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-2 md:flex md:flex-col md:space-y-3.5">
               <li>
-                <a href={`/${locale}`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '15px', fontWeight: 300, transition: 'all 0.5s linear' }}
+                <a href={`/${locale}`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, transition: 'all 0.5s linear' }}
                    onMouseEnter={(e) => { e.currentTarget.style.color = '#d06634'; e.currentTarget.style.opacity = '1'; }}
                    onMouseLeave={(e) => { e.currentTarget.style.color = '#2A2422'; e.currentTarget.style.opacity = '0.65'; }}>
                   {locale === 'bg' ? 'Начало' : locale === 'ru' ? 'Главная' : 'Home'}
                 </a>
               </li>
               <li>
-                <a href={`/${locale}/catalog`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '15px', fontWeight: 300, transition: 'all 0.5s linear' }}
+                <a href={`/${locale}/catalog`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, transition: 'all 0.5s linear' }}
                    onMouseEnter={(e) => { e.currentTarget.style.color = '#d06634'; e.currentTarget.style.opacity = '1'; }}
                    onMouseLeave={(e) => { e.currentTarget.style.color = '#2A2422'; e.currentTarget.style.opacity = '0.65'; }}>
                   {locale === 'bg' ? 'Каталог' : locale === 'ru' ? 'Каталог' : 'Catalog'}
                 </a>
               </li>
               <li>
-                <a href={`/${locale}/about`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '15px', fontWeight: 300, transition: 'all 0.5s linear' }}
+                <a href={`/${locale}/about`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, transition: 'all 0.5s linear' }}
                    onMouseEnter={(e) => { e.currentTarget.style.color = '#d06634'; e.currentTarget.style.opacity = '1'; }}
                    onMouseLeave={(e) => { e.currentTarget.style.color = '#2A2422'; e.currentTarget.style.opacity = '0.65'; }}>
                   {t('about')}
                 </a>
               </li>
               <li>
-                <a href={`/${locale}/contact`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '15px', fontWeight: 300, transition: 'all 0.5s linear' }}
+                <a href={`/${locale}/contact`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, transition: 'all 0.5s linear' }}
                    onMouseEnter={(e) => { e.currentTarget.style.color = '#d06634'; e.currentTarget.style.opacity = '1'; }}
                    onMouseLeave={(e) => { e.currentTarget.style.color = '#2A2422'; e.currentTarget.style.opacity = '0.65'; }}>
                   {t('contact')}
@@ -116,33 +114,33 @@ export default function Footer() {
 
           {/* Customer Service */}
           <div>
-            <h4 className="text-lg font-raleway mb-5" style={{ color: '#d06634', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '14px' }}>
+            <h4 className="text-lg font-raleway mb-3 md:mb-5" style={{ color: '#d06634', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '13px' }}>
               {locale === 'bg' ? 'Помощ' : locale === 'ru' ? 'Помощь' : 'Help'}
             </h4>
-            <ul className="space-y-3.5">
+            <ul className="grid grid-cols-2 gap-x-4 gap-y-2 md:flex md:flex-col md:space-y-3.5">
               <li>
-                <a href={`/${locale}/shipping`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '15px', fontWeight: 300, transition: 'all 0.5s linear' }}
+                <a href={`/${locale}#shipping-returns`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, transition: 'all 0.5s linear' }}
                    onMouseEnter={(e) => { e.currentTarget.style.color = '#d06634'; e.currentTarget.style.opacity = '1'; }}
                    onMouseLeave={(e) => { e.currentTarget.style.color = '#2A2422'; e.currentTarget.style.opacity = '0.65'; }}>
                   {t('shipping')}
                 </a>
               </li>
               <li>
-                <a href={`/${locale}/returns`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '15px', fontWeight: 300, transition: 'all 0.5s linear' }}
+                <a href={`/${locale}#shipping-returns`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, transition: 'all 0.5s linear' }}
                    onMouseEnter={(e) => { e.currentTarget.style.color = '#d06634'; e.currentTarget.style.opacity = '1'; }}
                    onMouseLeave={(e) => { e.currentTarget.style.color = '#2A2422'; e.currentTarget.style.opacity = '0.65'; }}>
                   {t('returns')}
                 </a>
               </li>
               <li>
-                <a href={`/${locale}/privacy`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '15px', fontWeight: 300, transition: 'all 0.5s linear' }}
+                <a href={`/${locale}/privacy`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, transition: 'all 0.5s linear' }}
                    onMouseEnter={(e) => { e.currentTarget.style.color = '#d06634'; e.currentTarget.style.opacity = '1'; }}
                    onMouseLeave={(e) => { e.currentTarget.style.color = '#2A2422'; e.currentTarget.style.opacity = '0.65'; }}>
                   {t('privacy')}
                 </a>
               </li>
               <li>
-                <a href={`/${locale}/terms`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '15px', fontWeight: 300, transition: 'all 0.5s linear' }}
+                <a href={`/${locale}/terms`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, transition: 'all 0.5s linear' }}
                    onMouseEnter={(e) => { e.currentTarget.style.color = '#d06634'; e.currentTarget.style.opacity = '1'; }}
                    onMouseLeave={(e) => { e.currentTarget.style.color = '#2A2422'; e.currentTarget.style.opacity = '0.65'; }}>
                   {t('terms')}
@@ -153,25 +151,25 @@ export default function Footer() {
 
           {/* Contact Info */}
           <div>
-            <h4 className="text-lg font-raleway mb-5" style={{ color: '#d06634', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '14px' }}>
+            <h4 className="text-lg font-raleway mb-3 md:mb-5" style={{ color: '#d06634', fontWeight: 500, letterSpacing: '0.05em', textTransform: 'uppercase', fontSize: '13px' }}>
               {t('contact')}
             </h4>
-            <ul className="space-y-4">
-              <li className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 mt-0.5 flex-shrink-0" style={{ color: '#d06634' }} />
-                <span className="font-raleway" style={{ color: '#2A2422', opacity: 0.7, fontSize: '15px', fontWeight: 300 }}>Sofia, Bulgaria</span>
+            <ul className="space-y-0 md:space-y-0">
+              <li className="flex items-center space-x-3 h-[35px]">
+                <MapPin className="w-5 h-5 flex-shrink-0" style={{ color: '#d06634' }} />
+                <span className="font-raleway flex items-center h-full" style={{ color: '#2A2422', opacity: 0.7, fontSize: '14px', fontWeight: 300, lineHeight: 1 }}>Sofia, Bulgaria</span>
               </li>
-              <li className="flex items-center space-x-3">
+              <li className="flex items-center space-x-3 h-[35px]">
                 <Phone className="w-5 h-5 flex-shrink-0" style={{ color: '#d06634' }} />
-                <a href="tel:+359123456789" className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '15px', fontWeight: 300, transition: 'all 0.5s linear' }}
+                <a href="tel:+359123456789" className="font-raleway flex items-center h-full" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, lineHeight: 1, transition: 'all 0.5s linear' }}
                    onMouseEnter={(e) => { e.currentTarget.style.color = '#d06634'; e.currentTarget.style.opacity = '1'; }}
                    onMouseLeave={(e) => { e.currentTarget.style.color = '#2A2422'; e.currentTarget.style.opacity = '0.65'; }}>
                   +359 123 456 789
                 </a>
               </li>
-              <li className="flex items-center space-x-3">
+              <li className="flex items-center space-x-3 h-[35px]">
                 <Mail className="w-5 h-5 flex-shrink-0" style={{ color: '#d06634' }} />
-                <a href="mailto:info@rodasoleil.bg" className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '15px', fontWeight: 300, transition: 'all 0.5s linear' }}
+                <a href="mailto:info@rodasoleil.bg" className="font-raleway flex items-center h-full" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, lineHeight: 1, transition: 'all 0.5s linear' }}
                    onMouseEnter={(e) => { e.currentTarget.style.color = '#d06634'; e.currentTarget.style.opacity = '1'; }}
                    onMouseLeave={(e) => { e.currentTarget.style.color = '#2A2422'; e.currentTarget.style.opacity = '0.65'; }}>
                   info@rodasoleil.bg
@@ -182,9 +180,9 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="pt-10" style={{ borderTop: '1px solid rgba(208, 102, 52, 0.25)' }}>
-          <div className="flex flex-col md:flex-row justify-between items-center space-y-5 md:space-y-0">
-            <p className="font-raleway text-center md:text-left" style={{ color: '#2A2422', opacity: 0.6, fontSize: '14px', fontWeight: 300, letterSpacing: '0.01em' }}>
+        <div className="pt-6 md:pt-10" style={{ borderTop: '1px solid rgba(208, 102, 52, 0.25)' }}>
+          <div className="flex flex-col md:flex-row justify-between items-center space-y-3 md:space-y-0">
+            <p className="font-raleway text-center md:text-left" style={{ color: '#2A2422', opacity: 0.6, fontSize: '13px', fontWeight: 300, letterSpacing: '0.01em' }}>
               © {new Date().getFullYear()} RoDaSoleil Bulgaria.
               {locale === 'bg' ? ' Всички права запазени.' : locale === 'ru' ? ' Все права защищены.' : ' All rights reserved.'}
             </p>

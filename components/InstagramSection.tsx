@@ -37,11 +37,11 @@ export default function InstagramSection() {
       >
         <div className="flex items-center justify-center gap-3">
           <h2 className="text-sm md:text-base font-raleway uppercase tracking-wider" style={{ color: '#1a1a1a', fontWeight: 500 }}>
-            {locale === 'bg' ? 'Следвайте ни' : locale === 'ru' ? 'Следуйте за нами' : 'FOLLOW ALONG'}
+            {t('followAlong')}
           </h2>
           <div style={{ width: '1px', height: '16px', backgroundColor: '#1a1a1a', opacity: 0.3 }}></div>
           <p className="text-base md:text-lg font-raleway" style={{ color: 'rgb(73, 73, 73)' }}>
-            @rodasoleil.bg
+            {t('handle')}
           </p>
         </div>
       </motion.div>
