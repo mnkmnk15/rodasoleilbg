@@ -103,10 +103,10 @@ export default function Footer() {
                 </a>
               </li>
               <li>
-                <a href={`/${locale}/contact`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, transition: 'all 0.5s linear' }}
+                <a href={`/${locale}/contacts`} className="font-raleway" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, transition: 'all 0.5s linear' }}
                    onMouseEnter={(e) => { e.currentTarget.style.color = '#d06634'; e.currentTarget.style.opacity = '1'; }}
                    onMouseLeave={(e) => { e.currentTarget.style.color = '#2A2422'; e.currentTarget.style.opacity = '0.65'; }}>
-                  {t('contact')}
+                  {locale === 'bg' ? 'Контакти' : locale === 'ru' ? 'Контакты' : 'Contacts'}
                 </a>
               </li>
             </ul>

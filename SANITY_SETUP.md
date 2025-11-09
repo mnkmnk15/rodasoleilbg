@@ -240,40 +240,62 @@ export const schemaTypes = [category, product]
 
 ## Шаг 5: Создание категорий
 
-Создайте следующие категории в Sanity Studio (используйте соответствующие slug):
+Создайте следующие категории в Sanity Studio с указанием типа категории:
 
-1. **Shop All** - slug: `shop-all`
-2. **Pants & Skirts** - slug: `pants-skirts`
-3. **Robes & Tunics** - slug: `robes-tunics`
-4. **T-Shirts & Shorts** - slug: `t-shirts-shorts`
-5. **Sleeveless** - slug: `sleeveless`
-6. **Long Sleeve** - slug: `long-sleeve`
-7. **Zippers** - slug: `zippers`
-8. **WOMEN** - slug: `women`
-9. **Men's** - slug: `mens`
-10. **Accessories** - slug: `accessories`
-11. **OTHER** - slug: `other`
-12. **Swimwear** - slug: `swimwear`
-13. **Beachwear** - slug: `beachwear`
-14. **KIDS** - slug: `kids`
+### Gender/Age Categories (Категории по полу/возрасту)
+Установите **Category Type**: `Gender/Age Category (Women, Men, Kids)`
+
+1. **Women** / **Женски** / **Женские** - slug: `women`
+2. **Men** / **Мъжки** / **Мужские** - slug: `mens`
+3. **Kids** / **Детски** / **Детские** - slug: `kids`
+
+### Product Type Categories (Типы товаров)
+Установите **Category Type**: `Product Type (Swimwear, Beachwear, etc.)`
+
+1. **Swimwear** / **Бански** / **Купальники** - slug: `swimwear`
+2. **Beachwear** / **Плажни** / **Пляжная Одежда** - slug: `beachwear`
+3. **Pants & Skirts** / **Панталони и Поли** / **Штаны и Юбки** - slug: `pants-skirts`
+4. **Robes & Tunics** / **Роби и Туники** / **Халаты и Туники** - slug: `robes-tunics`
+5. **T-Shirts & Shorts** / **Тениски и Шорти** / **Футболки и Шорты** - slug: `t-shirts-shorts`
+6. **Sleeveless** / **Без Ръкави** / **Без Рукавов** - slug: `sleeveless`
+7. **Long Sleeve** / **Дълъг Ръкав** / **Длинный Рукав** - slug: `long-sleeve`
+8. **Zippers** / **С Ципове** / **С Молниями** - slug: `zippers`
+9. **Accessories** / **Аксесоари** / **Аксессуары** - slug: `accessories`
+10. **Other** / **Други** / **Другие** - slug: `other`
+
+### General Categories (Общие категории)
+Установите **Category Type**: `General Category`
+
+1. **Shop All** / **Всички** / **Все** - slug: `shop-all` (опционально)
 
 ## Шаг 6: Добавление товаров
 
 Для каждого товара заполните:
 
+### Основная информация
 - **Название** (на 3 языках: BG, RU, EN)
 - **Slug** (автоматически генерируется)
 - **Описание** (на 3 языках)
 - **Изображения** (минимум 1, рекомендуется 3-5)
+
+### Цены и наличие
 - **Цена** (в евро)
 - **Старая цена** (опционально, для скидок)
 - **В наличии** (да/нет)
 - **Бестселлер** (да/нет)
 - **Новинка** (да/нет)
-- **Категория** (выберите из списка)
-- **Размеры** (выберите доступные размеры)
+
+### Категоризация (ВАЖНО!)
+- **Category** (устаревшее, можно оставить пустым или для совместимости)
+- **Gender/Age Category** (выберите: Women, Men или Kids) - **ОБЯЗАТЕЛЬНО**
+- **Product Type** (выберите тип товара: Swimwear, Beachwear, и т.д.) - **ОБЯЗАТЕЛЬНО**
+
+### Дополнительная информация
+- **Размеры** (выберите доступные размеры: XS, S, M, L, XL, XXL)
 - **Цвета** (название и HEX код, например: #FF0000)
 - **Особенности** (список характеристик на 3 языках)
+
+**Примечание:** Новые поля `Gender/Age Category` и `Product Type` используются для фильтрации в каталоге. Обязательно заполните их для корректной работы фильтров!
 
 ## Шаг 7: Настройка CORS
 
@@ -291,39 +313,68 @@ https://ваш-домен.com
 \`\`\`json
 {
   "name": {
-    "bg": "Лятна рокля с цветя",
-    "ru": "Летнее платье с цветами",
-    "en": "Summer Floral Dress"
+    "bg": "Елегантен дамски бански с флорален принт",
+    "ru": "Элегантный женский купальник с цветочным принтом",
+    "en": "Elegant Women's Swimsuit with Floral Print"
   },
   "description": {
-    "bg": "Красива лятна рокля със свеж флорален принт",
-    "ru": "Красивое летнее платье с свежим цветочным принтом",
-    "en": "Beautiful summer dress with fresh floral print"
+    "bg": "Красив дамски бански със свеж флорален принт и tan-through технология",
+    "ru": "Красивый женский купальник с свежим цветочным принтом и tan-through технологией",
+    "en": "Beautiful women's swimsuit with fresh floral print and tan-through technology"
   },
-  "price": 59.99,
-  "compareAtPrice": 89.99,
+  "price": 79.99,
+  "compareAtPrice": 99.99,
   "inStock": true,
   "bestseller": true,
   "newArrival": false,
+  "gender": "women",
+  "productType": "swimwear",
   "sizes": ["s", "m", "l", "xl"],
   "colors": [
-    { "name": "Бяло", "hex": "#FFFFFF" },
-    { "name": "Синьо", "hex": "#4A90E2" }
+    { "name": "Tropical Blue", "hex": "#4A90E2" },
+    { "name": "Coral Pink", "hex": "#FF6B9D" }
   ],
   "features": [
     {
-      "bg": "100% памук",
-      "ru": "100% хлопок",
-      "en": "100% cotton"
+      "bg": "Tan-through технология",
+      "ru": "Tan-through технология",
+      "en": "Tan-through technology"
     },
     {
-      "bg": "Машинно пране",
-      "ru": "Машинная стирка",
-      "en": "Machine washable"
+      "bg": "UV защита SPF 35+",
+      "ru": "UV защита SPF 35+",
+      "en": "UV protection SPF 35+"
+    },
+    {
+      "bg": "Бързо съхнеща тъкан",
+      "ru": "Быстросохнущая ткань",
+      "en": "Quick-dry fabric"
     }
   ]
 }
 \`\`\`
+
+### Примери товаров для разных категорий:
+
+**Женский купальник:**
+- Gender/Age Category: `women`
+- Product Type: `swimwear`
+
+**Мужские плавки:**
+- Gender/Age Category: `mens`
+- Product Type: `swimwear`
+
+**Детский купальник:**
+- Gender/Age Category: `kids`
+- Product Type: `swimwear`
+
+**Женская пляжная туника:**
+- Gender/Age Category: `women`
+- Product Type: `robes-tunics`
+
+**Мужские пляжные шорты:**
+- Gender/Age Category: `mens`
+- Product Type: `t-shirts-shorts`
 
 ## Готово!
 

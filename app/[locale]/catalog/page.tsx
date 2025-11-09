@@ -51,17 +51,17 @@ export default function ShopPage() {
   const filteredAndSortedProducts = useMemo(() => {
     let filtered = [...products];
 
-    // Apply gender filter
+    // Apply gender filter using new gender field
     if (selectedGender) {
       filtered = filtered.filter(
-        (product) => product.category?.slug.current === selectedGender
+        (product) => product.gender === selectedGender
       );
     }
 
-    // Apply product type filter
+    // Apply product type filter using new productType field
     if (selectedProductType) {
       filtered = filtered.filter(
-        (product) => product.category?.slug.current === selectedProductType
+        (product) => product.productType === selectedProductType
       );
     }
 

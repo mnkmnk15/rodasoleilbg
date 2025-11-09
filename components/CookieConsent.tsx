@@ -60,28 +60,45 @@ export default function CookieConsent() {
           initial={{ y: 100, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           exit={{ y: 100, opacity: 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
           className="fixed bottom-0 left-0 right-0 z-50 p-4 md:p-6"
         >
           <div className="max-w-7xl mx-auto">
-            <div className="bg-white rounded-2xl shadow-2xl border border-gray-200 p-6 md:p-8">
+            <div
+              className="bg-white rounded-3xl shadow-2xl p-6 md:p-8"
+              style={{
+                border: '1px solid rgba(208, 102, 52, 0.15)',
+                backdropFilter: 'blur(20px)',
+                background: 'rgba(255, 255, 255, 0.98)'
+              }}
+            >
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 {/* Content */}
                 <div className="flex-1 flex items-start space-x-4">
                   <div className="flex-shrink-0">
-                    <div className="w-12 h-12 rounded-full bg-[#FFE1AF] flex items-center justify-center">
-                      <Cookie className="w-6 h-6 text-gray-900" />
+                    <div
+                      className="w-14 h-14 rounded-full flex items-center justify-center"
+                      style={{ background: 'rgba(208, 102, 52, 0.1)' }}
+                    >
+                      <Cookie className="w-7 h-7" style={{ color: '#d06634' }} />
                     </div>
                   </div>
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                    <h3 className="text-lg md:text-xl font-raleway mb-2" style={{ color: '#d06634', fontWeight: 600 }}>
                       {content.title}
                     </h3>
-                    <p className="text-gray-600 text-sm md:text-base">
+                    <p className="font-raleway text-sm md:text-base leading-relaxed" style={{ color: '#2A2422', opacity: 0.8 }}>
                       {content.description}{' '}
                       <a
                         href={`/${locale}/privacy`}
-                        className="text-gray-900 underline hover:text-gray-700"
+                        className="font-raleway underline transition-colors"
+                        style={{ color: '#d06634', fontWeight: 500 }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.color = '#E89970';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.color = '#d06634';
+                        }}
                       >
                         {content.learnMore}
                       </a>
@@ -93,13 +110,37 @@ export default function CookieConsent() {
                 <div className="flex items-center space-x-3 w-full md:w-auto">
                   <button
                     onClick={handleDecline}
-                    className="flex-1 md:flex-none px-6 py-3 border-2 border-gray-300 rounded-full text-gray-700 hover:bg-gray-50 transition-colors font-medium"
+                    className="flex-1 md:flex-none px-6 py-3 rounded-full font-raleway font-medium transition-all"
+                    style={{
+                      border: '2px solid rgba(208, 102, 52, 0.3)',
+                      color: '#d06634'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = 'rgba(208, 102, 52, 0.08)';
+                      e.currentTarget.style.borderColor = 'rgba(208, 102, 52, 0.5)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = 'transparent';
+                      e.currentTarget.style.borderColor = 'rgba(208, 102, 52, 0.3)';
+                    }}
                   >
                     {content.decline}
                   </button>
                   <button
                     onClick={handleAccept}
-                    className="flex-1 md:flex-none px-6 py-3 bg-gray-900 text-white rounded-full hover:bg-gray-800 transition-colors font-medium"
+                    className="flex-1 md:flex-none px-6 py-3 rounded-full text-white font-raleway font-medium transition-all"
+                    style={{
+                      background: 'linear-gradient(135deg, #d06634 0%, #E89970 100%)',
+                      boxShadow: '0 4px 16px rgba(208, 102, 52, 0.3)'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 6px 24px rgba(208, 102, 52, 0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 4px 16px rgba(208, 102, 52, 0.3)';
+                    }}
                   >
                     {content.accept}
                   </button>

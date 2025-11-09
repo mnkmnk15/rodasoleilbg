@@ -1,19 +1,11 @@
-// Sanity Schema Definitions for RoDaSoleil Shop
-// These schemas should be added to your Sanity Studio
+import { defineType, defineField } from 'sanity';
 
-/**
- * Product Schema
- *
- * To use this in Sanity Studio, create a new schema file in your Sanity project:
- * schemas/product.ts
- */
-
-export const productSchema = {
+export default defineType({
   name: 'product',
   title: 'Product',
   type: 'document',
   fields: [
-    {
+    defineField({
       name: 'name',
       title: 'Product Name',
       type: 'object',
@@ -22,8 +14,9 @@ export const productSchema = {
         { name: 'ru', title: 'Russian', type: 'string' },
         { name: 'en', title: 'English', type: 'string' },
       ],
-    },
-    {
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'slug',
       title: 'Slug',
       type: 'slug',
@@ -31,8 +24,9 @@ export const productSchema = {
         source: 'name.en',
         maxLength: 96,
       },
-    },
-    {
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'description',
       title: 'Description',
       type: 'object',
@@ -41,8 +35,8 @@ export const productSchema = {
         { name: 'ru', title: 'Russian', type: 'text' },
         { name: 'en', title: 'English', type: 'text' },
       ],
-    },
-    {
+    }),
+    defineField({
       name: 'images',
       title: 'Product Images',
       type: 'array',
@@ -54,43 +48,46 @@ export const productSchema = {
           },
         },
       ],
-    },
-    {
+      validation: (Rule) => Rule.required().min(1),
+    }),
+    defineField({
       name: 'price',
       title: 'Price (EUR)',
       type: 'number',
-    },
-    {
+      validation: (Rule) => Rule.required().min(0),
+    }),
+    defineField({
       name: 'compareAtPrice',
       title: 'Compare at Price (EUR)',
       type: 'number',
       description: 'Original price for sale items',
-    },
-    {
+    }),
+    defineField({
       name: 'inStock',
       title: 'In Stock',
       type: 'boolean',
       initialValue: true,
-    },
-    {
+    }),
+    defineField({
       name: 'bestseller',
       title: 'Bestseller',
       type: 'boolean',
       initialValue: false,
-    },
-    {
+    }),
+    defineField({
       name: 'newArrival',
       title: 'New Arrival',
       type: 'boolean',
       initialValue: false,
-    },
-    {
+    }),
+    defineField({
       name: 'category',
-      title: 'Category',
+      title: 'Category (Legacy)',
       type: 'reference',
       to: [{ type: 'category' }],
-    },
-    {
+      description: 'Legacy category field - use Gender and Product Type instead',
+    }),
+    defineField({
       name: 'gender',
       title: 'Gender/Age Category',
       type: 'string',
@@ -102,8 +99,9 @@ export const productSchema = {
         ],
       },
       description: 'Main category by gender/age group',
-    },
-    {
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'productType',
       title: 'Product Type',
       type: 'string',
@@ -122,8 +120,9 @@ export const productSchema = {
         ],
       },
       description: 'Type of product',
-    },
-    {
+      validation: (Rule) => Rule.required(),
+    }),
+    defineField({
       name: 'sizes',
       title: 'Available Sizes',
       type: 'array',
@@ -138,8 +137,8 @@ export const productSchema = {
           { title: 'XXL', value: 'xxl' },
         ],
       },
-    },
-    {
+    }),
+    defineField({
       name: 'colors',
       title: 'Available Colors',
       type: 'array',
@@ -152,8 +151,8 @@ export const productSchema = {
           ],
         },
       ],
-    },
-    {
+    }),
+    defineField({
       name: 'features',
       title: 'Product Features',
       type: 'array',
@@ -167,156 +166,23 @@ export const productSchema = {
           ],
         },
       ],
-    },
+    }),
   ],
   preview: {
     select: {
       title: 'name.en',
       media: 'images.0',
       price: 'price',
+      gender: 'gender',
+      productType: 'productType',
     },
-    prepare(selection: any) {
-      const { title, media, price } = selection;
+    prepare(selection) {
+      const { title, media, price, gender, productType } = selection;
       return {
         title,
-        subtitle: `€${price}`,
+        subtitle: `€${price} · ${gender} · ${productType}`,
         media,
       };
     },
   },
-};
-
-/**
- * Category Schema
- */
-export const categorySchema = {
-  name: 'category',
-  title: 'Category',
-  type: 'document',
-  fields: [
-    {
-      name: 'name',
-      title: 'Category Name',
-      type: 'object',
-      fields: [
-        { name: 'bg', title: 'Bulgarian', type: 'string' },
-        { name: 'ru', title: 'Russian', type: 'string' },
-        { name: 'en', title: 'English', type: 'string' },
-      ],
-    },
-    {
-      name: 'slug',
-      title: 'Slug',
-      type: 'slug',
-      options: {
-        source: 'name.en',
-        maxLength: 96,
-      },
-    },
-    {
-      name: 'categoryType',
-      title: 'Category Type',
-      type: 'string',
-      options: {
-        list: [
-          { title: 'Gender/Age Category (Women, Men, Kids)', value: 'gender' },
-          { title: 'Product Type (Swimwear, Beachwear, etc.)', value: 'product-type' },
-          { title: 'General Category', value: 'general' },
-        ],
-      },
-      description: 'Type of category for filtering purposes',
-      initialValue: 'general',
-    },
-    {
-      name: 'image',
-      title: 'Category Image',
-      type: 'image',
-      options: {
-        hotspot: true,
-      },
-    },
-    {
-      name: 'description',
-      title: 'Description',
-      type: 'object',
-      fields: [
-        { name: 'bg', title: 'Bulgarian', type: 'text' },
-        { name: 'ru', title: 'Russian', type: 'text' },
-        { name: 'en', title: 'English', type: 'text' },
-      ],
-    },
-    {
-      name: 'order',
-      title: 'Display Order',
-      type: 'number',
-      description: 'Order in which this category should appear (lower numbers first)',
-      initialValue: 0,
-    },
-  ],
-  preview: {
-    select: {
-      title: 'name.en',
-      media: 'image',
-      categoryType: 'categoryType',
-    },
-    prepare(selection: any) {
-      const { title, media, categoryType } = selection;
-      return {
-        title,
-        subtitle: categoryType === 'gender' ? 'Gender/Age' : categoryType === 'product-type' ? 'Product Type' : 'General',
-        media,
-      };
-    },
-  },
-};
-
-/**
- * Homepage Banner Schema
- */
-export const bannerSchema = {
-  name: 'banner',
-  title: 'Homepage Banner',
-  type: 'document',
-  fields: [
-    {
-      name: 'title',
-      title: 'Title',
-      type: 'object',
-      fields: [
-        { name: 'bg', title: 'Bulgarian', type: 'string' },
-        { name: 'ru', title: 'Russian', type: 'string' },
-        { name: 'en', title: 'English', type: 'string' },
-      ],
-    },
-    {
-      name: 'subtitle',
-      title: 'Subtitle',
-      type: 'object',
-      fields: [
-        { name: 'bg', title: 'Bulgarian', type: 'string' },
-        { name: 'ru', title: 'Russian', type: 'string' },
-        { name: 'en', title: 'English', type: 'string' },
-      ],
-    },
-    {
-      name: 'video',
-      title: 'Video File',
-      type: 'file',
-      options: {
-        accept: 'video/*',
-      },
-    },
-    {
-      name: 'posterImage',
-      title: 'Poster Image',
-      type: 'image',
-      description: 'Fallback image shown before video loads',
-    },
-    {
-      name: 'active',
-      title: 'Active',
-      type: 'boolean',
-      initialValue: true,
-    },
-  ],
-};
+});

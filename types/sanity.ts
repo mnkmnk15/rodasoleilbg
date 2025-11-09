@@ -21,7 +21,9 @@ export interface SanityProduct {
   inStock: boolean;
   bestseller: boolean;
   newArrival: boolean;
-  category: SanityCategory;
+  category?: SanityCategory; // Legacy field, now optional
+  gender: 'women' | 'mens' | 'kids'; // New required field
+  productType: 'swimwear' | 'beachwear' | 'pants-skirts' | 'robes-tunics' | 't-shirts-shorts' | 'sleeveless' | 'long-sleeve' | 'zippers' | 'accessories' | 'other'; // New required field
   sizes?: string[];
   colors?: {
     name: string;
@@ -44,7 +46,14 @@ export interface SanityCategory {
   slug: {
     current: string;
   };
+  categoryType: 'gender' | 'product-type' | 'general';
   image?: string;
+  description?: {
+    bg: string;
+    ru: string;
+    en: string;
+  };
+  order: number;
 }
 
 export interface SanityBanner {

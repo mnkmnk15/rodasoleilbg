@@ -19,8 +19,11 @@ export async function getAllProducts() {
     newArrival,
     category->{
       name,
-      slug
+      slug,
+      categoryType
     },
+    gender,
+    productType,
     sizes,
     colors,
     features
@@ -60,8 +63,11 @@ export async function getProductBySlug(slug: string) {
     newArrival,
     category->{
       name,
-      slug
+      slug,
+      categoryType
     },
+    gender,
+    productType,
     sizes,
     colors,
     features
@@ -92,11 +98,14 @@ export async function getProductsByCategory(categorySlug: string) {
 
 // Get all categories
 export async function getAllCategories() {
-  const query = `*[_type == "category"] {
+  const query = `*[_type == "category"] | order(order asc) {
     _id,
     name,
     slug,
-    "image": image.asset->url
+    categoryType,
+    "image": image.asset->url,
+    description,
+    order
   }`;
 
   return await sanityClient.fetch(query);
@@ -130,8 +139,79 @@ export async function searchProducts(searchTerm: string) {
     slug,
     "image": images[0].asset->url,
     price,
-    inStock
+    inStock,
+    gender,
+    productType
   }`;
 
   return await sanityClient.fetch(query, { searchTerm: `*${searchTerm}*` });
+}
+
+// Get products by gender
+export async function getProductsByGender(gender: 'women' | 'mens' | 'kids') {
+  const query = `*[_type == "product" && gender == $gender] | order(_createdAt desc) {
+    _id,
+    name,
+    slug,
+    "image": images[0].asset->url,
+    price,
+    compareAtPrice,
+    inStock,
+    bestseller,
+    gender,
+    productType
+  }`;
+
+  return await sanityClient.fetch(query, { gender });
+}
+
+// Get products by product type
+export async function getProductsByType(productType: string) {
+  const query = `*[_type == "product" && productType == $productType] | order(_createdAt desc) {
+    _id,
+    name,
+    slug,
+    "image": images[0].asset->url,
+    price,
+    compareAtPrice,
+    inStock,
+    bestseller,
+    gender,
+    productType
+  }`;
+
+  return await sanityClient.fetch(query, { productType });
+}
+
+// Get products by gender and product type
+export async function getProductsByGenderAndType(gender: 'women' | 'mens' | 'kids', productType: string) {
+  const query = `*[_type == "product" && gender == $gender && productType == $productType] | order(_createdAt desc) {
+    _id,
+    name,
+    slug,
+    "image": images[0].asset->url,
+    price,
+    compareAtPrice,
+    inStock,
+    bestseller,
+    gender,
+    productType
+  }`;
+
+  return await sanityClient.fetch(query, { gender, productType });
+}
+
+// Get categories by type
+export async function getCategoriesByType(categoryType: 'gender' | 'product-type' | 'general') {
+  const query = `*[_type == "category" && categoryType == $categoryType] | order(order asc) {
+    _id,
+    name,
+    slug,
+    categoryType,
+    "image": image.asset->url,
+    description,
+    order
+  }`;
+
+  return await sanityClient.fetch(query, { categoryType });
 }
