@@ -105,7 +105,7 @@ export default function ProductPage() {
   const productName = product.name[locale];
   const productDescription = product.description[locale];
   const isOnSale = product.compareAtPrice && product.compareAtPrice > product.price;
-  const discount = isOnSale
+  const discount = isOnSale && product.compareAtPrice
     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
     : 0;
   const inWishlist = isInWishlist(product._id);
@@ -116,8 +116,8 @@ export default function ProductPage() {
       name: productName,
       price: product.price,
       image: product.images[0],
-      size: selectedSize,
-      color: selectedColor,
+      size: selectedSize || undefined,
+      color: selectedColor || undefined,
     });
     setIsAddedToCart(true);
     setTimeout(() => setIsAddedToCart(false), 2000);
