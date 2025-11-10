@@ -187,9 +187,9 @@ export default function Footer() {
               {locale === 'bg' ? ' Всички права запазени.' : locale === 'ru' ? ' Все права защищены.' : ' All rights reserved.'}
             </p>
             <div className="flex items-center space-x-4 opacity-50 grayscale hover:grayscale-0 hover:opacity-100" style={{ transition: 'all 0.5s linear' }}>
-              <img src="/images/payment-visa.svg" alt="Visa" className="h-6" />
-              <img src="/images/payment-mastercard.svg" alt="Mastercard" className="h-6" />
-              <img src="/images/payment-paypal.svg" alt="PayPal" className="h-6" />
+              <img src="/images/footer/visa.png" alt="Visa" className="h-8" />
+              <img src="/images/footer/mastercard.png" alt="Mastercard" className="h-8" />
+              <img src="/images/footer/paypal.png" alt="PayPal" className="h-8" />
             </div>
           </div>
         </div>

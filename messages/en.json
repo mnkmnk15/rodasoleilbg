@@ -140,5 +140,24 @@
   "instagram": {
     "followAlong": "FOLLOW ALONG",
     "handle": "@rodasoleil.bg"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "size": "Size",
+    "color": "Color",
+    "remove": "Remove",
+    "subtotal": "Subtotal",
+    "itemCount": "{count, plural, one {# item} other {# items}}",
+    "checkout": "Checkout",
+    "continueShopping": "Continue Shopping"
+  },
+  "search": {
+    "placeholder": "Search products...",
+    "startTyping": "Start typing to search for products",
+    "noResults": "No results found",
+    "resultsCount": "{count, plural, one {# result} other {# results}}",
+    "outOfStock": "Out of stock",
+    "escToClose": "Press ESC to close"
   }
 }

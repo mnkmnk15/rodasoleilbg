@@ -1,0 +1,37 @@
+# Robots.txt для RoDaSoleil Bulgaria
+# https://rodasoleil.bg
+
+# Разрешить всем поисковым системам индексировать сайт
+User-agent: *
+Allow: /
+
+# Запретить индексацию технических директорий
+Disallow: /api/
+Disallow: /_next/
+Disallow: /admin/
+Disallow: /*.json$
+
+# Разрешить доступ к статическим ресурсам
+Allow: /_next/static/
+Allow: /_next/image/
+
+# Карта сайта
+Sitemap: https://rodasoleil.bg/sitemap.xml
+Sitemap: https://rodasoleil.bg/sitemap-bg.xml
+Sitemap: https://rodasoleil.bg/sitemap-ru.xml
+Sitemap: https://rodasoleil.bg/sitemap-en.xml
+
+# Специфические настройки для Google
+User-agent: Googlebot
+Allow: /
+Crawl-delay: 0
+
+# Специфические настройки для Yandex
+User-agent: YandexBot
+Allow: /
+Crawl-delay: 0
+
+# Настройки для Bing
+User-agent: Bingbot
+Allow: /
+Crawl-delay: 0

@@ -140,5 +140,24 @@
   "instagram": {
     "followAlong": "Следвайте ни",
     "handle": "@rodasoleil.bg"
+  },
+  "cart": {
+    "title": "Количка",
+    "empty": "Вашата количка е празна",
+    "size": "Размер",
+    "color": "Цвят",
+    "remove": "Премахни",
+    "subtotal": "Междинна сума",
+    "itemCount": "{count, plural, one {# продукт} other {# продукта}}",
+    "checkout": "Поръчай",
+    "continueShopping": "Продължи пазаруването"
+  },
+  "search": {
+    "placeholder": "Търси продукти...",
+    "startTyping": "Започнете да пишете, за да търсите продукти",
+    "noResults": "Не са намерени резултати",
+    "resultsCount": "{count, plural, one {# резултат} other {# резултата}}",
+    "outOfStock": "Изчерпан",
+    "escToClose": "Натиснете ESC за затваряне"
   }
 }

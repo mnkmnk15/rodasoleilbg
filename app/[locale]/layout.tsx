@@ -5,6 +5,7 @@ import { locales } from '@/i18n';
 import { Cormorant_Garamond, Raleway, Playfair_Display, Montserrat } from 'next/font/google';
 import { CartProvider } from '@/contexts/CartContext';
 import { WishlistProvider } from '@/contexts/WishlistContext';
+import StructuredData from '@/components/StructuredData';
 import '../globals.css';
 
 const cormorant = Cormorant_Garamond({
@@ -58,6 +59,9 @@ export default async function LocaleLayout({
 
   return (
     <html lang={locale} className={`${cormorant.variable} ${raleway.variable} ${playfair.variable} ${montserrat.variable}`}>
+      <head>
+        <StructuredData locale={locale} />
+      </head>
       <body className={raleway.className}>
         <NextIntlClientProvider messages={messages}>
           <CartProvider>

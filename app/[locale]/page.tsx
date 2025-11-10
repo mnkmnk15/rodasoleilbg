@@ -2,7 +2,7 @@ import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import BeigeBanner from '@/components/BeigeBanner';
 import DualImageSection from '@/components/DualImageSection';
-import ProductCatalog from '@/components/ProductCatalog';
+import ProductCatalogServer from '@/components/ProductCatalogServer';
 import Features from '@/components/Features';
 import ShippingReturns from '@/components/ShippingReturns';
 import FAQ from '@/components/FAQ';
@@ -17,7 +17,7 @@ export default function HomePage() {
       <Hero />
       <BeigeBanner />
       <DualImageSection />
-      <ProductCatalog />
+      <ProductCatalogServer />
       <InstagramSection />
       <Features />
       <ShippingReturns />

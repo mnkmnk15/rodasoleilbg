@@ -113,7 +113,8 @@ export default function CookieConsent() {
                     className="flex-1 md:flex-none px-6 py-3 rounded-full font-raleway font-medium transition-all"
                     style={{
                       border: '2px solid rgba(208, 102, 52, 0.3)',
-                      color: '#d06634'
+                      color: '#d06634',
+                      cursor: 'pointer'
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.background = 'rgba(208, 102, 52, 0.08)';
@@ -131,7 +132,8 @@ export default function CookieConsent() {
                     className="flex-1 md:flex-none px-6 py-3 rounded-full text-white font-raleway font-medium transition-all"
                     style={{
                       background: 'linear-gradient(135deg, #d06634 0%, #E89970 100%)',
-                      boxShadow: '0 4px 16px rgba(208, 102, 52, 0.3)'
+                      boxShadow: '0 4px 16px rgba(208, 102, 52, 0.3)',
+                      cursor: 'pointer'
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-2px)';

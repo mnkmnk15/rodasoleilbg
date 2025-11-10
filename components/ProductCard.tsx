@@ -161,7 +161,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 20 }}
               transition={{ duration: 0.3 }}
               onClick={handleAddToCart}
-              className="absolute bottom-3 left-3 right-3 z-10 flex items-center justify-center gap-2 py-3 bg-white/95 backdrop-blur-md hover:bg-neutral-800 hover:text-white transition-all duration-300 rounded-md font-medium"
+              className="absolute bottom-3 left-3 right-3 z-10 flex items-center justify-center gap-2 py-3 bg-white/95 backdrop-blur-md hover:bg-neutral-800 hover:text-white transition-all duration-300 rounded-md font-medium cursor-pointer"
             >
               <ShoppingBag className="w-5 h-5" />
               <span className="text-sm uppercase tracking-wider">

@@ -7,6 +7,8 @@ import { useRouter } from '@/i18n/routing';
 import { Search, ShoppingCart, Globe, Menu, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '@/contexts/CartContext';
+import CartSidebar from './CartSidebar';
+import SearchModal from './SearchModal';
 
 const languages = [
   { code: 'bg', name: 'BG', flag: '🇧🇬' },
@@ -25,6 +27,8 @@ export default function Header({ forceWhite = false }: HeaderProps) {
   const { cart } = useCart();
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
   const [isWhite, setIsWhite] = useState(forceWhite);
@@ -171,7 +175,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
         WebkitBackdropFilter: opacity === 1 ? 'blur(20px) saturate(180%)' : 'none',
         transform: !isMobile && isVisible ? 'translateY(0)' : !isMobile ? 'translateY(-100%)' : 'translateY(0)',
         transition: !isMobile ? 'background 0.3s linear, transform 0.5s linear, backdrop-filter 0.3s linear' : 'none',
-        zIndex: 10000,
+        zIndex: 100,
       }}
     >
       {/* Mobile Header - белая часть с кнопками в 2 ряда */}
@@ -246,7 +250,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
                     WebkitBackdropFilter: 'blur(24px)',
                     border: '1px solid rgba(255, 255, 255, 0.12)',
                     boxShadow: '0 12px 40px rgba(208, 102, 52, 0.15), inset 0 1px 2px rgba(255, 245, 236, 0.3)',
-                    zIndex: 10001,
+                    zIndex: 110,
                   }}
                 >
                   {languages.map((lang, index) => (
@@ -303,7 +307,12 @@ export default function Header({ forceWhite = false }: HeaderProps) {
           >
             {locale === 'bg' ? 'Контакти' : locale === 'ru' ? 'Контакты' : 'CONTACTS'}
           </a>
-          <button className="relative p-1.5" style={{ marginLeft: 'auto', marginRight: '10%' }} aria-label="Shopping Cart">
+          <button
+            onClick={() => setIsCartOpen(true)}
+            className="relative p-1.5"
+            style={{ marginLeft: 'auto', marginRight: '10%' }}
+            aria-label="Shopping Cart"
+          >
             <ShoppingCart className="w-5 h-5" style={{ color: '#d06634' }} />
             {cart.itemCount > 0 && (
               <span
@@ -472,7 +481,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
           {/* Right Icons */}
           <div className="flex items-center space-x-3 flex-1 justify-end">
             {/* Language Selector */}
-            <div ref={langDropdownRefDesktop} className="relative" style={{ zIndex: 10000 }}>
+            <div ref={langDropdownRefDesktop} className="relative" style={{ zIndex: 50 }}>
               <button
                 onClick={() => setIsLangOpen(!isLangOpen)}
                 className="flex items-center space-x-1.5 px-3 py-2 rounded-full transition-all cursor-pointer"
@@ -512,6 +521,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
                       WebkitBackdropFilter: 'blur(24px)',
                       border: '1px solid rgba(255, 255, 255, 0.12)',
                       boxShadow: '0 12px 40px rgba(208, 102, 52, 0.15), inset 0 1px 2px rgba(255, 245, 236, 0.3)',
+                      zIndex: 60,
                     }}
                   >
                     {languages.map((lang, index) => (
@@ -553,6 +563,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
 
             {/* Search Icon */}
             <button
+              onClick={() => setIsSearchOpen(true)}
               className="p-2 rounded-full transition-all cursor-pointer"
               style={{
                 background: 'rgba(229, 217, 207, 0.08)',
@@ -575,6 +586,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
 
             {/* Cart Icon with Counter */}
             <button
+              onClick={() => setIsCartOpen(true)}
               className="p-2 rounded-full transition-all relative cursor-pointer"
               style={{
                 background: 'rgba(229, 217, 207, 0.08)',
@@ -670,6 +682,12 @@ export default function Header({ forceWhite = false }: HeaderProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Cart Sidebar */}
+      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+
+      {/* Search Modal */}
+      <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />
     </header>
   );
 }

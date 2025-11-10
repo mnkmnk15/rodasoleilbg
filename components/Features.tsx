@@ -293,6 +293,7 @@ export default function Features() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
                   className="fixed inset-0 z-40 lg:hidden"
                   onClick={() => setActiveHotspot(null)}
                 />
@@ -300,10 +301,14 @@ export default function Features() {
                 {/* Карточка */}
                 <motion.div
                   key={activeHotspot}
-                  initial={{ opacity: 0, scale: 0.95, y: 20 }}
+                  initial={{ opacity: 0, scale: 0.92, y: 30 }}
                   animate={{ opacity: 1, scale: 1, y: 0 }}
-                  exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                  transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                  exit={{ opacity: 0, scale: 0.92, y: 30 }}
+                  transition={{
+                    duration: 0.5,
+                    ease: [0.23, 1, 0.32, 1],
+                    opacity: { duration: 0.4 }
+                  }}
                   className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[90%] max-w-md z-50 lg:hidden"
                   onClick={(e) => e.stopPropagation()}
                 >

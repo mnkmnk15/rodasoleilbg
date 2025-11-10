@@ -140,5 +140,24 @@
   "instagram": {
     "followAlong": "Следуйте за нами",
     "handle": "@rodasoleil.bg"
+  },
+  "cart": {
+    "title": "Корзина",
+    "empty": "Ваша корзина пуста",
+    "size": "Размер",
+    "color": "Цвет",
+    "remove": "Удалить",
+    "subtotal": "Промежуточная сумма",
+    "itemCount": "{count, plural, one {# товар} few {# товара} other {# товаров}}",
+    "checkout": "Оформить заказ",
+    "continueShopping": "Продолжить покупки"
+  },
+  "search": {
+    "placeholder": "Искать товары...",
+    "startTyping": "Начните вводить текст для поиска товаров",
+    "noResults": "Результаты не найдены",
+    "resultsCount": "{count, plural, one {# результат} few {# результата} other {# результатов}}",
+    "outOfStock": "Нет в наличии",
+    "escToClose": "Нажмите ESC, чтобы закрыть"
   }
 }

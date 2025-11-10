@@ -73,7 +73,7 @@ export default function ProductPage() {
   if (isLoading) {
     return (
       <main className="min-h-screen bg-white">
-        <Header />
+        <Header forceWhite={true} />
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="animate-spin rounded-full h-12 w-12 border-4 border-neutral-200 border-t-neutral-900" />
         </div>
@@ -85,7 +85,7 @@ export default function ProductPage() {
   if (!product) {
     return (
       <main className="min-h-screen bg-white">
-        <Header />
+        <Header forceWhite={true} />
         <div className="flex flex-col items-center justify-center min-h-[60vh] px-4">
           <h1 className="text-3xl font-bold text-neutral-900 mb-4">
             {locale === 'bg' ? 'Продуктът не е намерен' : locale === 'ru' ? 'Товар не найден' : 'Product Not Found'}
@@ -134,7 +134,7 @@ export default function ProductPage() {
 
   return (
     <main className="min-h-screen bg-white">
-      <Header />
+      <Header forceWhite={true} />
 
       {/* Breadcrumb */}
       <div className="max-w-[1400px] mx-auto px-4 py-6">

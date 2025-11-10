@@ -93,7 +93,7 @@ html {
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--primary);
+  background: #a0522d;
 }
 
 /* Font utilities */
@@ -152,6 +152,11 @@ button, a {
   -webkit-tap-highlight-color: transparent;
   -webkit-touch-callout: none;
   user-select: none;
+}
+
+/* Cursor pointer for all buttons */
+button {
+  cursor: pointer;
 }
 
 /* Smooth transitions for all interactive elements */
