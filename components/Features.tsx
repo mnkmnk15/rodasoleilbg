@@ -202,7 +202,7 @@ export default function Features() {
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
             viewport={{ once: true }}
-            transition={{ delay: 1.5 }}
+            transition={{ delay: 0.3 }}
             className="text-center text-sm font-raleway px-6 mb-6"
             style={{ color: 'rgba(42, 36, 34, 0.5)' }}
           >
@@ -282,7 +282,7 @@ export default function Features() {
                       initial={{ scale: 0 }}
                       whileInView={{ scale: 1 }}
                       viewport={{ once: true }}
-                      transition={{ delay: 0.8 + index * 0.15, duration: 0.4 }}
+                      transition={{ delay: 0.2 + index * 0.08, duration: 0.3 }}
                       whileTap={{ scale: 0.9 }}
                       style={{
                         WebkitTapHighlightColor: 'transparent',
