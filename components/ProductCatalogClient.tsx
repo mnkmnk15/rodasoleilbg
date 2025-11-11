@@ -8,6 +8,7 @@ import { useState, useEffect } from 'react';
 import { SanityProduct } from '@/types/sanity';
 import { urlFor } from '@/sanity/config';
 import { useCart } from '@/contexts/CartContext';
+import Link from 'next/link';
 
 interface ProductCatalogClientProps {
   products: SanityProduct[];
@@ -53,15 +54,16 @@ function ProductCard({ product, index }: ProductCardProps) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative cursor-pointer"
-      onMouseEnter={() => !isMobile && setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <Link href={`/${locale}/catalog/${product.slug.current}`}>
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+        className="group relative cursor-pointer"
+        onMouseEnter={() => !isMobile && setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
       {/* Product Image Container */}
       <div className="relative aspect-[2/3] overflow-hidden bg-white rounded-sm"
         style={{
@@ -218,6 +220,7 @@ function ProductCard({ product, index }: ProductCardProps) {
         </div>
       </div>
     </motion.div>
+    </Link>
   );
 }
 

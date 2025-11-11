@@ -5,6 +5,7 @@ import { motion } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { Instagram } from 'lucide-react';
 import { useState } from 'react';
+import Image from 'next/image';
 
 const instagramImages = [
   '/images/inst/inst1.jpg',
@@ -57,22 +58,27 @@ export default function InstagramSection() {
               href="https://www.instagram.com/rodasoleil.bg/"
               target="_blank"
               rel="noopener noreferrer"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={inView ? { opacity: 1, scale: 1 } : {}}
-              transition={{ duration: 0.5, delay: index * 0.08 }}
-              className="relative overflow-hidden aspect-square"
+              initial={{ opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
+              transition={{ duration: 0.4, delay: index * 0.05 }}
+              className="relative overflow-hidden aspect-square bg-gray-100"
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
             >
-              <img
+              <Image
                 src={image}
                 alt={`Instagram post ${index + 1}`}
-                className="w-full h-full object-cover"
+                fill
+                sizes="(max-width: 768px) 50vw, 25vw"
+                className="object-cover"
                 style={{
                   filter: isHovered ? 'brightness(0.6)' : 'brightness(1)',
                   transform: isHovered ? 'scale(1.05)' : 'scale(1)',
                   transition: 'filter 0.5s ease, transform 0.5s ease'
                 }}
+                loading="lazy"
+                placeholder="blur"
+                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2YzZjRmNiIvPjwvc3ZnPg=="
               />
               {/* Instagram icon on hover */}
               <div

@@ -6,11 +6,16 @@ import { useInView } from 'react-intersection-observer';
 import { ShoppingCart, Heart } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
+import Link from 'next/link';
+import { getAllProducts } from '@/sanity/queries';
+import { SanityProduct } from '@/types/sanity';
+import { Loader2 } from 'lucide-react';
 
-// Mock product data - will be replaced with Strapi CMS
+// Mock product data - will be replaced with actual Sanity data
 const mockProducts = [
   {
     id: 1,
+    slug: 'shorts-fashion',
     name: { bg: 'Shorts "Fashion"', ru: 'Shorts "Fashion"', en: 'Shorts "Fashion"' },
     description: { bg: 'Дамски шорти', ru: 'Женские шорты', en: 'Women shorts' },
     price: 89,
@@ -21,6 +26,7 @@ const mockProducts = [
   },
   {
     id: 2,
+    slug: 'brasil',
     name: { bg: 'Brasil', ru: 'Brasil', en: 'Brasil' },
     description: { bg: 'Еднокомпонентен бански', ru: 'Слитный купальник', en: 'One-piece Swimsuit' },
     price: 219,
@@ -31,6 +37,7 @@ const mockProducts = [
   },
   {
     id: 3,
+    slug: 'meow',
     name: { bg: 'Meow', ru: 'Meow', en: 'Meow' },
     description: { bg: 'Еднокомпонентен бански', ru: 'Слитный купальник', en: 'One-piece Swimsuit' },
     price: 219,
@@ -41,6 +48,7 @@ const mockProducts = [
   },
   {
     id: 4,
+    slug: 'portofino',
     name: { bg: 'Portofino', ru: 'Portofino', en: 'Portofino' },
     description: { bg: 'Еднокомпонентен бански', ru: 'Слитный купальник', en: 'One-piece Swimsuit' },
     price: 219,
@@ -51,6 +59,7 @@ const mockProducts = [
   },
   {
     id: 5,
+    slug: 'peacock-mayura',
     name: { bg: 'Peacock Mayura', ru: 'Peacock Mayura', en: 'Peacock Mayura' },
     description: { bg: 'Еднокомпонентен бански с цип', ru: 'Слитный купальник с молнией', en: 'One-piece Zipper Swimsuit' },
     price: 259,
@@ -61,6 +70,7 @@ const mockProducts = [
   },
   {
     id: 6,
+    slug: 'dragon-and-phoenix',
     name: { bg: 'Dragon and Phoenix', ru: 'Dragon and Phoenix', en: 'Dragon and Phoenix' },
     description: { bg: 'Еднокомпонентен бански с цип', ru: 'Слитный купальник с молнией', en: 'One-piece Zipper Swimsuit' },
     price: 219,
@@ -71,6 +81,7 @@ const mockProducts = [
   },
   {
     id: 7,
+    slug: 'art',
     name: { bg: 'Art', ru: 'Art', en: 'Art' },
     description: { bg: 'Еднокомпонентен бански', ru: 'Слитный купальник', en: 'One-piece Swimsuit' },
     price: 189,
@@ -81,6 +92,7 @@ const mockProducts = [
   },
   {
     id: 8,
+    slug: 'leopard',
     name: { bg: 'Leopard', ru: 'Leopard', en: 'Leopard' },
     description: { bg: 'Еднокомпонентен бански с цип', ru: 'Слитный купальник с молнией', en: 'One-piece Zipper Swimsuit' },
     price: 189,
@@ -92,12 +104,12 @@ const mockProducts = [
 ];
 
 interface ProductCardProps {
-  product: typeof mockProducts[0];
+  product: SanityProduct;
   index: number;
 }
 
 function ProductCard({ product, index }: ProductCardProps) {
-  const locale = useLocale();
+  const locale = useLocale() as 'bg' | 'ru' | 'en';
   const t = useTranslations('catalog');
   const { addItem, openCart } = useCart();
   const [isHovered, setIsHovered] = useState(false);
@@ -117,10 +129,10 @@ function ProductCard({ product, index }: ProductCardProps) {
     e.preventDefault();
     e.stopPropagation();
     addItem({
-      id: product.id.toString(),
-      name: product.name[locale as keyof typeof product.name],
+      id: product._id,
+      name: product.name[locale],
       price: product.price,
-      image: product.imageFront,
+      image: product.images[0],
     });
 
     // Открываем корзину на мобильных устройствах
@@ -130,15 +142,16 @@ function ProductCard({ product, index }: ProductCardProps) {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative cursor-pointer"
-      onMouseEnter={() => !isMobile && setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <Link href={`/${locale}/catalog/${product.slug.current}`}>
+      <motion.div
+        initial={{ opacity: 0, y: 40 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
+        className="group relative cursor-pointer"
+        onMouseEnter={() => !isMobile && setIsHovered(true)}
+        onMouseLeave={() => setIsHovered(false)}
+      >
       {/* Product Image Container - белый фон + soft shadow + micro-hover lift */}
       <div className="relative aspect-[2/3] overflow-hidden bg-white rounded-sm"
         style={{
@@ -150,8 +163,8 @@ function ProductCard({ product, index }: ProductCardProps) {
       >
         {/* Front Image */}
         <motion.img
-          src={product.imageFront}
-          alt={product.name[locale as keyof typeof product.name]}
+          src={product.images[0]}
+          alt={product.name[locale]}
           className="w-full h-full object-cover absolute inset-0"
           initial={{ opacity: 1 }}
           animate={{ opacity: isHovered ? 0 : 1 }}
@@ -160,8 +173,8 @@ function ProductCard({ product, index }: ProductCardProps) {
 
         {/* Back Image */}
         <motion.img
-          src={product.imageBack}
-          alt={`${product.name[locale as keyof typeof product.name]} - back`}
+          src={product.images[1] || product.images[0]}
+          alt={`${product.name[locale]} - back`}
           className="w-full h-full object-cover absolute inset-0"
           initial={{ opacity: 0 }}
           animate={{ opacity: isHovered ? 1 : 0 }}
@@ -169,7 +182,7 @@ function ProductCard({ product, index }: ProductCardProps) {
         />
 
         {/* Minimal Badges */}
-        {product.isNew && !product.bestseller && (
+        {product.newArrival && !product.bestseller && (
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
@@ -275,26 +288,46 @@ function ProductCard({ product, index }: ProductCardProps) {
             letterSpacing: '0.08em'
           }}
         >
-          {product.name[locale as keyof typeof product.name]}
+          {product.name[locale]}
         </h3>
         <p className="text-sm sm:text-[15px] md:text-base font-normal text-[#666666] font-raleway">
-          {product.description[locale as keyof typeof product.description]}
+          {product.description ? product.description[locale] : ''}
         </p>
         <p className="text-base sm:text-lg md:text-xl font-medium text-[#1a1a1a] font-raleway pt-0.5 md:pt-1">
           €{product.price.toFixed(2)}
         </p>
       </div>
     </motion.div>
+    </Link>
   );
 }
 
 export default function ProductCatalog() {
   const t = useTranslations('catalog');
-  const locale = useLocale();
+  const locale = useLocale() as 'bg' | 'ru' | 'en';
   const [ref, inView] = useInView({
     triggerOnce: true,
     threshold: 0.05
   });
+  const [products, setProducts] = useState<SanityProduct[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setIsLoading(true);
+        const productsData = await getAllProducts();
+        // Показываем только первые 8 товаров на главной странице
+        setProducts(productsData?.slice(0, 8) || []);
+      } catch (error) {
+        console.error('Error fetching products:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   return (
     <section
@@ -331,7 +364,7 @@ export default function ProductCatalog() {
               initial={{ opacity: 0, x: 20 }}
               animate={inView ? { opacity: 1, x: 0 } : {}}
               transition={{ duration: 0.6, delay: 0.2 }}
-              href="#"
+              href={`/${locale}/catalog`}
               className="hidden lg:flex items-center text-sm uppercase tracking-[0.15em] text-[#1a1a1a] font-medium group"
               whileHover={{ scale: 1.05 }}
             >
@@ -349,11 +382,23 @@ export default function ProductCatalog() {
         </motion.div>
 
         {/* Products Grid - адаптивная сетка */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 mb-12 md:mb-16 lg:mb-20">
-          {mockProducts.map((product, index) => (
-            <ProductCard key={product.id} product={product} index={index} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="flex items-center justify-center py-20">
+            <Loader2 className="w-8 h-8 animate-spin text-neutral-400" />
+          </div>
+        ) : products.length > 0 ? (
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 mb-12 md:mb-16 lg:mb-20">
+            {products.map((product, index) => (
+              <ProductCard key={product._id} product={product} index={index} />
+            ))}
+          </div>
+        ) : (
+          <div className="text-center py-20">
+            <p className="text-xl text-neutral-500">
+              {locale === 'bg' ? 'Няма налични продукти' : locale === 'ru' ? 'Нет доступных товаров' : 'No products available'}
+            </p>
+          </div>
+        )}
 
         {/* View All Link - Centered Bottom */}
         <motion.div
@@ -363,7 +408,7 @@ export default function ProductCatalog() {
           className="text-center"
         >
           <motion.a
-            href="#"
+            href={`/${locale}/catalog`}
             className="inline-flex items-center text-base uppercase tracking-[0.15em] text-[#1a1a1a] font-semibold font-raleway px-4 py-2"
             whileHover={{ scale: 1.05 }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}

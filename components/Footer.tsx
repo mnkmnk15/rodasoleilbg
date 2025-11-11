@@ -27,7 +27,7 @@ export default function Footer() {
             </p>
             <div className="flex space-x-3">
               <a
-                href="https://facebook.com"
+                href="https://www.facebook.com/people/Rodasoleilbulgaria/61550255667531/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-11 h-11 rounded-full flex items-center justify-center"
@@ -50,7 +50,7 @@ export default function Footer() {
                 <Facebook className="w-5 h-5" style={{ color: '#d06634' }} />
               </a>
               <a
-                href="https://instagram.com"
+                href="https://www.instagram.com/rodasoleil.bg/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="w-11 h-11 rounded-full flex items-center justify-center"

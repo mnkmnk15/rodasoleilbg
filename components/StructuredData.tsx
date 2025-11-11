@@ -30,8 +30,8 @@ export default function StructuredData({ locale }: StructuredDataProps) {
       availableLanguage: ['Bulgarian', 'Russian', 'English'],
     },
     sameAs: [
-      'https://www.instagram.com/rodasoleil.bg',
-      'https://www.facebook.com/rodasoleil.bg',
+      'https://www.instagram.com/rodasoleil.bg/',
+      'https://www.facebook.com/people/Rodasoleilbulgaria/61550255667531/',
     ],
     priceRange: '$$',
   };
