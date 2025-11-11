@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, ShoppingBag, Eye } from 'lucide-react';
 import Image from 'next/image';
@@ -17,10 +17,20 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const locale = useLocale() as 'bg' | 'ru' | 'en';
-  const { addItem } = useCart();
+  const { addItem, openCart } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [isHovered, setIsHovered] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 1024);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const productName = product.name[locale];
   const isOnSale = product.compareAtPrice && product.compareAtPrice > product.price;
@@ -38,6 +48,11 @@ export default function ProductCard({ product }: ProductCardProps) {
       size: product.sizes?.[0],
       color: product.colors?.[0]?.name,
     });
+
+    // Открываем корзину на мобильных устройствах
+    if (isMobile) {
+      openCart();
+    }
   };
 
   const handleToggleWishlist = (e: React.MouseEvent) => {
@@ -53,18 +68,18 @@ export default function ProductCard({ product }: ProductCardProps) {
   const inWishlist = isInWishlist(product._id);
 
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
-      className="group relative"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => {
-        setIsHovered(false);
-        setCurrentImageIndex(0);
-      }}
-    >
-      <Link href={`/${locale}/catalog/${product.slug.current}`}>
+    <Link href={`/${locale}/catalog/${product.slug.current}`}>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="group relative"
+        onMouseEnter={() => !isMobile && setIsHovered(true)}
+        onMouseLeave={() => {
+          setIsHovered(false);
+          setCurrentImageIndex(0);
+        }}
+      >
         <div className="relative aspect-[3/4] overflow-hidden bg-neutral-100 rounded-lg">
           {/* Badges */}
           <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
@@ -85,33 +100,35 @@ export default function ProductCard({ product }: ProductCardProps) {
             )}
           </div>
 
-          {/* Quick Actions */}
-          <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
-            <motion.button
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : 20 }}
-              transition={{ duration: 0.2 }}
-              onClick={handleToggleWishlist}
-              className={`p-2 rounded-full backdrop-blur-md transition-colors ${
-                inWishlist
-                  ? 'bg-red-500 text-white'
-                  : 'bg-white/90 text-neutral-800 hover:bg-red-500 hover:text-white'
-              }`}
-              aria-label="Add to wishlist"
-            >
-              <Heart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} />
-            </motion.button>
+          {/* Quick Actions - только на десктопе */}
+          {!isMobile && (
+            <div className="absolute top-3 right-3 z-10 flex flex-col gap-2">
+              <motion.button
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : 20 }}
+                transition={{ duration: 0.2 }}
+                onClick={handleToggleWishlist}
+                className={`p-2 rounded-full backdrop-blur-md transition-colors ${
+                  inWishlist
+                    ? 'bg-red-500 text-white'
+                    : 'bg-white/90 text-neutral-800 hover:bg-red-500 hover:text-white'
+                }`}
+                aria-label="Add to wishlist"
+              >
+                <Heart className={`w-5 h-5 ${inWishlist ? 'fill-current' : ''}`} />
+              </motion.button>
 
-            <motion.button
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : 20 }}
-              transition={{ duration: 0.2, delay: 0.05 }}
-              className="p-2 bg-white/90 rounded-full backdrop-blur-md hover:bg-neutral-800 hover:text-white transition-colors"
-              aria-label="Quick view"
-            >
-              <Eye className="w-5 h-5" />
-            </motion.button>
-          </div>
+              <motion.button
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: isHovered ? 1 : 0, x: isHovered ? 0 : 20 }}
+                transition={{ duration: 0.2, delay: 0.05 }}
+                className="p-2 bg-white/90 rounded-full backdrop-blur-md hover:bg-neutral-800 hover:text-white transition-colors"
+                aria-label="Quick view"
+              >
+                <Eye className="w-5 h-5" />
+              </motion.button>
+            </div>
+          )}
 
           {/* Product Images */}
           <AnimatePresence mode="wait">
@@ -133,8 +150,8 @@ export default function ProductCard({ product }: ProductCardProps) {
             </motion.div>
           </AnimatePresence>
 
-          {/* Image Indicators */}
-          {product.images.length > 1 && (
+          {/* Image Indicators - только на десктопе */}
+          {!isMobile && product.images.length > 1 && (
             <div className="absolute bottom-3 left-1/2 -translate-x-1/2 z-10 flex gap-1">
               {product.images.map((_, index) => (
                 <button
@@ -152,22 +169,6 @@ export default function ProductCard({ product }: ProductCardProps) {
                 />
               ))}
             </div>
-          )}
-
-          {/* Add to Cart Button */}
-          {product.inStock && (
-            <motion.button
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 20 }}
-              transition={{ duration: 0.3 }}
-              onClick={handleAddToCart}
-              className="absolute bottom-3 left-3 right-3 z-10 flex items-center justify-center gap-2 py-3 bg-white/95 backdrop-blur-md hover:bg-neutral-800 hover:text-white transition-all duration-300 rounded-md font-medium cursor-pointer"
-            >
-              <ShoppingBag className="w-5 h-5" />
-              <span className="text-sm uppercase tracking-wider">
-                {locale === 'bg' ? 'Добави в кошницата' : locale === 'ru' ? 'Добавить в корзину' : 'Add to Cart'}
-              </span>
-            </motion.button>
           )}
         </div>
 
@@ -216,7 +217,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             </div>
           )}
         </div>
-      </Link>
-    </motion.div>
+      </motion.div>
+    </Link>
   );
 }

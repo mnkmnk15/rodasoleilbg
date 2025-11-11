@@ -24,10 +24,9 @@ export default function Header({ forceWhite = false }: HeaderProps) {
   const locale = useLocale();
   const pathname = usePathname();
   const router = useRouter();
-  const { cart } = useCart();
+  const { cart, isCartOpen, openCart, closeCart } = useCart();
   const [isLangOpen, setIsLangOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const [isCartOpen, setIsCartOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [isVisible, setIsVisible] = useState(true);
   const [lastScrollY, setLastScrollY] = useState(0);
@@ -308,7 +307,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
             {locale === 'bg' ? 'Контакти' : locale === 'ru' ? 'Контакты' : 'CONTACTS'}
           </a>
           <button
-            onClick={() => setIsCartOpen(true)}
+            onClick={openCart}
             className="relative p-1.5"
             style={{ marginLeft: 'auto', marginRight: '10%' }}
             aria-label="Shopping Cart"
@@ -586,7 +585,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
 
             {/* Cart Icon with Counter */}
             <button
-              onClick={() => setIsCartOpen(true)}
+              onClick={openCart}
               className="p-2 rounded-full transition-all relative cursor-pointer"
               style={{
                 background: 'rgba(229, 217, 207, 0.08)',
@@ -684,7 +683,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
       </AnimatePresence>
 
       {/* Cart Sidebar */}
-      <CartSidebar isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
+      <CartSidebar isOpen={isCartOpen} onClose={closeCart} />
 
       {/* Search Modal */}
       <SearchModal isOpen={isSearchOpen} onClose={() => setIsSearchOpen(false)} />

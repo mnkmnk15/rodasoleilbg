@@ -4,7 +4,7 @@ import { useTranslations, useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { ShoppingCart, Heart } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { SanityProduct } from '@/types/sanity';
 import { urlFor } from '@/sanity/config';
 import { useCart } from '@/contexts/CartContext';
@@ -24,6 +24,16 @@ function ProductCard({ product, index }: ProductCardProps) {
   const { addItem } = useCart();
   const [isHovered, setIsHovered] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Get product images
   const frontImage = product.images && product.images[0] ? product.images[0] : '/images/placeholder.jpg';
@@ -48,8 +58,8 @@ function ProductCard({ product, index }: ProductCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative"
-      onMouseEnter={() => setIsHovered(true)}
+      className="group relative cursor-pointer"
+      onMouseEnter={() => !isMobile && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product Image Container */}
@@ -115,62 +125,70 @@ function ProductCard({ product, index }: ProductCardProps) {
           </motion.div>
         )}
 
-        {/* Add to Cart Button */}
-        <AnimatePresence>
-          {isHovered && (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 30 }}
-              transition={{ duration: 0.3 }}
-              className="absolute bottom-0 left-0 right-0 p-5"
-            >
-              <button
-                onClick={handleAddToCart}
-                className="w-full text-white py-3.5 px-6 flex items-center justify-center space-x-2.5 font-medium text-sm uppercase tracking-wider cursor-pointer"
-                style={{
-                  background: '#1a1a1a',
-                  transition: 'all 0.3s ease',
-                  letterSpacing: '0.1em'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#2a2a2a';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#1a1a1a';
-                }}
+        {/* Add to Cart Button - Only on desktop hover */}
+        {!isMobile && (
+          <AnimatePresence>
+            {isHovered && (
+              <motion.div
+                initial={{ opacity: 0, y: 30 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 30 }}
+                transition={{ duration: 0.3 }}
+                className="absolute bottom-0 left-0 right-0 p-5"
               >
-                <ShoppingCart className="w-4 h-4" />
-                <span className="font-raleway">
-                  {locale === 'bg' ? 'Добави в количка' :
-                   locale === 'ru' ? 'Добавить в корзину' :
-                   'Add to Cart'}
-                </span>
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full text-white py-3.5 px-6 flex items-center justify-center space-x-2.5 font-medium text-sm uppercase tracking-wider cursor-pointer"
+                  style={{
+                    background: '#1a1a1a',
+                    transition: 'all 0.3s ease',
+                    letterSpacing: '0.1em'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#2a2a2a';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#1a1a1a';
+                  }}
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  <span className="font-raleway">
+                    {locale === 'bg' ? 'Добави в количка' :
+                     locale === 'ru' ? 'Добавить в корзину' :
+                     'Add to Cart'}
+                  </span>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
 
-        {/* Favorite Button */}
-        <motion.button
-          className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center z-10 cursor-pointer"
-          style={{
-            background: isFavorite ? '#1a1a1a' : 'rgba(255, 255, 255, 0.9)',
-            transition: 'all 0.3s ease'
-          }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setIsFavorite(!isFavorite)}
-        >
-          <Heart
-            className="w-4 h-4 transition-all"
+        {/* Favorite Button - Only on desktop */}
+        {!isMobile && (
+          <motion.button
+            className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center z-10 cursor-pointer"
             style={{
-              color: isFavorite ? '#ffffff' : '#1a1a1a',
-              fill: isFavorite ? '#ffffff' : 'none',
-              strokeWidth: 1.5
+              background: isFavorite ? '#1a1a1a' : 'rgba(255, 255, 255, 0.9)',
+              transition: 'all 0.3s ease'
             }}
-          />
-        </motion.button>
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsFavorite(!isFavorite);
+            }}
+          >
+            <Heart
+              className="w-4 h-4 transition-all"
+              style={{
+                color: isFavorite ? '#ffffff' : '#1a1a1a',
+                fill: isFavorite ? '#ffffff' : 'none',
+                strokeWidth: 1.5
+              }}
+            />
+          </motion.button>
+        )}
       </div>
 
       {/* Product Info */}
@@ -268,7 +286,7 @@ export default function ProductCatalogClient({ products }: ProductCatalogClientP
 
         {/* Products Grid */}
         {productsToShow.length > 0 ? (
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8 lg:gap-10 xl:gap-12 mb-12 md:mb-16 lg:mb-20">
+          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 mb-12 md:mb-16 lg:mb-20">
             {productsToShow.map((product, index) => (
               <ProductCard key={product._id} product={product} index={index} />
             ))}

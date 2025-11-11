@@ -4,7 +4,8 @@ import { useTranslations, useLocale } from 'next-intl';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useInView } from 'react-intersection-observer';
 import { ShoppingCart, Heart } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useCart } from '@/contexts/CartContext';
 
 // Mock product data - will be replaced with Strapi CMS
 const mockProducts = [
@@ -98,8 +99,35 @@ interface ProductCardProps {
 function ProductCard({ product, index }: ProductCardProps) {
   const locale = useLocale();
   const t = useTranslations('catalog');
+  const { addItem, openCart } = useCart();
   const [isHovered, setIsHovered] = useState(false);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  const handleAddToCart = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addItem({
+      id: product.id.toString(),
+      name: product.name[locale as keyof typeof product.name],
+      price: product.price,
+      image: product.imageFront,
+    });
+
+    // Открываем корзину на мобильных устройствах
+    if (isMobile) {
+      openCart();
+    }
+  };
 
   return (
     <motion.div
@@ -107,8 +135,8 @@ function ProductCard({ product, index }: ProductCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.6, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
-      className="group relative"
-      onMouseEnter={() => setIsHovered(true)}
+      className="group relative cursor-pointer"
+      onMouseEnter={() => !isMobile && setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {/* Product Image Container - белый фон + soft shadow + micro-hover lift */}
@@ -173,61 +201,70 @@ function ProductCard({ product, index }: ProductCardProps) {
           </motion.div>
         )}
 
-        {/* Add to Cart - Bottom Bar on Hover */}
-        <AnimatePresence>
-          {isHovered && (
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 30 }}
-              transition={{ duration: 0.3 }}
-              className="absolute bottom-0 left-0 right-0 p-5"
-            >
-              <button
-                className="w-full text-white py-3.5 px-6 flex items-center justify-center space-x-2.5 font-medium text-sm uppercase tracking-wider cursor-pointer"
-                style={{
-                  background: '#1a1a1a',
-                  transition: 'all 0.3s ease',
-                  letterSpacing: '0.1em'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = '#2a2a2a';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = '#1a1a1a';
-                }}
+        {/* Add to Cart - Bottom Bar - Only on desktop hover */}
+        {!isMobile && (
+          <AnimatePresence>
+            {isHovered && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 20 }}
+                transition={{ duration: 0.25, ease: 'easeOut' }}
+                className="absolute bottom-0 left-0 right-0 p-5"
               >
-                <ShoppingCart className="w-4 h-4" />
-                <span className="font-raleway">
-                  {locale === 'bg' ? 'Добави в количка' :
-                   locale === 'ru' ? 'Добавить в корзину' :
-                   'Add to Cart'}
-                </span>
-              </button>
-            </motion.div>
-          )}
-        </AnimatePresence>
+                <button
+                  onClick={handleAddToCart}
+                  className="w-full text-white py-3.5 px-6 flex items-center justify-center space-x-2.5 font-medium text-sm uppercase tracking-wider cursor-pointer"
+                  style={{
+                    background: '#1a1a1a',
+                    transition: 'all 0.3s ease',
+                    letterSpacing: '0.1em'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#2a2a2a';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#1a1a1a';
+                  }}
+                >
+                  <ShoppingCart className="w-4 h-4" />
+                  <span className="font-raleway">
+                    {locale === 'bg' ? 'Добави в количка' :
+                     locale === 'ru' ? 'Добавить в корзину' :
+                     'Add to Cart'}
+                  </span>
+                </button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        )}
 
-        {/* Favorite Button - Always Visible */}
-        <motion.button
-          className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center z-10 cursor-pointer"
-          style={{
-            background: isFavorite ? '#1a1a1a' : 'rgba(255, 255, 255, 0.9)',
-            transition: 'all 0.3s ease'
-          }}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
-          onClick={() => setIsFavorite(!isFavorite)}
-        >
-          <Heart
-            className="w-4 h-4 transition-all"
+        {/* Favorite Button - Only on desktop */}
+        {!isMobile && (
+          <motion.button
+            className="absolute top-5 right-5 w-10 h-10 flex items-center justify-center z-10 cursor-pointer"
             style={{
-              color: isFavorite ? '#ffffff' : '#1a1a1a',
-              fill: isFavorite ? '#ffffff' : 'none',
-              strokeWidth: 1.5
+              background: isFavorite ? '#1a1a1a' : 'rgba(255, 255, 255, 0.9)',
+              transition: 'all 0.3s ease'
             }}
-          />
-        </motion.button>
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              setIsFavorite(!isFavorite);
+            }}
+          >
+            <Heart
+              className="w-4 h-4 transition-all"
+              style={{
+                color: isFavorite ? '#ffffff' : '#1a1a1a',
+                fill: isFavorite ? '#ffffff' : 'none',
+                strokeWidth: 1.5
+              }}
+            />
+          </motion.button>
+        )}
       </div>
 
       {/* Product Info - адаптивная типографика */}
@@ -312,7 +349,7 @@ export default function ProductCatalog() {
         </motion.div>
 
         {/* Products Grid - адаптивная сетка */}
-        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-8 lg:gap-10 xl:gap-12 mb-12 md:mb-16 lg:mb-20">
+        <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6 md:gap-8 lg:gap-10 xl:gap-12 mb-12 md:mb-16 lg:mb-20">
           {mockProducts.map((product, index) => (
             <ProductCard key={product.id} product={product} index={index} />
           ))}
