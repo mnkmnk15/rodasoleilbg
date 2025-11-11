@@ -113,15 +113,18 @@ export default function Header({ forceWhite = false }: HeaderProps) {
         if (currentScrollY > lastScrollY) {
           // Скроллим вниз - скрываем хедер
           setIsVisible(false);
-          // Меняем цвет на белый ПОСЛЕ того как хедер начал скрываться
+          // Меняем цвет на белый ПОСЛЕ того как хедер полностью скрылся (500ms - время анимации)
           if (timeoutRef.current) clearTimeout(timeoutRef.current);
           timeoutRef.current = setTimeout(() => {
             setIsWhite(true);
-          }, 350); // После завершения анимации скрытия
+          }, 500);
         } else if (currentScrollY < lastScrollY) {
-          // Скроллим вверх - СНАЧАЛА ставим белый цвет (пока хедер скрыт), ПОТОМ показываем
+          // Скроллим вверх - СНАЧАЛА меняем цвет на белый (пока хедер скрыт), ПОТОМ показываем
           setIsWhite(true);
-          setIsVisible(true);
+          // Даем время чтобы состояние обновилось, потом показываем
+          requestAnimationFrame(() => {
+            setIsVisible(true);
+          });
         }
       }
 
@@ -173,7 +176,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
         backdropFilter: opacity === 1 ? 'blur(20px) saturate(180%)' : 'none',
         WebkitBackdropFilter: opacity === 1 ? 'blur(20px) saturate(180%)' : 'none',
         transform: !isMobile && isVisible ? 'translateY(0)' : !isMobile ? 'translateY(-100%)' : 'translateY(0)',
-        transition: !isMobile ? 'background 0.3s linear, transform 0.5s linear, backdrop-filter 0.3s linear' : 'none',
+        transition: !isMobile ? 'transform 0.5s linear, background 0.15s ease-out, backdrop-filter 0.15s ease-out' : 'none',
         zIndex: 100,
       }}
     >
