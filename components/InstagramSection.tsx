@@ -22,6 +22,7 @@ export default function InstagramSection() {
     threshold: 0.1
   });
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [loadedImages, setLoadedImages] = useState<Set<number>>(new Set());
 
   return (
     <section
@@ -58,9 +59,8 @@ export default function InstagramSection() {
               href="https://www.instagram.com/rodasoleil.bg/"
               target="_blank"
               rel="noopener noreferrer"
-              initial={{ opacity: 0 }}
-              animate={inView ? { opacity: 1 } : {}}
-              transition={{ duration: 0.4, delay: index * 0.05 }}
+              initial={false}
+              animate={{ opacity: 1 }}
               className="relative overflow-hidden aspect-square bg-gray-100"
               onMouseEnter={() => setHoveredIndex(index)}
               onMouseLeave={() => setHoveredIndex(null)}
@@ -70,15 +70,17 @@ export default function InstagramSection() {
                 alt={`Instagram post ${index + 1}`}
                 fill
                 sizes="(max-width: 768px) 50vw, 25vw"
-                className="object-cover"
+                className="object-cover will-change-transform"
                 style={{
                   filter: isHovered ? 'brightness(0.6)' : 'brightness(1)',
                   transform: isHovered ? 'scale(1.05)' : 'scale(1)',
-                  transition: 'filter 0.5s ease, transform 0.5s ease'
+                  transition: 'filter 0.5s ease, transform 0.5s ease, opacity 0.4s ease-in-out',
+                  opacity: loadedImages.has(index) ? 1 : 0
                 }}
                 loading="lazy"
-                placeholder="blur"
-                blurDataURL="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iNDAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI2YzZjRmNiIvPjwvc3ZnPg=="
+                onLoad={() => {
+                  setLoadedImages(prev => new Set(prev).add(index));
+                }}
               />
               {/* Instagram icon on hover */}
               <div

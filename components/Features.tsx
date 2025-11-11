@@ -17,6 +17,7 @@ export default function Features() {
   const t = useTranslations('features');
   const containerRef = useRef<HTMLDivElement>(null);
   const [activeHotspot, setActiveHotspot] = useState<number | null>(null);
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -213,10 +214,8 @@ export default function Features() {
           <div className="relative">
             {/* Центральное изображение с интерактивными точками */}
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.8 }}
+              initial={false}
+              animate={{ opacity: 1 }}
               className="relative w-full max-w-md mx-auto h-[600px] mb-8"
             >
             <div className="absolute inset-0" style={{ zIndex: 1 }}>
@@ -226,12 +225,17 @@ export default function Features() {
                 fill
                 className="object-contain drop-shadow-2xl"
                 sizes="(max-width: 768px) 100vw, 448px"
+                style={{
+                  opacity: imageLoaded ? 1 : 0,
+                  transition: 'opacity 0.3s ease-in-out'
+                }}
                 priority
+                onLoad={() => setImageLoaded(true)}
               />
             </div>
 
             {/* Интерактивные точки на модели */}
-            {features.map((feature, index) => {
+            {imageLoaded && features.map((feature, index) => {
               return (
                 <div
                   key={`hotspot-container-${index}`}
@@ -252,11 +256,12 @@ export default function Features() {
                     {activeHotspot !== index && (
                       <motion.div
                         key={`pulse-${index}`}
-                        className="absolute inset-0 rounded-full pointer-events-none will-change-transform"
+                        className="absolute inset-0 rounded-full pointer-events-none"
                         style={{
                           backgroundColor: 'rgba(208, 102, 52, 0.3)',
                           width: '48px',
                           height: '48px',
+                          willChange: 'transform, opacity'
                         }}
                         animate={{
                           scale: [1, 1.8, 1],
@@ -279,10 +284,9 @@ export default function Features() {
                         setActiveHotspot(activeHotspot === index ? null : index);
                       }}
                       className="relative cursor-pointer group touch-manipulation z-50"
-                      initial={{ scale: 0 }}
-                      whileInView={{ scale: 1 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.2 + index * 0.08, duration: 0.3 }}
+                      initial={{ scale: 0, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.1 + index * 0.08, duration: 0.4, ease: 'easeOut' }}
                       whileTap={{ scale: 0.9 }}
                       style={{
                         WebkitTapHighlightColor: 'transparent',
