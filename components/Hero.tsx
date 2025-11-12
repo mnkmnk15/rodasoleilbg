@@ -2,13 +2,16 @@
 
 import { useTranslations, useLocale } from 'next-intl';
 import { motion, useScroll, useTransform } from 'framer-motion';
-import { useRef } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import Image from 'next/image';
 
 export default function Hero() {
   const t = useTranslations('hero');
   const locale = useLocale();
   const containerRef = useRef<HTMLDivElement>(null);
+  const mobileVideoRef = useRef<HTMLVideoElement>(null);
+  const desktopVideoRef = useRef<HTMLVideoElement>(null);
+  const [videoError, setVideoError] = useState(false);
 
   const { scrollYProgress } = useScroll({
     target: containerRef,
@@ -25,6 +28,58 @@ export default function Hero() {
   const logoRightY = useTransform(scrollYProgress, [0, 1], ['15%', '-40%']); // Right logo starts lower, moves up
   const logoRotate = useTransform(scrollYProgress, [0, 1], [0, 5]);
 
+  // Обработка автозапуска видео на мобильных устройствах
+  useEffect(() => {
+    const attemptVideoPlay = async (videoElement: HTMLVideoElement | null) => {
+      if (!videoElement) return;
+
+      try {
+        // Пытаемся запустить видео
+        await videoElement.play();
+      } catch (error) {
+        console.warn('Autoplay prevented:', error);
+        setVideoError(true);
+
+        // Пробуем повторно через небольшую задержку
+        setTimeout(async () => {
+          try {
+            await videoElement.play();
+            setVideoError(false);
+          } catch (retryError) {
+            console.warn('Video retry failed:', retryError);
+          }
+        }, 500);
+      }
+    };
+
+    // Запускаем видео при загрузке компонента
+    if (mobileVideoRef.current) {
+      attemptVideoPlay(mobileVideoRef.current);
+    }
+    if (desktopVideoRef.current) {
+      attemptVideoPlay(desktopVideoRef.current);
+    }
+
+    // Пробуем запустить видео при первом взаимодействии пользователя
+    const handleUserInteraction = () => {
+      if (mobileVideoRef.current && videoError) {
+        attemptVideoPlay(mobileVideoRef.current);
+      }
+      if (desktopVideoRef.current && videoError) {
+        attemptVideoPlay(desktopVideoRef.current);
+      }
+    };
+
+    // Слушаем различные события для попытки автозапуска
+    document.addEventListener('touchstart', handleUserInteraction, { once: true, passive: true });
+    document.addEventListener('click', handleUserInteraction, { once: true, passive: true });
+
+    return () => {
+      document.removeEventListener('touchstart', handleUserInteraction);
+      document.removeEventListener('click', handleUserInteraction);
+    };
+  }, [videoError]);
+
   return (
     <section ref={containerRef} className="relative w-full overflow-hidden md:h-screen">
       {/* Desktop Hero - Full Screen */}
@@ -35,13 +90,17 @@ export default function Hero() {
           style={{ scale: videoScale, y: videoY }}
         >
           <video
+            ref={desktopVideoRef}
             autoPlay
             loop
             muted
             playsInline
+            preload="auto"
             className="w-full h-full object-cover"
             poster="/images/hero-poster.jpg"
             style={{ filter: 'brightness(0.7)' }}
+            onError={() => setVideoError(true)}
+            onLoadedData={() => setVideoError(false)}
           >
             <source src="/videos/rodasoleilbghero.mp4" type="video/mp4" />
           </video>
@@ -230,13 +289,17 @@ export default function Hero() {
       {/* Mobile Hero - компактная высота */}
       <div className="md:hidden relative w-full" style={{ height: '350px' }}>
         <video
+          ref={mobileVideoRef}
           autoPlay
           loop
           muted
           playsInline
+          preload="auto"
           className="absolute inset-0 w-full h-full object-cover"
           poster="/images/hero-poster.jpg"
           style={{ filter: 'brightness(0.75)' }}
+          onError={() => setVideoError(true)}
+          onLoadedData={() => setVideoError(false)}
         >
           <source src="/videos/rodasoleilbghero.mp4" type="video/mp4" />
         </video>

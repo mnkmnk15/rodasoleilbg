@@ -17,7 +17,7 @@ interface ProductCardProps {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const locale = useLocale() as 'bg' | 'ru' | 'en';
-  const { addItem, openCart } = useCart();
+  const { addItem } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
   const [isHovered, setIsHovered] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -48,11 +48,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       size: product.sizes?.[0],
       color: product.colors?.[0]?.name,
     });
-
-    // Открываем корзину на мобильных устройствах
-    if (isMobile) {
-      openCart();
-    }
+    // Корзина автоматически откроется благодаря CartContext
   };
 
   const handleToggleWishlist = (e: React.MouseEvent) => {

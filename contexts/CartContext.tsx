@@ -28,8 +28,20 @@ export function CartProvider({ children }: { children: ReactNode }) {
     setIsCartOpen(false);
   }, []);
 
+  // Обертка для addItem, которая автоматически открывает корзину
+  const addItemAndOpenCart = useCallback((item: Omit<CartItem, 'quantity'>) => {
+    cartHook.addItem(item);
+    setIsCartOpen(true);
+  }, [cartHook]);
+
   return (
-    <CartContext.Provider value={{ ...cartHook, isCartOpen, openCart, closeCart }}>
+    <CartContext.Provider value={{
+      ...cartHook,
+      addItem: addItemAndOpenCart, // Переопределяем addItem
+      isCartOpen,
+      openCart,
+      closeCart
+    }}>
       {children}
     </CartContext.Provider>
   );
