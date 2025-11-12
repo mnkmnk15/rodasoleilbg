@@ -141,7 +141,11 @@ export default function Features() {
             <div className="relative min-h-[100vh]">
               <div className="sticky top-20">
                 <motion.div
-                  style={{ scale }}
+                  style={{
+                    scale,
+                    transform: 'translateZ(0)',
+                    willChange: 'transform'
+                  }}
                   className="relative w-[650px] h-[1020px] xl:w-[750px] xl:h-[1160px] mx-auto"
                 >
                   <Image
@@ -261,16 +265,17 @@ export default function Features() {
                           backgroundColor: 'rgba(208, 102, 52, 0.3)',
                           width: '48px',
                           height: '48px',
+                          transform: 'translateZ(0)',
                           willChange: 'transform, opacity'
                         }}
                         animate={{
-                          scale: [1, 1.8, 1],
-                          opacity: [0.6, 0, 0.6],
+                          scale: [1, 1.6, 1],
+                          opacity: [0.5, 0, 0.5],
                         }}
                         transition={{
-                          duration: 2,
+                          duration: 2.5,
                           repeat: Infinity,
-                          ease: "easeInOut",
+                          ease: "linear",
                           repeatType: "loop"
                         }}
                       />
@@ -319,12 +324,13 @@ export default function Features() {
             {activeHotspot !== null && (
               <motion.div
                 key={activeHotspot}
-                initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                initial={{ opacity: 0, scale: 0.9, y: 10 }}
                 animate={{ opacity: 1, scale: 1, y: 0 }}
-                exit={{ opacity: 0, scale: 0.8, y: 10 }}
+                exit={{ opacity: 0, scale: 0.9, y: 10 }}
                 transition={{
-                  duration: 0.25,
-                  ease: [0.34, 1.56, 0.64, 1]
+                  type: 'tween',
+                  duration: 0.2,
+                  ease: [0.25, 0.1, 0.25, 1]
                 }}
                 className="absolute left-1/2 -translate-x-1/2 px-4"
                 style={{
@@ -332,6 +338,8 @@ export default function Features() {
                   width: '100%',
                   maxWidth: '360px',
                   zIndex: 200,
+                  transform: 'translateZ(0)',
+                  willChange: 'transform, opacity'
                 }}
                 onClick={(e) => e.stopPropagation()}
               >

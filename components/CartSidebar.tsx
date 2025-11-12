@@ -75,7 +75,15 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
             initial={{ x: '100%' }}
             animate={{ x: 0 }}
             exit={{ x: '100%' }}
-            transition={{ type: 'spring', damping: 30, stiffness: 300 }}
+            transition={{
+              type: 'tween',
+              duration: 0.3,
+              ease: [0.25, 0.1, 0.25, 1]
+            }}
+            style={{
+              transform: 'translateZ(0)',
+              willChange: 'transform'
+            }}
             className="fixed right-0 top-0 h-screen w-[85%] sm:w-[450px] bg-white shadow-2xl z-[9999] flex flex-col"
           >
             {/* Header */}
