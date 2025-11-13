@@ -1,12 +1,13 @@
 'use client';
 
 import React from 'react';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
 export default function CheckoutCancelPage() {
   const t = useTranslations('checkout');
+  const locale = useLocale();
   const router = useRouter();
 
   return (
@@ -47,7 +48,7 @@ export default function CheckoutCancelPage() {
             {t('backToCheckout') || 'Вернуться к оформлению'}
           </button>
 
-          <Link href="/" className="block w-full">
+          <Link href={`/${locale}`} className="block w-full">
             <button className="w-full py-3 border border-neutral-800 text-neutral-800 rounded-lg font-medium hover:bg-gray-50 transition-colors">
               {t('continueShopping') || 'Продолжить покупки'}
             </button>

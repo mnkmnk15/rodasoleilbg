@@ -5,10 +5,13 @@ import Stripe from 'stripe';
 
 export async function POST(req: NextRequest) {
   try {
+    console.log('🔔 Webhook received at:', new Date().toISOString());
+
     const body = await req.text();
     const signature = req.headers.get('stripe-signature');
 
     if (!signature) {
+      console.error('❌ Missing stripe-signature header');
       return NextResponse.json(
         { error: 'Missing stripe-signature header' },
         { status: 400 }
@@ -17,15 +20,19 @@ export async function POST(req: NextRequest) {
 
     const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
     if (!webhookSecret) {
-      console.error('STRIPE_WEBHOOK_SECRET is not configured');
+      console.error('❌ STRIPE_WEBHOOK_SECRET is not configured');
       return NextResponse.json(
         { error: 'Webhook secret not configured' },
         { status: 500 }
       );
     }
 
+    console.log('✅ Webhook secret found, constructing event...');
+
     // Проверяем подпись webhook
     const event = constructWebhookEvent(body, signature, webhookSecret);
+
+    console.log('📦 Event type:', event.type);
 
     // Обрабатываем событие
     switch (event.type) {
@@ -33,12 +40,14 @@ export async function POST(req: NextRequest) {
         const session = event.data.object as Stripe.Checkout.Session;
 
         // Получаем детали заказа
-        const customerEmail = session.customer_details?.email;
-        const customerName = session.customer_details?.name;
-        const customerPhone = session.customer_details?.phone;
+        const customerEmail = session.customer_details?.email ?? undefined;
+        const customerName = session.customer_details?.name ?? undefined;
+        const customerPhone = session.customer_details?.phone ?? undefined;
         const amount = session.amount_total || 0;
-        const currency = session.currency;
-        const shippingAddress = session.shipping_details?.address;
+        const currency = session.currency ?? 'eur';
+
+        // Получаем адрес доставки через shipping_cost
+        const shippingAddress = (session as any).shipping_details?.address;
 
         // Парсим информацию о товарах из метаданных
         let items: Array<{
@@ -77,9 +86,11 @@ export async function POST(req: NextRequest) {
         });
 
         // Отправляем уведомление в Telegram
+        console.log('📤 Sending Telegram notification...');
         await sendTelegramNotification(message);
+        console.log('✅ Telegram notification sent successfully');
 
-        console.log('Order processed successfully:', session.id);
+        console.log('✅ Order processed successfully:', session.id);
         break;
       }
 

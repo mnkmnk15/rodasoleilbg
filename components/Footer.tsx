@@ -157,22 +157,22 @@ export default function Footer() {
             <ul className="space-y-0 md:space-y-0">
               <li className="flex items-center space-x-3 h-[35px]">
                 <MapPin className="w-5 h-5 flex-shrink-0" style={{ color: '#d06634' }} />
-                <span className="font-raleway flex items-center h-full" style={{ color: '#2A2422', opacity: 0.7, fontSize: '14px', fontWeight: 300, lineHeight: 1 }}>Sofia, Bulgaria</span>
+                <span className="font-raleway flex items-center h-full" style={{ color: '#2A2422', opacity: 0.7, fontSize: '14px', fontWeight: 300, lineHeight: 1 }}>Burgas, Bulgaria</span>
               </li>
               <li className="flex items-center space-x-3 h-[35px]">
                 <Phone className="w-5 h-5 flex-shrink-0" style={{ color: '#d06634' }} />
-                <a href="tel:+359123456789" className="font-raleway flex items-center h-full" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, lineHeight: 1, transition: 'all 0.5s linear' }}
+                <a href="tel:+359896235961" className="font-raleway flex items-center h-full" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, lineHeight: 1, transition: 'all 0.5s linear' }}
                    onMouseEnter={(e) => { e.currentTarget.style.color = '#d06634'; e.currentTarget.style.opacity = '1'; }}
                    onMouseLeave={(e) => { e.currentTarget.style.color = '#2A2422'; e.currentTarget.style.opacity = '0.65'; }}>
-                  +359 123 456 789
+                  +359 896 235 961
                 </a>
               </li>
               <li className="flex items-center space-x-3 h-[35px]">
                 <Mail className="w-5 h-5 flex-shrink-0" style={{ color: '#d06634' }} />
-                <a href="mailto:info@rodasoleil.bg" className="font-raleway flex items-center h-full" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, lineHeight: 1, transition: 'all 0.5s linear' }}
+                <a href="mailto:rodasoleilbg@gmail.com" className="font-raleway flex items-center h-full" style={{ color: '#2A2422', opacity: 0.65, fontSize: '14px', fontWeight: 300, lineHeight: 1, transition: 'all 0.5s linear' }}
                    onMouseEnter={(e) => { e.currentTarget.style.color = '#d06634'; e.currentTarget.style.opacity = '1'; }}
                    onMouseLeave={(e) => { e.currentTarget.style.color = '#2A2422'; e.currentTarget.style.opacity = '0.65'; }}>
-                  info@rodasoleil.bg
+                  rodasoleilbg@gmail.com
                 </a>
               </li>
             </ul>

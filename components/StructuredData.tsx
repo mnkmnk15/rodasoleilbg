@@ -22,7 +22,7 @@ export default function StructuredData({ locale }: StructuredDataProps) {
     address: {
       '@type': 'PostalAddress',
       addressCountry: 'BG',
-      addressLocality: 'София',
+      addressLocality: 'Бургас',
     },
     contactPoint: {
       '@type': 'ContactPoint',
@@ -119,11 +119,11 @@ export default function StructuredData({ locale }: StructuredDataProps) {
     },
     geo: {
       '@type': 'GeoCoordinates',
-      latitude: 42.6977,
-      longitude: 23.3219,
+      latitude: 42.5048,
+      longitude: 27.4626,
     },
     url: 'https://rodasoleil.bg',
-    telephone: '+359-XXX-XXX-XXX',
+    telephone: '+359896235961',
     priceRange: '$$',
     openingHoursSpecification: {
       '@type': 'OpeningHoursSpecification',

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useCart } from '@/contexts/CartContext';
-import { useTranslations } from 'next-intl';
+import { useTranslations, useLocale } from 'next-intl';
 import Link from 'next/link';
 
 export default function CheckoutSuccessPage() {
@@ -11,6 +11,7 @@ export default function CheckoutSuccessPage() {
   const router = useRouter();
   const { clearCart } = useCart();
   const t = useTranslations('checkout');
+  const locale = useLocale();
   const [sessionId, setSessionId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -68,7 +69,7 @@ export default function CheckoutSuccessPage() {
         )}
 
         <div className="space-y-3">
-          <Link href="/" className="block w-full">
+          <Link href={`/${locale}`} className="block w-full">
             <button className="w-full py-3 bg-neutral-800 text-white rounded-lg font-semibold hover:bg-neutral-900 transition-colors">
               {t('continueShopping') || 'Продолжить покупки'}
             </button>
