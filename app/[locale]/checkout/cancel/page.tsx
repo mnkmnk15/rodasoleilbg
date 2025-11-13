@@ -48,10 +48,11 @@ export default function CheckoutCancelPage() {
             {t('backToCheckout') || 'Вернуться к оформлению'}
           </button>
 
-          <Link href={`/${locale}`} className="block w-full">
-            <button className="w-full py-3 border border-neutral-800 text-neutral-800 rounded-lg font-medium hover:bg-gray-50 transition-colors">
-              {t('continueShopping') || 'Продолжить покупки'}
-            </button>
+          <Link
+            href={`/${locale}`}
+            className="block w-full py-3 border border-neutral-800 text-neutral-800 rounded-lg font-medium hover:bg-gray-50 transition-colors text-center"
+          >
+            {t('continueShopping') || 'Продолжить покупки'}
           </Link>
         </div>
       </div>

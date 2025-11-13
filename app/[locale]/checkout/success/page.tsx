@@ -69,10 +69,11 @@ export default function CheckoutSuccessPage() {
         )}
 
         <div className="space-y-3">
-          <Link href={`/${locale}`} className="block w-full">
-            <button className="w-full py-3 bg-neutral-800 text-white rounded-lg font-semibold hover:bg-neutral-900 transition-colors">
-              {t('continueShopping') || 'Продолжить покупки'}
-            </button>
+          <Link
+            href={`/${locale}`}
+            className="block w-full py-3 bg-neutral-800 text-white rounded-lg font-semibold hover:bg-neutral-900 transition-colors text-center"
+          >
+            {t('continueShopping') || 'Продолжить покупки'}
           </Link>
 
           <p className="text-sm text-gray-500">
