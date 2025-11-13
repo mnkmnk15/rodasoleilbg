@@ -23,9 +23,10 @@ export default function CheckoutSuccessPage() {
       clearCart();
     } else {
       // Если нет session_id, перенаправляем на главную
-      router.push('/');
+      router.push(`/${locale}`);
     }
-  }, [searchParams, clearCart, router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center py-12 px-4">
