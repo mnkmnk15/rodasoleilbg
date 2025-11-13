@@ -36,20 +36,20 @@ Environment: Production, Preview, Development (все три ✅)
 
 ```
 Name: SANITY_API_TOKEN
-Value: skWrWXGIsG1TCKpJmFDMsMUmFuUVyX7og3PN22VyNv94Yga7yFUaVdXSy33pPobGJ4EuHnCvlp85PVcew94jgvcAmsEZK21zONeFZk7VZ9Ww0f7qNOruQsigZmrR8P7Ipj5Xve4v2UUQRTGTagL5MCuMDwZ8ELrGVxVJPQ3Rg8kvA7MGyeeT
+Value: skXXXXXXXXXXXXXXXXXXXX (скопируйте из .env файла)
 Environment: Production, Preview, Development (все три ✅)
 ```
 
 #### 2. Stripe (Test режим)
 ```
 Name: STRIPE_SECRET_KEY
-Value: sk_test_51ST4MBQpEDw6WWaGZsmREi4EBmUKi1z3i78BiWaar9TVFyUQZx3mBaZcUpIW1yMlLOUHeLqT9PzwqgGIusDFZZHg003uy8VfXm
+Value: sk_test_xxxxxxxxxxxxx (скопируйте из .env файла)
 Environment: Production, Preview, Development (все три ✅)
 ```
 
 ```
 Name: NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-Value: pk_test_51ST4MBQpEDw6WWaG6GI3nQowa3j3DgA4AXYizjA2SvBcTl5NYWoZIRxp8DiD4ILQJod7RJQuNu9SVrBFJ8usfu0500qWHA9spb
+Value: pk_test_xxxxxxxxxxxxx (скопируйте из .env файла)
 Environment: Production, Preview, Development (все три ✅)
 ```
 
@@ -73,13 +73,13 @@ Environment: Production, Preview, Development (все три ✅)
 #### 4. Telegram Bot
 ```
 Name: TELEGRAM_BOT_TOKEN
-Value: 8343970844:AAEOnz9ucrzKPsRzHIrIS0NkyShg20gjoIQ
+Value: ваш_telegram_bot_token (скопируйте из .env файла)
 Environment: Production, Preview, Development (все три ✅)
 ```
 
 ```
 Name: TELEGRAM_CHAT_ID
-Value: 6279876822
+Value: ваш_telegram_chat_id (скопируйте из .env файла)
 Environment: Production, Preview, Development (все три ✅)
 ```
 
