@@ -10,8 +10,15 @@ export const config = {
   useCdn: process.env.NODE_ENV === 'production',
 };
 
-// Set up the client for fetching data
+// Set up the client for fetching data (public, read-only)
 export const sanityClient = createClient(config);
+
+// Set up the client with write permissions (for API routes)
+export const sanityClientWithToken = createClient({
+  ...config,
+  token: process.env.SANITY_API_TOKEN,
+  useCdn: false, // Always use fresh data when writing
+});
 
 // Set up a helper function for generating Image URLs with only the asset reference data
 const builder = imageUrlBuilder(sanityClient);

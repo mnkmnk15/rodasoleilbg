@@ -159,5 +159,24 @@
     "resultsCount": "{count, plural, one {# результат} few {# результата} other {# результатов}}",
     "outOfStock": "Нет в наличии",
     "escToClose": "Нажмите ESC, чтобы закрыть"
+  },
+  "checkout": {
+    "title": "Оформление заказа",
+    "orderSummary": "Ваш заказ",
+    "size": "Размер",
+    "color": "Цвет",
+    "quantity": "Количество",
+    "total": "Итого",
+    "processing": "Обрабатывается...",
+    "proceedToPayment": "Перейти к оплате",
+    "securePayment": "Безопасная оплата через Stripe",
+    "successTitle": "Заказ оформлен успешно!",
+    "successMessage": "Спасибо за ваш заказ! Мы отправили подтверждение на вашу электронную почту.",
+    "orderNumber": "Номер заказа",
+    "continueShopping": "Продолжить покупки",
+    "contactSupport": "По вопросам о заказе свяжитесь с нашей службой поддержки",
+    "cancelTitle": "Оплата отменена",
+    "cancelMessage": "Ваш заказ не был оформлен. Товары остались в корзине.",
+    "backToCheckout": "Вернуться к оформлению"
   }
 }

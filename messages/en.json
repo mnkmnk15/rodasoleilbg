@@ -159,5 +159,24 @@
     "resultsCount": "{count, plural, one {# result} other {# results}}",
     "outOfStock": "Out of stock",
     "escToClose": "Press ESC to close"
+  },
+  "checkout": {
+    "title": "Checkout",
+    "orderSummary": "Your Order",
+    "size": "Size",
+    "color": "Color",
+    "quantity": "Quantity",
+    "total": "Total",
+    "processing": "Processing...",
+    "proceedToPayment": "Proceed to Payment",
+    "securePayment": "Secure payment via Stripe",
+    "successTitle": "Order placed successfully!",
+    "successMessage": "Thank you for your order! We've sent a confirmation to your email.",
+    "orderNumber": "Order number",
+    "continueShopping": "Continue Shopping",
+    "contactSupport": "For questions about your order, please contact our support",
+    "cancelTitle": "Payment cancelled",
+    "cancelMessage": "Your order was not placed. Items remain in your cart.",
+    "backToCheckout": "Back to Checkout"
   }
 }

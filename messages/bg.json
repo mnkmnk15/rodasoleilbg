@@ -159,5 +159,24 @@
     "resultsCount": "{count, plural, one {# резултат} other {# резултата}}",
     "outOfStock": "Изчерпан",
     "escToClose": "Натиснете ESC за затваряне"
+  },
+  "checkout": {
+    "title": "Оформяне на поръчка",
+    "orderSummary": "Вашата поръчка",
+    "size": "Размер",
+    "color": "Цвят",
+    "quantity": "Количество",
+    "total": "Общо",
+    "processing": "Обработва се...",
+    "proceedToPayment": "Преминете към плащане",
+    "securePayment": "Сигурно плащане чрез Stripe",
+    "successTitle": "Поръчката е оформена успешно!",
+    "successMessage": "Благодарим за поръчката! Изпратихме потвърждение на вашия имейл.",
+    "orderNumber": "Номер на поръчката",
+    "continueShopping": "Продължи пазаруването",
+    "contactSupport": "За въпроси относно поръчката се свържете с нашата поддръжка",
+    "cancelTitle": "Плащането е отменено",
+    "cancelMessage": "Вашата поръчка не беше оформена. Продуктите остават в количката.",
+    "backToCheckout": "Обратно към оформяне"
   }
 }

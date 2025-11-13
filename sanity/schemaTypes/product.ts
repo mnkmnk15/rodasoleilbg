@@ -167,6 +167,20 @@ export default defineType({
         },
       ],
     }),
+    defineField({
+      name: 'stripeProductId',
+      title: 'Stripe Product ID',
+      type: 'string',
+      description: 'Auto-generated Stripe Product ID',
+      readOnly: true,
+    }),
+    defineField({
+      name: 'stripePriceId',
+      title: 'Stripe Price ID',
+      type: 'string',
+      description: 'Auto-generated Stripe Price ID',
+      readOnly: true,
+    }),
   ],
   preview: {
     select: {
