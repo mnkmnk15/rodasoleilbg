@@ -79,6 +79,7 @@ export async function POST(req: NextRequest) {
                 line1: shippingAddress.line1 || undefined,
                 line2: shippingAddress.line2 || undefined,
                 city: shippingAddress.city || undefined,
+                state: shippingAddress.state || undefined,
                 postal_code: shippingAddress.postal_code || undefined,
                 country: shippingAddress.country || undefined,
               }

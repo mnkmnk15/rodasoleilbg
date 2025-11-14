@@ -49,12 +49,12 @@ export function formatOrderMessage(orderData: {
     line1?: string;
     line2?: string;
     city?: string;
+    state?: string;
     postal_code?: string;
     country?: string;
   };
 }) {
   const {
-    sessionId,
     customerEmail,
     customerName,
     customerPhone,
@@ -65,38 +65,53 @@ export function formatOrderMessage(orderData: {
   } = orderData;
 
   let message = `🎉 <b>Новый заказ!</b>\n\n`;
-  message += `📋 <b>ID сессии:</b> ${sessionId}\n\n`;
 
+  // Информация о клиенте
+  message += `👤 <b>ИНФОРМАЦИЯ О КЛИЕНТЕ</b>\n`;
   if (customerName) {
-    message += `👤 <b>Клиент:</b> ${customerName}\n`;
+    message += `<b>Имя:</b> ${customerName}\n`;
   }
   if (customerEmail) {
-    message += `📧 <b>Email:</b> ${customerEmail}\n`;
+    message += `<b>Email:</b> ${customerEmail}\n`;
   }
   if (customerPhone) {
-    message += `📱 <b>Телефон:</b> ${customerPhone}\n`;
+    message += `<b>Телефон:</b> ${customerPhone}\n`;
   }
 
-  message += `\n💰 <b>Сумма:</b> ${(amount / 100).toFixed(2)} ${currency.toUpperCase()}\n\n`;
+  // Адрес доставки
+  if (shippingAddress) {
+    message += `\n📍 <b>АДРЕС ДОСТАВКИ</b>\n`;
+    if (shippingAddress.line1) {
+      message += `<b>Адрес:</b> ${shippingAddress.line1}\n`;
+    }
+    if (shippingAddress.line2) {
+      message += `<b>Доп. адрес:</b> ${shippingAddress.line2}\n`;
+    }
+    if (shippingAddress.city) {
+      message += `<b>Город:</b> ${shippingAddress.city}\n`;
+    }
+    if (shippingAddress.state) {
+      message += `<b>Регион:</b> ${shippingAddress.state}\n`;
+    }
+    if (shippingAddress.postal_code) {
+      message += `<b>Индекс:</b> ${shippingAddress.postal_code}\n`;
+    }
+    if (shippingAddress.country) {
+      message += `<b>Страна:</b> ${shippingAddress.country}\n`;
+    }
+  }
 
-  message += `📦 <b>Товары:</b>\n`;
+  // Товары
+  message += `\n📦 <b>ЗАКАЗАННЫЕ ТОВАРЫ</b>\n`;
   items.forEach((item, index) => {
-    message += `${index + 1}. ${item.name} (x${item.quantity})`;
-    if (item.size) message += ` - Размер: ${item.size}`;
-    if (item.color) message += ` - Цвет: ${item.color}`;
-    message += `\n`;
+    message += `\n${index + 1}. <b>${item.name}</b>\n`;
+    message += `   Количество: ${item.quantity} шт.\n`;
+    if (item.size) message += `   Размер: ${item.size}\n`;
+    if (item.color) message += `   Цвет: ${item.color}\n`;
   });
 
-  if (shippingAddress) {
-    message += `\n📍 <b>Адрес доставки:</b>\n`;
-    if (shippingAddress.line1) message += `${shippingAddress.line1}\n`;
-    if (shippingAddress.line2) message += `${shippingAddress.line2}\n`;
-    if (shippingAddress.city)
-      message += `${shippingAddress.city}${
-        shippingAddress.postal_code ? ', ' + shippingAddress.postal_code : ''
-      }\n`;
-    if (shippingAddress.country) message += `${shippingAddress.country}\n`;
-  }
+  // Сумма заказа
+  message += `\n💰 <b>ИТОГО:</b> ${(amount / 100).toFixed(2)} ${currency.toUpperCase()}\n`;
 
   return message;
 }
