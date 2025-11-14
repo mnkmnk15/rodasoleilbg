@@ -38,14 +38,18 @@ export default function ParallaxSection() {
         className="absolute top-0 right-0 w-[600px] h-[600px] rounded-full blur-3xl opacity-[0.03]"
         style={{
           background: 'radial-gradient(circle, rgba(212, 165, 116, 0.15) 0%, transparent 70%)',
-          y: backgroundY
+          y: backgroundY,
+          willChange: 'transform',
+          transform: 'translateZ(0)'
         }}
       />
       <motion.div
         className="absolute bottom-0 left-0 w-[500px] h-[500px] rounded-full blur-3xl opacity-[0.02]"
         style={{
           background: 'radial-gradient(circle, rgba(232, 212, 184, 0.1) 0%, transparent 70%)',
-          y: useTransform(scrollYProgress, [0, 1], ['0%', '-25%'])
+          y: useTransform(scrollYProgress, [0, 1], ['0%', '-25%']),
+          willChange: 'transform',
+          transform: 'translateZ(0)'
         }}
       />
 
@@ -56,7 +60,11 @@ export default function ParallaxSection() {
             <motion.div
               ref={ref}
               className="space-y-10 lg:pr-8"
-              style={{ y: textY }}
+              style={{
+                y: textY,
+                willChange: 'transform',
+                transform: 'translateZ(0)'
+              }}
             >
               {/* Premium Badge */}
               <motion.div
@@ -186,7 +194,12 @@ export default function ParallaxSection() {
             {/* Model Image with Advanced Parallax - Right Side */}
             <motion.div
               className="relative h-[550px] lg:h-[700px]"
-              style={{ scale: modelScale, y: modelY }}
+              style={{
+                scale: modelScale,
+                y: modelY,
+                willChange: 'transform',
+                transform: 'translateZ(0)'
+              }}
             >
               <motion.div
                 className="absolute inset-0 rounded-[3rem] overflow-hidden"

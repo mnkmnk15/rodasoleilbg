@@ -70,25 +70,53 @@ export async function syncProductToStripe(product: {
         },
       });
       stripePriceId = price.id;
+
+      // Устанавливаем новую цену как default
+      await stripeClient.products.update(stripeProduct.id, {
+        default_price: stripePriceId,
+      });
     } else {
       // Проверяем, изменилась ли цена
-      const existingPrice = await stripeClient.prices.retrieve(stripePriceId);
-      const newAmount = Math.round(product.price * 100);
+      try {
+        const existingPrice = await stripeClient.prices.retrieve(stripePriceId);
+        const newAmount = Math.round(product.price * 100);
 
-      if (existingPrice.unit_amount !== newAmount) {
-        // Деактивируем старую цену
-        await stripeClient.prices.update(stripePriceId, { active: false });
+        if (existingPrice.unit_amount !== newAmount) {
+          // Деактивируем старую цену
+          await stripeClient.prices.update(stripePriceId, { active: false });
 
-        // Создаём новую цену
+          // Создаём новую цену
+          const price = await stripeClient.prices.create({
+            product: stripeProduct.id,
+            unit_amount: newAmount,
+            currency: 'eur',
+            metadata: {
+              sanityId: product.id,
+            },
+          });
+          stripePriceId = price.id;
+
+          // Устанавливаем новую цену как default
+          await stripeClient.products.update(stripeProduct.id, {
+            default_price: stripePriceId,
+          });
+        }
+      } catch (error) {
+        // Если старая цена не найдена, создаём новую
         const price = await stripeClient.prices.create({
           product: stripeProduct.id,
-          unit_amount: newAmount,
+          unit_amount: Math.round(product.price * 100),
           currency: 'eur',
           metadata: {
             sanityId: product.id,
           },
         });
         stripePriceId = price.id;
+
+        // Устанавливаем новую цену как default
+        await stripeClient.products.update(stripeProduct.id, {
+          default_price: stripePriceId,
+        });
       }
     }
 

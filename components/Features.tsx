@@ -115,7 +115,7 @@ export default function Features() {
                   key={`left-${index}`}
                   initial={{ opacity: 0, y: 50, x: -30 }}
                   whileInView={{ opacity: 1, y: 0, x: 0 }}
-                  viewport={{ once: false, amount: 0.2 }}
+                  viewport={{ once: true, amount: 0.2 }}
                   transition={{ duration: 0.7, ease: "easeOut" }}
                   className="text-right pr-8"
                 >
@@ -143,8 +143,7 @@ export default function Features() {
                 <motion.div
                   style={{
                     scale,
-                    transform: 'translateZ(0)',
-                    willChange: 'transform'
+                    transform: 'translateZ(0)'
                   }}
                   className="relative w-[650px] h-[1020px] xl:w-[750px] xl:h-[1160px] mx-auto"
                 >
@@ -167,7 +166,7 @@ export default function Features() {
                   key={`right-${index}`}
                   initial={{ opacity: 0, y: 50, x: 30 }}
                   whileInView={{ opacity: 1, y: 0, x: 0 }}
-                  viewport={{ once: false, amount: 0.3 }}
+                  viewport={{ once: true, amount: 0.3 }}
                   transition={{ duration: 0.7, ease: "easeOut", delay: 0.15 }}
                   className="text-left pl-8"
                 >
@@ -265,8 +264,7 @@ export default function Features() {
                           backgroundColor: 'rgba(208, 102, 52, 0.3)',
                           width: '48px',
                           height: '48px',
-                          transform: 'translateZ(0)',
-                          willChange: 'transform, opacity'
+                          transform: 'translateZ(0)'
                         }}
                         animate={{
                           scale: [1, 1.6, 1],
@@ -338,8 +336,7 @@ export default function Features() {
                   width: '100%',
                   maxWidth: '360px',
                   zIndex: 200,
-                  transform: 'translateZ(0)',
-                  willChange: 'transform, opacity'
+                  transform: 'translateZ(0)'
                 }}
                 onClick={(e) => e.stopPropagation()}
               >

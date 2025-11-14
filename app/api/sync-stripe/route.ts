@@ -10,6 +10,19 @@ import { sanityClientWithToken as sanityClient } from '@/sanity/config';
  * Body: { productId: "product-id" } - для синхронизации конкретного продукта
  * Body: { syncAll: true } - для синхронизации всех продуктов
  */
+
+// CORS headers
+export async function OPTIONS(req: NextRequest) {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      'Access-Control-Allow-Origin': '*',
+      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    },
+  });
+}
+
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
@@ -97,18 +110,34 @@ export async function POST(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({
-      message: 'Sync completed',
-      results,
-      total: products.length,
-      successful: results.filter((r) => r.success).length,
-      failed: results.filter((r) => !r.success).length,
-    });
+    return NextResponse.json(
+      {
+        message: 'Sync completed',
+        results,
+        total: products.length,
+        successful: results.filter((r) => r.success).length,
+        failed: results.filter((r) => !r.success).length,
+      },
+      {
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        },
+      }
+    );
   } catch (error: any) {
     console.error('Sync error:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to sync products' },
-      { status: 500 }
+      {
+        status: 500,
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        },
+      }
     );
   }
 }

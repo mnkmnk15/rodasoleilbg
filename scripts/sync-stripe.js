@@ -108,7 +108,7 @@ async function syncProductToStripe(product) {
         stripePrice = await stripe.prices.create({
           product: stripeProduct.id,
           unit_amount: priceInCents,
-          currency: 'bgn',
+          currency: 'eur',
         });
       } else {
         stripePrice = existingPrice;
@@ -118,14 +118,14 @@ async function syncProductToStripe(product) {
       stripePrice = await stripe.prices.create({
         product: stripeProduct.id,
         unit_amount: priceInCents,
-        currency: 'bgn',
+        currency: 'eur',
       });
     }
   } else {
     stripePrice = await stripe.prices.create({
       product: stripeProduct.id,
       unit_amount: priceInCents,
-      currency: 'bgn',
+      currency: 'eur',
     });
   }
 

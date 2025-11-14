@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "eslint",
     "test:telegram": "node test-telegram.js",
-    "webhook:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe"
+    "webhook:listen": "stripe listen --forward-to localhost:3000/api/webhooks/stripe",
+    "sync-stripe": "node scripts/sync-stripe.js"
   },
   "dependencies": {
     "@sanity/client": "^7.12.0",
