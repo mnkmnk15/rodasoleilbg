@@ -164,6 +164,41 @@ a, button, input, select, textarea {
   transition: all 0.3s ease;
 }
 
+/* Performance optimizations */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* GPU acceleration для анимированных элементов */
+.will-change-transform {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  perspective: 1000px;
+}
+
+/* Оптимизация скролла */
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 /* Pulse animation for feature dots */
 @keyframes pulseDot {
   0%, 100% {
@@ -174,4 +209,89 @@ a, button, input, select, textarea {
     transform: scale(1.5);
     opacity: 0;
   }
+}
+
+/* Скрытие контролов видео на всех устройствах */
+video::-webkit-media-controls {
+  display: none !important;
+}
+
+video::-webkit-media-controls-enclosure {
+  display: none !important;
+}
+
+video::-webkit-media-controls-panel {
+  display: none !important;
+}
+
+video::-webkit-media-controls-play-button {
+  display: none !important;
+}
+
+video::-webkit-media-controls-start-playback-button {
+  display: none !important;
+}
+
+video::-webkit-media-controls-overlay-play-button {
+  display: none !important;
+}
+
+/* Для других браузеров */
+video::--media-controls {
+  display: none !important;
+}
+
+video::-moz-media-controls {
+  display: none !important;
+}
+
+/* Дополнительное скрытие для мобильных Safari */
+@supports (-webkit-touch-callout: none) {
+  video {
+    pointer-events: none;
+  }
+
+  video::-webkit-media-controls-panel {
+    display: none !important;
+    -webkit-appearance: none;
+  }
+
+  video::-webkit-media-controls-play-button {
+    display: none !important;
+    -webkit-appearance: none;
+  }
+
+  video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+    -webkit-appearance: none;
+  }
+}
+
+/* Оптимизация анимаций для плавной работы на мобильных устройствах */
+@media (max-width: 768px) {
+  /* GPU ускорение для сайдбара корзины */
+  [class*="fixed"][class*="right-0"] {
+    transform: translate3d(0, 0, 0);
+    -webkit-transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    perspective: 1000px;
+    -webkit-perspective: 1000px;
+  }
+
+  /* Оптимизация transition для мобильных */
+  * {
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+  }
+}
+
+/* Плавные анимации для всех motion элементов */
+[data-framer-component-type],
+[class*="motion"] {
+  transform: translate3d(0, 0, 0);
+  -webkit-transform: translate3d(0, 0, 0);
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
 }

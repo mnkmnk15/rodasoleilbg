@@ -87,7 +87,12 @@ export default function Hero() {
         {/* Video Background - Desktop */}
         <motion.div
           className="absolute inset-0 w-full h-full"
-          style={{ scale: videoScale, y: videoY }}
+          style={{
+            scale: videoScale,
+            y: videoY,
+            willChange: 'transform',
+            transform: 'translateZ(0)'
+          }}
         >
           <video
             ref={desktopVideoRef}
@@ -98,7 +103,10 @@ export default function Hero() {
             preload="auto"
             className="w-full h-full object-cover"
             poster="/images/hero-poster.jpg"
-            style={{ filter: 'brightness(0.7)' }}
+            style={{
+              filter: 'brightness(0.7)',
+              transform: 'translateZ(0)'
+            }}
             onError={() => setVideoError(true)}
             onLoadedData={() => setVideoError(false)}
           >
@@ -116,7 +124,9 @@ export default function Hero() {
             scale: logoScale,
             y: logoLeftY,
             rotate: useTransform(scrollYProgress, [0, 1], [0, -3]),
-            opacity: 0.3
+            opacity: 0.3,
+            willChange: 'transform',
+            transform: 'translateZ(0)'
           }}
         >
           <div className="relative w-[50%] h-[50%]">
@@ -126,6 +136,7 @@ export default function Hero() {
               fill
               className="object-contain"
               priority
+              style={{ transform: 'translateZ(0)' }}
             />
           </div>
         </motion.div>
@@ -139,7 +150,9 @@ export default function Hero() {
             scale: logoScale,
             y: logoRightY,
             rotate: useTransform(scrollYProgress, [0, 1], [0, 3]),
-            opacity: 0.3
+            opacity: 0.3,
+            willChange: 'transform',
+            transform: 'translateZ(0)'
           }}
         >
           <div className="relative w-[50%] h-[50%]">
@@ -149,6 +162,7 @@ export default function Hero() {
               fill
               className="object-contain"
               priority
+              style={{ transform: 'translateZ(0)' }}
             />
           </div>
         </motion.div>
@@ -297,9 +311,16 @@ export default function Hero() {
           preload="auto"
           className="absolute inset-0 w-full h-full object-cover"
           poster="/images/hero-poster.jpg"
-          style={{ filter: 'brightness(0.75)' }}
+          style={{
+            filter: 'brightness(0.75)',
+            pointerEvents: 'none'
+          }}
           onError={() => setVideoError(true)}
           onLoadedData={() => setVideoError(false)}
+          controls={false}
+          disablePictureInPicture
+          disableRemotePlayback
+          webkit-playsinline="true"
         >
           <source src="/videos/rodasoleilbghero.mp4" type="video/mp4" />
         </video>
@@ -308,18 +329,10 @@ export default function Hero() {
         <div className="absolute inset-0 z-10 flex flex-col items-center justify-center text-center px-6" style={{
           background: 'linear-gradient(to bottom, rgba(0,0,0,0.2) 0%, rgba(0,0,0,0.4) 100%)'
         }}>
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.8, ease: 'linear' }}
-            className="w-full"
-          >
+          <div className="w-full">
             {/* Mobile Heading */}
-            <motion.h2
+            <h2
               className="text-3xl font-cormorant font-light mb-4"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
               style={{
                 letterSpacing: '0.05em',
                 lineHeight: 1.3,
@@ -331,14 +344,14 @@ export default function Hero() {
               {locale === 'bg' ? 'Бански, който дарява' : locale === 'ru' ? 'Купальник, который дарит' : 'Swimwear that gives you'}
               <br />
               {locale === 'bg' ? 'равномерен тен' : locale === 'ru' ? 'равномерный загар' : 'an even tan'}
-            </motion.h2>
+            </h2>
 
             {/* Mobile Button */}
             <motion.a
               href={`/${locale}/catalog`}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 1, y: 0 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.4 }}
+              transition={{ duration: 0 }}
               className="inline-block px-8 py-3 cursor-pointer font-montserrat"
               style={{
                 background: 'transparent',
@@ -355,7 +368,7 @@ export default function Hero() {
             >
               {locale === 'bg' ? 'Виж Колекцията' : locale === 'ru' ? 'Смотреть Коллекцию' : 'SHOP COLLECTION'}
             </motion.a>
-          </motion.div>
+          </div>
         </div>
       </div>
     </section>

@@ -7,6 +7,7 @@ import { useCart } from '@/contexts/CartContext';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useRouter } from '@/i18n/routing';
 import { urlFor } from '@/sanity/config';
 
 interface CartSidebarProps {
@@ -17,6 +18,7 @@ interface CartSidebarProps {
 export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const { cart, removeItem, updateQuantity } = useCart();
   const t = useTranslations('cart');
+  const router = useRouter();
   const sidebarRef = useRef<HTMLDivElement>(null);
   const [mounted, setMounted] = React.useState(false);
 
@@ -59,7 +61,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const formatPrice = (price: number) => {
     return new Intl.NumberFormat('bg-BG', {
       style: 'currency',
-      currency: 'BGN',
+      currency: 'EUR',
     }).format(price);
   };
 
@@ -68,7 +70,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
   const content = (
     <>
       {/* Sidebar */}
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {isOpen && (
           <motion.div
             ref={sidebarRef}
@@ -77,12 +79,16 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
             exit={{ x: '100%' }}
             transition={{
               type: 'tween',
-              duration: 0.3,
-              ease: [0.25, 0.1, 0.25, 1]
+              duration: 0.25,
+              ease: [0.4, 0.0, 0.2, 1]
             }}
             style={{
-              transform: 'translateZ(0)',
-              willChange: 'transform'
+              transform: 'translate3d(0, 0, 0)',
+              willChange: 'transform',
+              backfaceVisibility: 'hidden',
+              WebkitBackfaceVisibility: 'hidden',
+              perspective: 1000,
+              WebkitPerspective: 1000
             }}
             className="fixed right-0 top-0 h-screen w-[85%] sm:w-[450px] bg-white shadow-2xl z-[9999] flex flex-col"
           >
@@ -131,9 +137,18 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                     <motion.div
                       key={`${item.id}-${item.size || ''}-${item.color || ''}`}
                       layout
-                      initial={{ opacity: 0, y: 20 }}
+                      initial={{ opacity: 1, y: 0 }}
                       animate={{ opacity: 1, y: 0 }}
                       exit={{ opacity: 0, x: 100 }}
+                      transition={{
+                        type: 'tween',
+                        duration: 0.15,
+                        ease: 'easeOut'
+                      }}
+                      style={{
+                        transform: 'translate3d(0, 0, 0)',
+                        willChange: 'transform, opacity'
+                      }}
                       className="flex gap-4 p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow"
                     >
                       {/* Product Image */}
@@ -228,7 +243,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
 
             {/* Footer with Total and Checkout */}
             {cart.items.length > 0 && (
-              <div className="border-t border-gray-200 p-6 space-y-4 bg-white shadow-lg">
+              <div className="border-t border-gray-200 p-6 space-y-5 bg-white shadow-lg">
                 {/* Subtotal */}
                 <div className="flex items-center justify-between text-lg">
                   <span className="font-medium">{t('subtotal')}:</span>
@@ -249,8 +264,11 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
 
                 {/* Continue Shopping */}
                 <button
-                  onClick={onClose}
-                  className="w-full py-3 border border-neutral-800 text-neutral-800 rounded-lg font-medium hover:bg-gray-50 transition-colors"
+                  onClick={() => {
+                    onClose();
+                    router.push('/catalog');
+                  }}
+                  className="w-full py-3 border border-neutral-800 text-neutral-800 rounded-lg font-medium hover:bg-gray-50 transition-colors mt-3"
                 >
                   {t('continueShopping')}
                 </button>
