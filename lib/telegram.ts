@@ -64,54 +64,54 @@ export function formatOrderMessage(orderData: {
     shippingAddress,
   } = orderData;
 
-  let message = `🎉 <b>Новый заказ!</b>\n\n`;
+  let message = `<b>НОВЫЙ ЗАКАЗ</b>\n\n`;
 
   // Информация о клиенте
-  message += `👤 <b>ИНФОРМАЦИЯ О КЛИЕНТЕ</b>\n`;
+  message += `<b>👤 ДАННЫЕ КЛИЕНТА:</b>\n`;
   if (customerName) {
-    message += `<b>Имя:</b> ${customerName}\n`;
+    message += `Имя: ${customerName}\n`;
   }
   if (customerEmail) {
-    message += `<b>Email:</b> ${customerEmail}\n`;
+    message += `Email: ${customerEmail}\n`;
   }
   if (customerPhone) {
-    message += `<b>Телефон:</b> ${customerPhone}\n`;
+    message += `Телефон: ${customerPhone}\n`;
   }
 
   // Адрес доставки
   if (shippingAddress) {
-    message += `\n📍 <b>АДРЕС ДОСТАВКИ</b>\n`;
+    message += `\n<b>АДРЕС ДОСТАВКИ:</b>\n`;
     if (shippingAddress.line1) {
-      message += `<b>Адрес:</b> ${shippingAddress.line1}\n`;
+      message += `${shippingAddress.line1}\n`;
     }
     if (shippingAddress.line2) {
-      message += `<b>Доп. адрес:</b> ${shippingAddress.line2}\n`;
+      message += `${shippingAddress.line2}\n`;
     }
-    if (shippingAddress.city) {
-      message += `<b>Город:</b> ${shippingAddress.city}\n`;
-    }
-    if (shippingAddress.state) {
-      message += `<b>Регион:</b> ${shippingAddress.state}\n`;
-    }
-    if (shippingAddress.postal_code) {
-      message += `<b>Индекс:</b> ${shippingAddress.postal_code}\n`;
+    const cityLine = [
+      shippingAddress.postal_code,
+      shippingAddress.city,
+      shippingAddress.state
+    ].filter(Boolean).join(', ');
+    if (cityLine) {
+      message += `${cityLine}\n`;
     }
     if (shippingAddress.country) {
-      message += `<b>Страна:</b> ${shippingAddress.country}\n`;
+      message += `${shippingAddress.country}\n`;
     }
   }
 
   // Товары
-  message += `\n📦 <b>ЗАКАЗАННЫЕ ТОВАРЫ</b>\n`;
+  message += `\n<b>📦 ЗАКАЗАННЫЕ ТОВАРЫ:</b>\n`;
   items.forEach((item, index) => {
-    message += `\n${index + 1}. <b>${item.name}</b>\n`;
+    message += `\n${index + 1}. ${item.name}\n`;
     message += `   Количество: ${item.quantity} шт.\n`;
     if (item.size) message += `   Размер: ${item.size}\n`;
     if (item.color) message += `   Цвет: ${item.color}\n`;
   });
 
   // Сумма заказа
-  message += `\n💰 <b>ИТОГО:</b> ${(amount / 100).toFixed(2)} ${currency.toUpperCase()}\n`;
+  const total = (amount / 100).toFixed(2);
+  message += `\n <b>💰 ИТОГО: ${total} EUR</b>\n`;
 
   return message;
 }

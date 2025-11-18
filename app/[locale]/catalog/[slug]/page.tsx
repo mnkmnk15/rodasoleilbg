@@ -376,7 +376,7 @@ export default function ProductPage() {
                     {locale === 'bg' ? 'Безплатна доставка' : locale === 'ru' ? 'Бесплатная доставка' : 'Free Shipping'}
                   </p>
                   <p className="text-xs text-neutral-500">
-                    {locale === 'bg' ? 'Над 100 лв' : locale === 'ru' ? 'Свыше 100 лв' : 'Over €100'}
+                    {locale === 'bg' ? 'Над €100' : locale === 'ru' ? 'Свыше €100' : 'Over €100'}
                   </p>
                 </div>
               </div>

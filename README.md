@@ -1,6 +1,8 @@
-# RoDaSoleil Shop - E-commerce Platform
+# RoDaSoleil Shop
 
-Профессиональный интернет-магазин одежды премиум-класса с интеграцией Sanity CMS и Stripe Payment Gateway.
+Професионален онлайн магазин за дрехи премиум клас с интеграция на Sanity CMS и Stripe Payment Gateway.
+
+**Website:** https://www.rodasoleil.bg
 
 ## Технологический Стек
 
@@ -139,8 +141,6 @@ rodasoleil-shop/
 
 ## Документация
 
-- [Интеграция Stripe](./STRIPE_INTEGRATION.md) - Полное руководство по Stripe
-- [Чеклист деплоя](./DEPLOYMENT_CHECKLIST.md) - Подготовка к продакшену
 - [Sanity Schemas](./sanity/README.md) - Схемы данных CMS
 
 ## API Endpoints
@@ -166,9 +166,25 @@ vercel --prod
 
 ### Настройка на Vercel
 
-1. Добавьте все переменные окружения в Vercel Dashboard
-2. Настройте Stripe Webhook URL: `https://your-domain.com/api/webhooks/stripe`
-3. Добавьте события: `checkout.session.completed`, `payment_intent.succeeded`, `payment_intent.payment_failed`
+1. **Добавьте переменные окружения:**
+   - `NEXT_PUBLIC_SANITY_PROJECT_ID`
+   - `NEXT_PUBLIC_SANITY_DATASET`
+   - `SANITY_API_TOKEN`
+   - `STRIPE_SECRET_KEY` (live key для продакшена)
+   - `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` (live key)
+   - `STRIPE_WEBHOOK_SECRET`
+   - `TELEGRAM_BOT_TOKEN`
+   - `TELEGRAM_CHAT_ID`
+   - `NEXT_PUBLIC_BASE_URL=https://www.rodasoleil.bg`
+   - `NEXT_PUBLIC_SITE_URL=https://www.rodasoleil.bg`
+
+2. **Настройте Stripe Webhook:**
+   - URL: `https://www.rodasoleil.bg/api/webhooks/stripe`
+   - События: `checkout.session.completed`, `payment_intent.succeeded`, `payment_intent.payment_failed`
+
+3. **Настройте домен:**
+   - Основной домен: `www.rodasoleil.bg`
+   - Редирект с `rodasoleil.bg` на `www.rodasoleil.bg`
 
 ## Безопасность
 
@@ -200,11 +216,12 @@ vercel --prod
 
 ## Контакты
 
-- Website: [https://rodasoleil.bg](https://rodasoleil.bg)
-- Email: info@rodasoleil.bg
+- Website: [https://www.rodasoleil.bg](https://www.rodasoleil.bg)
+- Instagram: [https://www.instagram.com/rodasoleil.bg/](https://www.instagram.com/rodasoleil.bg/)
+- Facebook: [https://www.facebook.com/people/Rodasoleilbulgaria/61550255667531/](https://www.facebook.com/people/Rodasoleilbulgaria/61550255667531/)
 
 ---
 
-**Статус:** ✅ Ready for Production
-**Версия:** 0.1.3
-**Last Updated:** November 2024
+**Статус:** ✅ Production Ready
+**Версия:** 0.1.0
+**Обновлено:** Ноябрь 2025
