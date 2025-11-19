@@ -67,7 +67,7 @@ export function formatOrderMessage(orderData: {
   let message = `<b>НОВЫЙ ЗАКАЗ</b>\n\n`;
 
   // Информация о клиенте
-  message += `<b>👤 ДАННЫЕ КЛИЕНТА:</b>\n`;
+  message += `<b>ДАННЫЕ КЛИЕНТА:</b>\n`;
   if (customerName) {
     message += `Имя: ${customerName}\n`;
   }

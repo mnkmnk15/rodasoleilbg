@@ -131,18 +131,41 @@ export async function syncProductToStripe(product: {
 }
 
 // Функция для создания сессии оформления заказа
-export async function createCheckoutSession(items: Array<{
-  priceId: string;
-  quantity: number;
-}>, metadata?: Record<string, string>) {
+export async function createCheckoutSession(
+  items: Array<{
+    priceId: string;
+    quantity: number;
+  }>,
+  metadata?: Record<string, string>,
+  deliveryPrice?: number
+) {
   try {
     const stripeClient = stripe();
+
+    // Добавляем товары
+    const lineItems = items.map(item => ({
+      price: item.priceId,
+      quantity: item.quantity,
+    }));
+
+    // Если есть стоимость доставки, добавляем её как динамический line item
+    if (deliveryPrice && deliveryPrice > 0) {
+      lineItems.push({
+        price_data: {
+          currency: 'eur',
+          unit_amount: Math.round(deliveryPrice * 100), // Конвертируем в центы
+          product_data: {
+            name: 'Доставка',
+            description: 'Стоимость доставки',
+          },
+        },
+        quantity: 1,
+      } as any);
+    }
+
     const session = await stripeClient.checkout.sessions.create({
       payment_method_types: ['card'],
-      line_items: items.map(item => ({
-        price: item.priceId,
-        quantity: item.quantity,
-      })),
+      line_items: lineItems,
       mode: 'payment',
       success_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.NEXT_PUBLIC_BASE_URL}/checkout/cancel`,

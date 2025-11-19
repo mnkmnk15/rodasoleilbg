@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Search } from 'lucide-react';
 import Image from 'next/image';
 import { urlFor } from '@/sanity/config';
+import { useTranslations } from 'next-intl';
 import {
   CheckoutFormData,
   PaymentMethod,
@@ -43,6 +44,8 @@ export default function CheckoutModal({
   onSubmit,
   isLoading = false,
 }: CheckoutModalProps) {
+  const t = useTranslations('checkout');
+  const tCart = useTranslations('cart');
   const [mounted, setMounted] = useState(false);
   const [formData, setFormData] = useState<CheckoutFormData>({
     firstName: '',
@@ -57,6 +60,7 @@ export default function CheckoutModal({
   // Валидация
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
+  const [deliveryError, setDeliveryError] = useState('');
 
   // Данные для селектов
   const [cities, setCities] = useState<EcontCity[]>([]);
@@ -182,7 +186,7 @@ export default function CheckoutModal({
       return true;
     }
     if (!emailRegex.test(email)) {
-      setEmailError('Невалиден имейл адрес');
+      setEmailError(t('invalidEmail'));
       return false;
     }
     setEmailError('');
@@ -204,7 +208,7 @@ export default function CheckoutModal({
     const phoneRegex2 = /^\+359\d{9}$/; // +359888123456
 
     if (!phoneRegex1.test(cleanPhone) && !phoneRegex2.test(cleanPhone)) {
-      setPhoneError('Невалиден телефонен номер (използвайте 0888123456 или +359888123456)');
+      setPhoneError(t('invalidPhone'));
       return false;
     }
     setPhoneError('');
@@ -253,6 +257,7 @@ export default function CheckoutModal({
     }));
     setCitySearch(city.name);
     setShowCityDropdown(false);
+    setDeliveryError('');
   };
 
   const handleOfficeSelect = (office: EcontOffice) => {
@@ -268,6 +273,7 @@ export default function CheckoutModal({
       `${office.address.city.name} - ${office.name}`
     );
     setShowOfficeDropdown(false);
+    setDeliveryError('');
   };
 
   const calculateTotal = () => {
@@ -287,6 +293,20 @@ export default function CheckoutModal({
       return;
     }
 
+    // Валидация выбора офиса или адреса
+    if (formData.deliveryMethod === 'econt_office') {
+      if (!formData.econtOfficeId || !formData.econtOfficeCode) {
+        setDeliveryError('Моля, изберете офис за доставка');
+        return;
+      }
+    } else if (formData.deliveryMethod === 'econt_address') {
+      if (!formData.city || !formData.address) {
+        setDeliveryError('Моля, попълнете град и адрес за доставка');
+        return;
+      }
+    }
+
+    setDeliveryError('');
     onSubmit(formData);
   };
 
@@ -313,7 +333,6 @@ export default function CheckoutModal({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.2 }}
             className="fixed inset-0 bg-black/50 z-[9998]"
-            onClick={onClose}
           />
 
           {/* Modal */}
@@ -323,17 +342,20 @@ export default function CheckoutModal({
             exit={{ opacity: 0, scale: 0.95 }}
             transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             className="fixed inset-0 z-[9999] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
+            onClick={onClose}
           >
             <div className="min-h-screen px-4 flex items-center justify-center py-8">
-              <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl overflow-hidden">
+              <div
+                className="bg-white rounded-xl shadow-2xl w-full max-w-6xl overflow-hidden"
+                onClick={(e) => e.stopPropagation()}
+              >
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-0">
                   {/* Правая часть - Товары и итого */}
                   <div className="bg-gray-50 p-6 lg:p-8 border-b lg:border-b-0 lg:border-r border-gray-200">
                     {/* Header */}
                     <div className="flex items-center justify-between mb-6">
                       <h2 className="text-xl font-bold text-neutral-900">
-                        Вашата количка
+                        {t('yourCart')}
                       </h2>
                       <button
                         onClick={onClose}
@@ -361,7 +383,7 @@ export default function CheckoutModal({
                                 }
                                 alt={item.name}
                                 fill
-                                className="object-cover"
+                                className="object-cover object-top"
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -378,9 +400,9 @@ export default function CheckoutModal({
                             </h4>
                             {(item.size || item.color) && (
                               <p className="text-xs text-gray-500 mt-1">
-                                {item.size && <span>Размер: {item.size}</span>}
+                                {item.size && <span>{tCart('size')}: {item.size}</span>}
                                 {item.size && item.color && <span className="mx-1">·</span>}
-                                {item.color && <span>Цвят: {item.color}</span>}
+                                {item.color && <span>{tCart('color')}: {item.color}</span>}
                               </p>
                             )}
                             <p className="text-sm font-semibold text-neutral-900 mt-1">
@@ -396,15 +418,15 @@ export default function CheckoutModal({
                     {/* Итого */}
                     <div className="space-y-2 pt-4 border-t border-gray-300">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Междинна сума:</span>
+                        <span className="text-gray-600">{t('subtotal')}:</span>
                         <span className="font-medium">{formatPrice(cartTotal)}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Доставка:</span>
+                        <span className="text-gray-600">{t('delivery')}:</span>
                         <span className="font-medium">{formatPrice(deliveryPrice)}</span>
                       </div>
                       <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-300">
-                        <span>Общо:</span>
+                        <span>{t('total')}:</span>
                         <span>{formatPrice(calculateTotal())}</span>
                       </div>
                     </div>
@@ -415,7 +437,7 @@ export default function CheckoutModal({
                     <form onSubmit={handleSubmit} className="space-y-6">
                       {/* Личные данные */}
                       <div>
-                        <h3 className="text-base font-semibold mb-4">Вашите данни</h3>
+                        <h3 className="text-base font-semibold mb-4">{t('yourDetails')}</h3>
                         <div className="grid grid-cols-2 gap-3">
                           <input
                             type="text"
@@ -423,7 +445,7 @@ export default function CheckoutModal({
                             value={formData.firstName}
                             onChange={handleInputChange}
                             required
-                            placeholder="Име"
+                            placeholder={t('firstName')}
                             className="px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
                           />
                           <input
@@ -432,7 +454,7 @@ export default function CheckoutModal({
                             value={formData.lastName}
                             onChange={handleInputChange}
                             required
-                            placeholder="Фамилия"
+                            placeholder={t('lastName')}
                             className="px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
                           />
                           <div className="col-span-2">
@@ -442,7 +464,7 @@ export default function CheckoutModal({
                               value={formData.email}
                               onChange={handleInputChange}
                               required
-                              placeholder="Имейл"
+                              placeholder={t('email')}
                               className={`w-full px-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent ${
                                 emailError ? 'border-red-500' : 'border-gray-300'
                               }`}
@@ -458,7 +480,7 @@ export default function CheckoutModal({
                               value={formData.phone}
                               onChange={handleInputChange}
                               required
-                              placeholder="Телефон (0888123456 или +359888123456)"
+                              placeholder={t('phonePlaceholder')}
                               className={`w-full px-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent ${
                                 phoneError ? 'border-red-500' : 'border-gray-300'
                               }`}
@@ -472,7 +494,7 @@ export default function CheckoutModal({
 
                       {/* Метод доставки */}
                       <div>
-                        <h3 className="text-base font-semibold mb-3">Метод на доставка</h3>
+                        <h3 className="text-base font-semibold mb-3">{t('deliveryMethod')}</h3>
                         <div className="space-y-2">
                           <label className="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-neutral-900 transition-colors has-[:checked]:border-neutral-900 has-[:checked]:bg-gray-50">
                             <input
@@ -487,12 +509,14 @@ export default function CheckoutModal({
                                 <Image
                                   src="/images/econtLogo.png"
                                   alt="Econt"
-                                  width={60}
-                                  height={20}
+                                  width={1200}
+                                  height={323}
                                   className="h-5 w-auto object-contain"
+                                  quality={100}
+                                  priority
                                 />
                                 <span className="text-sm font-medium">
-                                  До офис/автомат Еконт
+                                  {t('econtOffice')}
                                 </span>
                               </div>
                               <span className="text-sm font-semibold">
@@ -510,7 +534,7 @@ export default function CheckoutModal({
                               className="w-4 h-4 accent-neutral-900"
                             />
                             <div className="flex-1 flex items-center justify-between">
-                              <span className="text-sm font-medium">До адрес</span>
+                              <span className="text-sm font-medium">{t('toAddress')}</span>
                               <span className="text-sm font-semibold">
                                 {formatPrice(DELIVERY_PRICES.econt_address)}
                               </span>
@@ -523,19 +547,27 @@ export default function CheckoutModal({
                       {formData.deliveryMethod === 'econt_office' ? (
                         <div ref={officeDropdownRef} className="relative">
                           <label className="block text-sm font-medium text-gray-700 mb-2">
-                            Изберете офис или автомат:
+                            {t('selectOffice')}
                           </label>
                           <div className="relative">
                             <input
                               type="text"
-                              placeholder="Търсене по офис, град или код (минимум 2 символа)..."
+                              placeholder={t('searchOffice')}
                               value={officeSearch}
-                              onChange={(e) => setOfficeSearch(e.target.value)}
+                              onChange={(e) => {
+                                setOfficeSearch(e.target.value);
+                                setDeliveryError('');
+                              }}
                               onFocus={() => setShowOfficeDropdown(true)}
-                              className="w-full px-4 py-2.5 pr-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+                              className={`w-full px-4 py-2.5 pr-10 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent ${
+                                deliveryError ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                              }`}
                             />
                             <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                           </div>
+                          {deliveryError && (
+                            <p className="text-xs text-red-600 mt-1">{deliveryError}</p>
+                          )}
 
                           {/* Custom Dropdown */}
                           <AnimatePresence>
@@ -549,15 +581,15 @@ export default function CheckoutModal({
                               >
                                 {loadingOffices ? (
                                   <div className="px-4 py-3 text-sm text-gray-500">
-                                    Зареждане...
+                                    {t('loading')}
                                   </div>
                                 ) : officeSearch.length < 2 ? (
                                   <div className="px-4 py-3 text-sm text-gray-500">
-                                    Въведете минимум 2 символа за търсене
+                                    {t('minChars')}
                                   </div>
                                 ) : filteredOffices.length === 0 ? (
                                   <div className="px-4 py-3 text-sm text-gray-500">
-                                    Няма намерени офиси
+                                    {t('noOffices')}
                                   </div>
                                 ) : (
                                   <>
@@ -585,7 +617,7 @@ export default function CheckoutModal({
                                     ))}
                                     {filteredOffices.length === 100 && (
                                       <div className="px-4 py-2 text-xs text-gray-500 bg-gray-50 border-t border-gray-200">
-                                        Показани първите 100 резултата. Уточнете търсенето за повече.
+                                        {t('showingFirst100')}
                                       </div>
                                     )}
                                   </>
@@ -598,16 +630,21 @@ export default function CheckoutModal({
                         <div className="space-y-3">
                           <div ref={cityDropdownRef} className="relative">
                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                              Изберете град:
+                              {t('selectCity')}
                             </label>
                             <div className="relative">
                               <input
                                 type="text"
-                                placeholder="Търсене на град (минимум 2 символа)..."
+                                placeholder={t('searchCity')}
                                 value={citySearch}
-                                onChange={(e) => setCitySearch(e.target.value)}
+                                onChange={(e) => {
+                                  setCitySearch(e.target.value);
+                                  setDeliveryError('');
+                                }}
                                 onFocus={() => setShowCityDropdown(true)}
-                                className="w-full px-4 py-2.5 pr-10 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
+                                className={`w-full px-4 py-2.5 pr-10 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent ${
+                                  deliveryError && !formData.city ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                                }`}
                               />
                               <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
                             </div>
@@ -624,15 +661,15 @@ export default function CheckoutModal({
                                 >
                                   {loadingCities ? (
                                     <div className="px-4 py-3 text-sm text-gray-500">
-                                      Зареждане...
+                                      {t('loading')}
                                     </div>
                                   ) : citySearch.length < 2 ? (
                                     <div className="px-4 py-3 text-sm text-gray-500">
-                                      Въведете минимум 2 символа за търсене
+                                      {t('minChars')}
                                     </div>
                                   ) : filteredCities.length === 0 ? (
                                     <div className="px-4 py-3 text-sm text-gray-500">
-                                      Няма намерени градове
+                                      {t('noCities')}
                                     </div>
                                   ) : (
                                     <>
@@ -647,13 +684,13 @@ export default function CheckoutModal({
                                             {city.name}
                                           </div>
                                           <div className="text-xs text-gray-500 mt-0.5">
-                                            Пощенски код: {city.postCode}
+                                            {t('postalCode')}: {city.postCode}
                                           </div>
                                         </button>
                                       ))}
                                       {filteredCities.length === 100 && (
                                         <div className="px-4 py-2 text-xs text-gray-500 bg-gray-50 border-t border-gray-200">
-                                          Показани първите 100 резултата. Уточнете търсенето за повече.
+                                          {t('showingFirst100')}
                                         </div>
                                       )}
                                     </>
@@ -662,21 +699,31 @@ export default function CheckoutModal({
                               )}
                             </AnimatePresence>
                           </div>
-                          <input
-                            type="text"
-                            name="address"
-                            value={formData.address || ''}
-                            onChange={handleInputChange}
-                            required
-                            placeholder="Адрес (улица, номер, етаж, апартамент)"
-                            className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent"
-                          />
+                          <div>
+                            <input
+                              type="text"
+                              name="address"
+                              value={formData.address || ''}
+                              onChange={(e) => {
+                                handleInputChange(e);
+                                setDeliveryError('');
+                              }}
+                              required
+                              placeholder={t('address')}
+                              className={`w-full px-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent ${
+                                deliveryError && !formData.address ? 'border-red-500 bg-red-50' : 'border-gray-300'
+                              }`}
+                            />
+                            {deliveryError && (
+                              <p className="text-xs text-red-600 mt-1">{deliveryError}</p>
+                            )}
+                          </div>
                         </div>
                       )}
 
                       {/* Начин на плащане */}
                       <div>
-                        <h3 className="text-base font-semibold mb-3">Начин на плащане</h3>
+                        <h3 className="text-base font-semibold mb-3">{t('paymentMethod')}</h3>
                         <div className="space-y-2">
                           <label className="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-neutral-900 transition-colors has-[:checked]:border-neutral-900 has-[:checked]:bg-gray-50">
                             <input
@@ -686,7 +733,7 @@ export default function CheckoutModal({
                               onChange={() => handlePaymentMethodChange('cash_on_delivery')}
                               className="w-4 h-4 accent-neutral-900"
                             />
-                            <span className="text-sm font-medium">Наложен платеж</span>
+                            <span className="text-sm font-medium">{t('cashOnDelivery')}</span>
                           </label>
                           <label className="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-neutral-900 transition-colors has-[:checked]:border-neutral-900 has-[:checked]:bg-gray-50">
                             <input
@@ -696,7 +743,7 @@ export default function CheckoutModal({
                               onChange={() => handlePaymentMethodChange('card')}
                               className="w-4 h-4 accent-neutral-900"
                             />
-                            <span className="text-sm font-medium">Кредитна/дебитна карта</span>
+                            <span className="text-sm font-medium">{t('card')}</span>
                           </label>
                         </div>
                       </div>
@@ -704,7 +751,7 @@ export default function CheckoutModal({
                       {/* Примечания */}
                       <div>
                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                          Бележки към поръчката:
+                          {t('notes')}
                         </label>
                         <textarea
                           name="notes"
@@ -712,7 +759,7 @@ export default function CheckoutModal({
                           onChange={handleInputChange}
                           rows={3}
                           className="w-full px-4 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent resize-none"
-                          placeholder="Допълнителни инструкции за доставката..."
+                          placeholder={t('notesPlaceholder')}
                         />
                       </div>
 
@@ -722,7 +769,7 @@ export default function CheckoutModal({
                         disabled={isLoading || !!emailError || !!phoneError}
                         className="w-full py-3.5 bg-neutral-900 text-white text-base font-bold rounded-lg hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       >
-                        {isLoading ? 'Обработка...' : 'ЗАВЪРШИ ПОРЪЧКАТА'}
+                        {isLoading ? t('processing') : t('completeOrder')}
                       </button>
                     </form>
                   </div>

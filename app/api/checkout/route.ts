@@ -149,11 +149,7 @@ export async function POST(req: NextRequest) {
       };
     });
 
-    // Добавляем доставку как отдельный line item
-    // Примечание: здесь нужно создать отдельный Price в Stripe для доставки
-    // или добавить доставку в метаданные
-
-    const session = await createCheckoutSession(lineItems, metadata);
+    const session = await createCheckoutSession(lineItems, metadata, deliveryPrice);
 
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (error: any) {

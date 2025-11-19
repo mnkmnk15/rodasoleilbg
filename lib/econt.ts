@@ -1,12 +1,16 @@
 // Библиотека для работы с Econt API
 import { EcontOffice, EcontCity } from '@/types/checkout';
 
-const ECONT_API_BASE_URL = process.env.ECONT_API_URL || 'https://demo.econt.com/ee/services';
-const ECONT_USERNAME = process.env.ECONT_USERNAME || 'iasp-dev';
-const ECONT_PASSWORD = process.env.ECONT_PASSWORD || '1Asp-dev';
+const ECONT_API_BASE_URL = process.env.ECONT_API_URL;
+const ECONT_USERNAME = process.env.ECONT_USERNAME;
+const ECONT_PASSWORD = process.env.ECONT_PASSWORD;
 
 // Базовая функция для запросов к Econt API
 async function econtRequest(endpoint: string, data?: any) {
+  if (!ECONT_API_BASE_URL || !ECONT_USERNAME || !ECONT_PASSWORD) {
+    throw new Error('Econt API credentials are not configured. Please set ECONT_API_URL, ECONT_USERNAME, and ECONT_PASSWORD in environment variables.');
+  }
+
   const credentials = Buffer.from(`${ECONT_USERNAME}:${ECONT_PASSWORD}`).toString('base64');
 
   const response = await fetch(`${ECONT_API_BASE_URL}${endpoint}`, {
