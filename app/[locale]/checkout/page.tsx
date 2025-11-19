@@ -9,20 +9,21 @@ import { urlFor } from '@/sanity/config';
 import CheckoutModal from '@/components/CheckoutModal';
 import { CheckoutFormData } from '@/types/checkout';
 
-export default function CheckoutPage() {
+export default function CheckoutPage({ params }: { params: { locale: string } }) {
   const { cart, clearCart, syncPrices } = useCart();
   const t = useTranslations('checkout');
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const locale = params.locale;
 
   useEffect(() => {
     // Если корзина пуста, перенаправляем на главную
     if (cart.items.length === 0) {
-      router.push('/');
+      router.push(`/${locale}`);
     }
-  }, [cart.items.length, router]);
+  }, [cart.items.length, router, locale]);
 
   // Синхронизируем цены при загрузке страницы checkout
   useEffect(() => {
@@ -45,6 +46,7 @@ export default function CheckoutPage() {
         body: JSON.stringify({
           items: cart.items,
           formData,
+          locale,
         }),
       });
 
@@ -61,7 +63,7 @@ export default function CheckoutPage() {
       // Если наложенный платеж - перенаправляем на страницу благодарности
       else if (formData.paymentMethod === 'cash_on_delivery') {
         clearCart();
-        router.push('/checkout/success?cash=true');
+        router.push(`/${locale}/checkout/success?cash=true`);
       } else {
         throw new Error('Invalid payment method or missing checkout URL');
       }

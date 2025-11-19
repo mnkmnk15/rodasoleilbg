@@ -7,9 +7,10 @@ import { CheckoutFormData, DELIVERY_PRICES } from '@/types/checkout';
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const { items, formData } = body as {
+    const { items, formData, locale } = body as {
       items: any[];
       formData?: CheckoutFormData;
+      locale?: string;
     };
 
     if (!items || !Array.isArray(items) || items.length === 0) {
@@ -149,7 +150,7 @@ export async function POST(req: NextRequest) {
       };
     });
 
-    const session = await createCheckoutSession(lineItems, metadata, deliveryPrice);
+    const session = await createCheckoutSession(lineItems, metadata, deliveryPrice, locale || 'bg');
 
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (error: any) {
@@ -193,7 +194,7 @@ function formatOrderMessageWithDelivery(orderData: {
     notes,
   } = orderData;
 
-  let message = `<b>🎉 НОВА ПОРЪЧКА</b>\n\n`;
+  let message = `<b>НОВА ПОРЪЧКА</b>\n\n`;
 
   // Информация о клиенте
   message += `<b>👤 ДАННИ НА КЛИЕНТА:</b>\n`;

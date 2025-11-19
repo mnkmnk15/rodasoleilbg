@@ -22,7 +22,10 @@ export default function CheckoutSuccessPage() {
     if (session || isCashPayment) {
       setSessionId(session);
       // Очищаем корзину после успешной оплаты
-      clearCart();
+      // Используем setTimeout чтобы дать useCart время загрузиться
+      setTimeout(() => {
+        clearCart();
+      }, 0);
     } else {
       // Если нет session_id и не наложенный платеж, перенаправляем на главную
       router.push(`/${locale}`);

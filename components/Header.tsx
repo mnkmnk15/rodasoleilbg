@@ -353,10 +353,10 @@ export default function Header({ forceWhite = false }: HeaderProps) {
           </button>
 
           {/* Left Navigation - Desktop */}
-          <nav className="hidden lg:flex items-center space-x-8 xl:space-x-10 flex-1">
+          <nav className="hidden lg:flex items-center space-x-4 lg:space-x-5 xl:space-x-10 flex-1 max-w-[45%]">
             <a
               href={`/${locale}`}
-              className="hover:opacity-100 font-light cursor-pointer text-[15px] xl:text-[16px] tracking-[0.08em] py-2 uppercase whitespace-nowrap"
+              className="hover:opacity-100 font-light cursor-pointer text-[13px] lg:text-[14px] xl:text-[16px] tracking-[0.08em] py-2 uppercase whitespace-nowrap"
               style={{ fontWeight: 300, color: isInHero ? '#FFFFFF' : '#d06634', transition: 'all 0.3s linear' }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = isInHero ? 'rgba(208, 102, 52, 0.9)' : '#E89970';
@@ -371,7 +371,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
             </a>
             <a
               href={`/${locale}/catalog`}
-              className="hover:opacity-100 font-light cursor-pointer text-[15px] xl:text-[16px] tracking-[0.08em] py-2 uppercase whitespace-nowrap"
+              className="hover:opacity-100 font-light cursor-pointer text-[13px] lg:text-[14px] xl:text-[16px] tracking-[0.08em] py-2 uppercase whitespace-nowrap"
               style={{ fontWeight: 300, color: isInHero ? '#FFFFFF' : '#d06634', transition: 'all 0.3s linear' }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = isInHero ? 'rgba(208, 102, 52, 0.9)' : '#E89970';
@@ -386,7 +386,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
             </a>
             <a
               href={`/${locale}/about`}
-              className="hover:opacity-100 font-light cursor-pointer text-[15px] xl:text-[16px] tracking-[0.08em] py-2 uppercase whitespace-nowrap"
+              className="hover:opacity-100 font-light cursor-pointer text-[13px] lg:text-[14px] xl:text-[16px] tracking-[0.08em] py-2 uppercase whitespace-nowrap"
               style={{ fontWeight: 300, color: isInHero ? '#FFFFFF' : '#d06634', transition: 'all 0.3s linear' }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = isInHero ? 'rgba(208, 102, 52, 0.9)' : '#E89970';
@@ -401,7 +401,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
             </a>
             <a
               href={`/${locale}/contacts`}
-              className="hover:opacity-100 font-light cursor-pointer text-[15px] xl:text-[16px] tracking-[0.08em] py-2 uppercase whitespace-nowrap"
+              className="hover:opacity-100 font-light cursor-pointer text-[13px] lg:text-[14px] xl:text-[16px] tracking-[0.08em] py-2 uppercase whitespace-nowrap"
               style={{ fontWeight: 300, color: isInHero ? '#FFFFFF' : '#d06634', transition: 'all 0.3s linear' }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.color = isInHero ? 'rgba(208, 102, 52, 0.9)' : '#E89970';
@@ -467,12 +467,12 @@ export default function Header({ forceWhite = false }: HeaderProps) {
                 }
               }}
             >
-              <h1 className="text-[28px] sm:text-[32px] md:text-[40px] lg:text-[44px] leading-none font-cormorant" style={{ letterSpacing: '0.03em' }}>
+              <h1 className="text-[28px] sm:text-[32px] md:text-[36px] lg:text-[38px] xl:text-[44px] leading-none font-cormorant" style={{ letterSpacing: '0.03em' }}>
                 <span className="logo-roda font-semibold" style={{ fontWeight: 600, color: isInHero ? '#fff6e9' : '#d06634', transition: 'all 0.4s ease-out' }}>RODA</span>
-                <span className="logo-soleil font-light ml-1.5 md:ml-2.5" style={{ fontWeight: 300, color: isInHero ? '#fff6e9' : '#d06634', transition: 'all 0.4s ease-out' }}>Soleil</span>
+                <span className="logo-soleil font-light ml-1.5 md:ml-2" style={{ fontWeight: 300, color: isInHero ? '#fff6e9' : '#d06634', transition: 'all 0.4s ease-out' }}>Soleil</span>
               </h1>
               <span
-                className="logo-bulgaria text-[10px] sm:text-[11px] md:text-[13px] font-light uppercase font-raleway"
+                className="logo-bulgaria text-[10px] sm:text-[11px] md:text-[12px] lg:text-[12px] xl:text-[13px] font-light uppercase font-raleway"
                 style={{ letterSpacing: '0.38em', fontWeight: 300, color: isInHero ? 'rgba(255, 255, 255, 0.7)' : 'rgba(208, 102, 52, 0.6)', transition: 'all 0.4s ease-out' }}
               >
                 Bulgaria
@@ -481,12 +481,12 @@ export default function Header({ forceWhite = false }: HeaderProps) {
           </div>
 
           {/* Right Icons */}
-          <div className="flex items-center space-x-3 flex-1 justify-end">
+          <div className="flex items-center space-x-2 lg:space-x-2.5 xl:space-x-3 flex-1 justify-end max-w-[45%]">
             {/* Language Selector */}
             <div ref={langDropdownRefDesktop} className="relative" style={{ zIndex: 50 }}>
               <button
                 onClick={() => setIsLangOpen(!isLangOpen)}
-                className="flex items-center space-x-1.5 px-3 py-2 rounded-full transition-all cursor-pointer"
+                className="flex items-center space-x-1 lg:space-x-1.5 px-2 lg:px-2.5 xl:px-3 py-1.5 lg:py-2 rounded-full transition-all cursor-pointer"
                 style={{
                   background: 'rgba(229, 217, 207, 0.08)',
                   backdropFilter: 'blur(10px)',
@@ -505,8 +505,8 @@ export default function Header({ forceWhite = false }: HeaderProps) {
                 }}
                 aria-label="Select language"
               >
-                <Globe className="w-4 h-4" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
-                <span className="font-light text-[13px]" style={{ letterSpacing: '0.05em', color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }}>{currentLang?.name}</span>
+                <Globe className="w-3.5 lg:w-4 h-3.5 lg:h-4" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
+                <span className="font-light text-[12px] lg:text-[13px]" style={{ letterSpacing: '0.05em', color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }}>{currentLang?.name}</span>
               </button>
 
               <AnimatePresence>
@@ -566,7 +566,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
             {/* Search Icon */}
             <button
               onClick={() => setIsSearchOpen(true)}
-              className="p-2 rounded-full transition-all cursor-pointer"
+              className="p-1.5 lg:p-2 rounded-full transition-all cursor-pointer"
               style={{
                 background: 'rgba(229, 217, 207, 0.08)',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -583,13 +583,13 @@ export default function Header({ forceWhite = false }: HeaderProps) {
               }}
               aria-label="Search"
             >
-              <Search className="w-[18px] h-[18px]" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
+              <Search className="w-4 lg:w-[18px] h-4 lg:h-[18px]" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
             </button>
 
             {/* Cart Icon with Counter */}
             <button
               onClick={openCart}
-              className="p-2 rounded-full transition-all relative cursor-pointer"
+              className="p-1.5 lg:p-2 rounded-full transition-all relative cursor-pointer"
               style={{
                 background: 'rgba(229, 217, 207, 0.08)',
                 border: '1px solid rgba(255, 255, 255, 0.1)',
@@ -606,7 +606,7 @@ export default function Header({ forceWhite = false }: HeaderProps) {
               }}
               aria-label="Shopping Cart"
             >
-              <ShoppingCart className="w-[18px] h-[18px]" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
+              <ShoppingCart className="w-4 lg:w-[18px] h-4 lg:h-[18px]" style={{ color: isInHero ? '#FFFFFF' : '#d06634', transition: 'color 0.3s linear' }} />
               {cart.itemCount > 0 && (
                 <span
                   className="absolute -top-1 -right-1 text-white text-[10px] rounded-full w-[18px] h-[18px] flex items-center justify-center"
