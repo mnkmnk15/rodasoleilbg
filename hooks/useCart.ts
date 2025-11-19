@@ -57,9 +57,9 @@ export function useCart() {
       // Обновляем цены в корзине
       setCart((prev) => {
         let hasChanges = false;
-        const updatedItems = prev.items.map((item) => {
+        const updatedItems = prev.items.map((item): CartItem => {
           const newPrice = priceMap.get(item.id);
-          if (newPrice !== undefined && newPrice !== item.price) {
+          if (newPrice !== undefined && typeof newPrice === 'number' && newPrice !== item.price) {
             hasChanges = true;
             console.log(`Price updated for ${item.name}: ${item.price} → ${newPrice}`);
             return { ...item, price: newPrice };
