@@ -199,6 +199,7 @@ export default function CheckoutPage() {
       <CheckoutModal
         isOpen={showCheckoutModal}
         onClose={() => setShowCheckoutModal(false)}
+        cartItems={cart.items}
         cartTotal={cart.total}
         onSubmit={handleCheckoutSubmit}
         isLoading={isLoading}
