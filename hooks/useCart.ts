@@ -35,21 +35,30 @@ export function useCart() {
 
     setIsSyncing(true);
     try {
-      // Получаем текущее состояние корзины
-      const currentCart = cart;
-      if (currentCart.items.length === 0) {
+      // Получаем актуальное состояние корзины из setCart
+      let currentItems: CartItem[] = [];
+      setCart((prev) => {
+        currentItems = prev.items;
+        return prev;
+      });
+
+      if (currentItems.length === 0) {
         setIsSyncing(false);
         return;
       }
 
+      console.log('Syncing prices for', currentItems.length, 'items');
+
       // Получаем ID всех товаров в корзине
-      const productIds = [...new Set(currentCart.items.map(item => item.id))];
+      const productIds = [...new Set(currentItems.map(item => item.id))];
 
       // Запрашиваем актуальные цены из Sanity
       const products = await sanityClient.fetch(
         `*[_type == "product" && _id in $ids]{ _id, price }`,
         { ids: productIds }
       );
+
+      console.log('Received prices from Sanity:', products);
 
       // Создаем мапу ID -> цена
       const priceMap = new Map(products.map((p: any) => [p._id, p.price]));
@@ -91,7 +100,7 @@ export function useCart() {
     } finally {
       setIsSyncing(false);
     }
-  }, [cart, isSyncing]);
+  }, [isSyncing]);
 
   // Load cart from localStorage on mount
   useEffect(() => {
