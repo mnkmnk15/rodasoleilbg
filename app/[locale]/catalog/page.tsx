@@ -10,10 +10,12 @@ import ShopFilters from '@/components/ShopFilters';
 import { SanityProduct, SanityCategory } from '@/types/sanity';
 import { getAllProducts, getAllCategories } from '@/sanity/queries';
 import { Loader2 } from 'lucide-react';
+import { useCart } from '@/contexts/CartContext';
 
 export default function ShopPage() {
   const locale = useLocale() as 'bg' | 'ru' | 'en';
   const t = useTranslations('catalog');
+  const { syncPrices } = useCart();
   const [products, setProducts] = useState<SanityProduct[]>([]);
   const [categories, setCategories] = useState<SanityCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,6 +27,11 @@ export default function ShopPage() {
   const [sortBy, setSortBy] = useState('newest');
   const [showSaleOnly, setShowSaleOnly] = useState(false);
   const [showInStockOnly, setShowInStockOnly] = useState(false);
+
+  // Синхронизируем цены в корзине при открытии каталога
+  useEffect(() => {
+    syncPrices();
+  }, [syncPrices]);
 
   // Fetch products and categories
   useEffect(() => {

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { storage } from '@/lib/utils';
 import { sanityClient } from '@/sanity/config';
 
@@ -28,29 +28,36 @@ export function useCart() {
     itemCount: 0,
   });
   const [isSyncing, setIsSyncing] = useState(false);
+  const syncingRef = useRef(false);
 
   // Синхронизация цен с Sanity
   const syncPrices = useCallback(async () => {
-    if (isSyncing) return;
+    // Используем ref вместо state для проверки синхронизации
+    if (syncingRef.current) {
+      console.log('Sync already in progress, skipping');
+      return;
+    }
 
+    syncingRef.current = true;
     setIsSyncing(true);
     try {
-      // Получаем актуальное состояние корзины из setCart
-      let currentItems: CartItem[] = [];
-      setCart((prev) => {
-        currentItems = prev.items;
-        return prev;
+      // Получаем актуальное состояние корзины из localStorage
+      const savedCart = storage.get<Cart>('cart', {
+        items: [],
+        total: 0,
+        itemCount: 0,
       });
 
-      if (currentItems.length === 0) {
+      if (savedCart.items.length === 0) {
+        syncingRef.current = false;
         setIsSyncing(false);
         return;
       }
 
-      console.log('Syncing prices for', currentItems.length, 'items');
+      console.log('🔄 Syncing prices for', savedCart.items.length, 'items');
 
       // Получаем ID всех товаров в корзине
-      const productIds = [...new Set(currentItems.map(item => item.id))];
+      const productIds = [...new Set(savedCart.items.map(item => item.id))];
 
       // Запрашиваем актуальные цены из Sanity
       const products = await sanityClient.fetch(
@@ -58,56 +65,58 @@ export function useCart() {
         { ids: productIds }
       );
 
-      console.log('Received prices from Sanity:', products);
+      console.log('📦 Received prices from Sanity:', products);
 
       // Создаем мапу ID -> цена
       const priceMap = new Map(products.map((p: any) => [p._id, p.price]));
 
       // Обновляем цены в корзине
-      setCart((prev) => {
-        let hasChanges = false;
-        const updatedItems = prev.items.map((item): CartItem => {
-          const newPrice = priceMap.get(item.id);
-          if (newPrice !== undefined && typeof newPrice === 'number' && newPrice !== item.price) {
-            hasChanges = true;
-            console.log(`Price updated for ${item.name}: ${item.price} → ${newPrice}`);
-            return { ...item, price: newPrice };
-          }
-          return item;
-        });
-
-        // Если цены не изменились, не обновляем state
-        if (!hasChanges) {
-          console.log('No price changes detected');
-          return prev;
+      let hasChanges = false;
+      const updatedItems = savedCart.items.map((item): CartItem => {
+        const newPrice = priceMap.get(item.id);
+        if (newPrice !== undefined && typeof newPrice === 'number' && newPrice !== item.price) {
+          hasChanges = true;
+          console.log(`💰 Price updated for ${item.name}: ${item.price}€ → ${newPrice}€`);
+          return { ...item, price: newPrice };
         }
-
-        // Пересчитываем total и itemCount
-        const total = updatedItems.reduce(
-          (sum, i) => sum + i.price * i.quantity,
-          0
-        );
-        const itemCount = updatedItems.reduce((sum, i) => sum + i.quantity, 0);
-
-        const updatedCart = {
-          items: updatedItems,
-          total,
-          itemCount,
-        };
-
-        console.log('Cart prices synced, new total:', total);
-
-        // Явно сохраняем обновленную корзину в localStorage
-        storage.set('cart', updatedCart);
-
-        return updatedCart;
+        return item;
       });
+
+      // Если цены не изменились, не обновляем state
+      if (!hasChanges) {
+        console.log('✅ No price changes detected');
+        syncingRef.current = false;
+        setIsSyncing(false);
+        return;
+      }
+
+      // Пересчитываем total и itemCount
+      const total = updatedItems.reduce(
+        (sum, i) => sum + i.price * i.quantity,
+        0
+      );
+      const itemCount = updatedItems.reduce((sum, i) => sum + i.quantity, 0);
+
+      const updatedCart = {
+        items: updatedItems,
+        total,
+        itemCount,
+      };
+
+      console.log('✨ Cart prices synced, new total:', total.toFixed(2), '€');
+
+      // Сохраняем обновленную корзину в localStorage
+      storage.set('cart', updatedCart);
+
+      // Обновляем state
+      setCart(updatedCart);
     } catch (error) {
-      console.error('Error syncing cart prices:', error);
+      console.error('❌ Error syncing cart prices:', error);
     } finally {
+      syncingRef.current = false;
       setIsSyncing(false);
     }
-  }, [isSyncing]);
+  }, []);
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -118,12 +127,10 @@ export function useCart() {
     });
     setCart(savedCart);
 
-    // Если есть товары, запускаем синхронизацию цен
+    // Если есть товары, запускаем синхронизацию цен немедленно
     if (savedCart.items.length > 0) {
-      // Небольшая задержка, чтобы state успел обновиться
-      setTimeout(() => {
-        syncPrices();
-      }, 100);
+      console.log('🚀 Initial cart load, syncing prices...');
+      syncPrices();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []); // Запускаем только один раз при монтировании
@@ -223,5 +230,6 @@ export function useCart() {
     updateQuantity,
     clearCart,
     syncPrices,
+    isSyncing,
   };
 }

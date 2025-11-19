@@ -10,6 +10,7 @@ interface CartContextType {
   updateQuantity: (id: string, quantity: number, size?: string, color?: string) => void;
   clearCart: () => void;
   syncPrices: () => Promise<void>;
+  isSyncing: boolean;
   isCartOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
