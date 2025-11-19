@@ -1,14 +1,15 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '@/contexts/CartContext';
 import { useTranslations } from 'next-intl';
 import Image from 'next/image';
-import Link from 'next/link';
 import { useRouter } from '@/i18n/routing';
 import { urlFor } from '@/sanity/config';
+import CheckoutModal from './CheckoutModal';
+import { CheckoutFormData } from '@/types/checkout';
 
 interface CartSidebarProps {
   isOpen: boolean;
@@ -16,11 +17,14 @@ interface CartSidebarProps {
 }
 
 export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
-  const { cart, removeItem, updateQuantity } = useCart();
+  const { cart, removeItem, updateQuantity, clearCart } = useCart();
   const t = useTranslations('cart');
   const router = useRouter();
   const sidebarRef = useRef<HTMLDivElement>(null);
-  const [mounted, setMounted] = React.useState(false);
+  const [mounted, setMounted] = useState(false);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -63,6 +67,53 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
       style: 'currency',
       currency: 'EUR',
     }).format(price);
+  };
+
+  const handleCheckoutClick = () => {
+    onClose(); // Закрываем корзину
+    setShowCheckoutModal(true); // Открываем модалку оформления
+  };
+
+  const handleCheckoutSubmit = async (formData: CheckoutFormData) => {
+    try {
+      setIsLoading(true);
+      setError(null);
+
+      // Отправляем запрос на создание заказа с данными формы
+      const response = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          items: cart.items,
+          formData,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create checkout session');
+      }
+
+      // Если оплата картой - перенаправляем на Stripe
+      if (formData.paymentMethod === 'card' && data.url) {
+        window.location.href = data.url;
+      }
+      // Если наложенный платеж - перенаправляем на страницу благодарности
+      else if (formData.paymentMethod === 'cash_on_delivery') {
+        clearCart();
+        setShowCheckoutModal(false);
+        router.push('/checkout/success?cash=true');
+      } else {
+        throw new Error('Invalid payment method or missing checkout URL');
+      }
+    } catch (err: any) {
+      console.error('Checkout error:', err);
+      setError(err.message || 'An error occurred during checkout');
+      setIsLoading(false);
+    }
   };
 
   if (!mounted) return null;
@@ -256,11 +307,12 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                 </p>
 
                 {/* Checkout Button */}
-                <Link href="/checkout" onClick={onClose}>
-                  <button className="w-full py-4 bg-neutral-800 text-white rounded-lg font-semibold hover:bg-neutral-900 transition-colors">
-                    {t('checkout')}
-                  </button>
-                </Link>
+                <button
+                  onClick={handleCheckoutClick}
+                  className="w-full py-4 bg-neutral-800 text-white rounded-lg font-semibold hover:bg-neutral-900 transition-colors"
+                >
+                  {t('checkout')}
+                </button>
 
                 {/* Continue Shopping */}
                 <button
@@ -277,6 +329,16 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Checkout Modal */}
+      <CheckoutModal
+        isOpen={showCheckoutModal}
+        onClose={() => setShowCheckoutModal(false)}
+        cartItems={cart.items}
+        cartTotal={cart.total}
+        onSubmit={handleCheckoutSubmit}
+        isLoading={isLoading}
+      />
     </>
   );
 

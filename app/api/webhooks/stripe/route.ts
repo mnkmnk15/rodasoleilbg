@@ -40,14 +40,14 @@ export async function POST(req: NextRequest) {
         const session = event.data.object as Stripe.Checkout.Session;
 
         // Получаем детали заказа
-        const customerEmail = session.customer_details?.email ?? undefined;
-        const customerName = session.customer_details?.name ?? undefined;
-        const customerPhone = session.customer_details?.phone ?? undefined;
+        const customerEmail = session.customer_details?.email ?? session.metadata?.customerEmail ?? undefined;
+        const customerName = session.customer_details?.name
+          ?? (session.metadata?.customerFirstName && session.metadata?.customerLastName
+            ? `${session.metadata.customerFirstName} ${session.metadata.customerLastName}`
+            : undefined);
+        const customerPhone = session.customer_details?.phone ?? session.metadata?.customerPhone ?? undefined;
         const amount = session.amount_total || 0;
         const currency = session.currency ?? 'eur';
-
-        // Получаем адрес доставки через shipping_cost
-        const shippingAddress = (session as any).shipping_details?.address;
 
         // Парсим информацию о товарах из метаданных
         let items: Array<{
@@ -65,26 +65,67 @@ export async function POST(req: NextRequest) {
           }
         }
 
-        // Формируем сообщение для Telegram
-        const message = formatOrderMessage({
-          sessionId: session.id,
-          customerEmail,
-          customerName,
-          customerPhone,
-          amount,
-          currency,
-          items,
-          shippingAddress: shippingAddress
-            ? {
-                line1: shippingAddress.line1 || undefined,
-                line2: shippingAddress.line2 || undefined,
-                city: shippingAddress.city || undefined,
-                state: shippingAddress.state || undefined,
-                postal_code: shippingAddress.postal_code || undefined,
-                country: shippingAddress.country || undefined,
-              }
-            : undefined,
+        // Формируем расширенное сообщение для Telegram с данными доставки
+        let message = `<b>🎉 НОВА ПОРЪЧКА (Платена с карта)</b>\n\n`;
+
+        // Информация о клиенте
+        message += `<b>👤 ДАННИ НА КЛИЕНТА:</b>\n`;
+        if (customerName) message += `Име: ${customerName}\n`;
+        if (customerEmail) message += `Email: ${customerEmail}\n`;
+        if (customerPhone) message += `Телефон: ${customerPhone}\n`;
+
+        // Способ оплаты
+        message += `\n<b>💳 НАЧИН НА ПЛАЩАНЕ:</b>\n`;
+        message += `Кредитна/дебитна карта (платена)\n`;
+
+        // Доставка
+        message += `\n<b>🚚 ДОСТАВКА:</b>\n`;
+        const deliveryMethod = session.metadata?.deliveryMethod;
+        const deliveryPrice = session.metadata?.deliveryPrice;
+
+        if (deliveryMethod === 'econt_office') {
+          message += `Тип: До офис/автомат Еконт\n`;
+          if (session.metadata?.econtOfficeName) {
+            message += `Офис: ${session.metadata.econtOfficeName}\n`;
+          }
+          if (session.metadata?.econtOfficeCode) {
+            message += `Код офис: ${session.metadata.econtOfficeCode}\n`;
+          }
+        } else if (deliveryMethod === 'econt_address') {
+          message += `Тип: До адрес\n`;
+          if (session.metadata?.city) {
+            message += `Град: ${session.metadata.city}\n`;
+          }
+          if (session.metadata?.postalCode) {
+            message += `Пощенски код: ${session.metadata.postalCode}\n`;
+          }
+          if (session.metadata?.address) {
+            message += `Адрес: ${session.metadata.address}\n`;
+          }
+        }
+
+        if (deliveryPrice) {
+          message += `Цена на доставка: €${deliveryPrice}\n`;
+        }
+
+        // Товары
+        message += `\n<b>📦 ПОРЪЧАНИ ПРОДУКТИ:</b>\n`;
+        items.forEach((item, index) => {
+          message += `\n${index + 1}. ${item.name}\n`;
+          message += `   Количество: ${item.quantity} бр.\n`;
+          if (item.size) message += `   Размер: ${item.size}\n`;
+          if (item.color) message += `   Цвят: ${item.color}\n`;
         });
+
+        // Примечания
+        if (session.metadata?.notes) {
+          message += `\n<b>📝 БЕЛЕЖКИ:</b>\n${session.metadata.notes}\n`;
+        }
+
+        // Сумма заказа
+        const total = (amount / 100).toFixed(2);
+        message += `\n<b>💰 ОБЩА СУМА: €${total}</b>\n`;
+        message += `\n<i>Session ID: ${session.id}</i>`;
 
         // Отправляем уведомление в Telegram
         console.log('📤 Sending Telegram notification...');

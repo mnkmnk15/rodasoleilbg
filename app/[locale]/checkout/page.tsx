@@ -6,6 +6,8 @@ import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import { urlFor } from '@/sanity/config';
+import CheckoutModal from '@/components/CheckoutModal';
+import { CheckoutFormData } from '@/types/checkout';
 
 export default function CheckoutPage() {
   const { cart, clearCart, syncPrices } = useCart();
@@ -13,6 +15,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showCheckoutModal, setShowCheckoutModal] = useState(false);
 
   useEffect(() => {
     // Если корзина пуста, перенаправляем на главную
@@ -28,12 +31,12 @@ export default function CheckoutPage() {
     }
   }, [cart.items.length, syncPrices]);
 
-  const handleCheckout = async () => {
+  const handleCheckoutSubmit = async (formData: CheckoutFormData) => {
     try {
       setIsLoading(true);
       setError(null);
 
-      // Отправляем запрос на создание сессии оформления заказа
+      // Отправляем запрос на создание заказа с данными формы
       const response = await fetch('/api/checkout', {
         method: 'POST',
         headers: {
@@ -41,6 +44,7 @@ export default function CheckoutPage() {
         },
         body: JSON.stringify({
           items: cart.items,
+          formData,
         }),
       });
 
@@ -50,17 +54,20 @@ export default function CheckoutPage() {
         throw new Error(data.error || 'Failed to create checkout session');
       }
 
-      // Перенаправляем на Stripe Checkout
-      if (data.url) {
-        // Используем URL напрямую (современный подход)
+      // Если оплата картой - перенаправляем на Stripe
+      if (formData.paymentMethod === 'card' && data.url) {
         window.location.href = data.url;
+      }
+      // Если наложенный платеж - перенаправляем на страницу благодарности
+      else if (formData.paymentMethod === 'cash_on_delivery') {
+        clearCart();
+        router.push('/checkout/success?cash=true');
       } else {
-        throw new Error('Checkout URL not received');
+        throw new Error('Invalid payment method or missing checkout URL');
       }
     } catch (err: any) {
       console.error('Checkout error:', err);
       setError(err.message || 'An error occurred during checkout');
-    } finally {
       setIsLoading(false);
     }
   };
@@ -173,22 +180,29 @@ export default function CheckoutPage() {
 
         {/* Checkout Button */}
         <button
-          onClick={handleCheckout}
+          onClick={() => setShowCheckoutModal(true)}
           disabled={isLoading}
           className="w-full py-4 bg-neutral-800 text-white rounded-lg font-semibold hover:bg-neutral-900 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
-          {isLoading
-            ? t('processing') || 'Обработка...'
-            : t('proceedToPayment') || 'Перейти к оплате'}
+          {t('proceedToCheckout') || 'Продължи към поръчка'}
         </button>
 
         {/* Security Info */}
         <div className="mt-6 text-center text-sm text-gray-600">
           <p>
-            🔒 {t('securePayment') || 'Безопасная оплата через Stripe'}
+            🔒 {t('securePayment') || 'Безопасна оплата'}
           </p>
         </div>
       </div>
+
+      {/* Checkout Modal */}
+      <CheckoutModal
+        isOpen={showCheckoutModal}
+        onClose={() => setShowCheckoutModal(false)}
+        cartTotal={cart.total}
+        onSubmit={handleCheckoutSubmit}
+        isLoading={isLoading}
+      />
     </div>
   );
 }

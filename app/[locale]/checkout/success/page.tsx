@@ -13,16 +13,18 @@ export default function CheckoutSuccessPage() {
   const t = useTranslations('checkout');
   const locale = useLocale();
   const [sessionId, setSessionId] = useState<string | null>(null);
+  const isCashPayment = searchParams.get('cash') === 'true';
 
   useEffect(() => {
     const session = searchParams.get('session_id');
+    const isCashPayment = searchParams.get('cash');
 
-    if (session) {
+    if (session || isCashPayment) {
       setSessionId(session);
       // Очищаем корзину после успешной оплаты
       clearCart();
     } else {
-      // Если нет session_id, перенаправляем на главную
+      // Если нет session_id и не наложенный платеж, перенаправляем на главную
       router.push(`/${locale}`);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -50,12 +52,16 @@ export default function CheckoutSuccessPage() {
 
         {/* Success Message */}
         <h1 className="text-2xl font-bold text-neutral-900 mb-4">
-          {t('successTitle') || 'Заказ оформлен успешно!'}
+          {isCashPayment
+            ? 'Поръчката е приета успешно!'
+            : t('successTitle') || 'Поръчката е завършена успешно!'}
         </h1>
 
         <p className="text-gray-600 mb-6">
-          {t('successMessage') ||
-            'Спасибо за ваш заказ! Мы отправили подтверждение на вашу электронную почту.'}
+          {isCashPayment
+            ? 'Благодарим ви за поръчката! Ще получите потвърждение на вашия имейл. Плащането ще се извърши при получаване на пратката.'
+            : t('successMessage') ||
+              'Благодарим ви за поръчката! Изпратихме потвърждение на вашия имейл.'}
         </p>
 
         {sessionId && (
