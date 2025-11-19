@@ -8,7 +8,7 @@ import Image from 'next/image';
 import { urlFor } from '@/sanity/config';
 
 export default function CheckoutPage() {
-  const { cart, clearCart } = useCart();
+  const { cart, clearCart, syncPrices } = useCart();
   const t = useTranslations('checkout');
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
@@ -20,6 +20,13 @@ export default function CheckoutPage() {
       router.push('/');
     }
   }, [cart.items.length, router]);
+
+  // Синхронизируем цены при загрузке страницы checkout
+  useEffect(() => {
+    if (cart.items.length > 0) {
+      syncPrices();
+    }
+  }, [cart.items.length, syncPrices]);
 
   const handleCheckout = async () => {
     try {

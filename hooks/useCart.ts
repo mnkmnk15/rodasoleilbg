@@ -82,18 +82,25 @@ export function useCart() {
           return prev;
         }
 
-        // Пересчитываем total
+        // Пересчитываем total и itemCount
         const total = updatedItems.reduce(
           (sum, i) => sum + i.price * i.quantity,
           0
         );
+        const itemCount = updatedItems.reduce((sum, i) => sum + i.quantity, 0);
 
-        console.log('Cart prices synced, new total:', total);
-        return {
-          ...prev,
+        const updatedCart = {
           items: updatedItems,
           total,
+          itemCount,
         };
+
+        console.log('Cart prices synced, new total:', total);
+
+        // Явно сохраняем обновленную корзину в localStorage
+        storage.set('cart', updatedCart);
+
+        return updatedCart;
       });
     } catch (error) {
       console.error('Error syncing cart prices:', error);
