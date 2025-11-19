@@ -9,6 +9,7 @@ interface CartContextType {
   removeItem: (id: string, size?: string, color?: string) => void;
   updateQuantity: (id: string, quantity: number, size?: string, color?: string) => void;
   clearCart: () => void;
+  syncPrices: () => Promise<void>;
   isCartOpen: boolean;
   openCart: () => void;
   closeCart: () => void;
@@ -20,9 +21,11 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const cartHook = useCartHook();
   const [isCartOpen, setIsCartOpen] = useState(false);
 
-  const openCart = useCallback(() => {
+  const openCart = useCallback(async () => {
+    // Синхронизируем цены при открытии корзины
+    await cartHook.syncPrices();
     setIsCartOpen(true);
-  }, []);
+  }, [cartHook]);
 
   const closeCart = useCallback(() => {
     setIsCartOpen(false);

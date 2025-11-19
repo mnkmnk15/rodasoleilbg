@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { storage } from '@/lib/utils';
+import { sanityClient } from '@/sanity/config';
 
 export interface CartItem {
   id: string;
@@ -26,6 +27,68 @@ export function useCart() {
     total: 0,
     itemCount: 0,
   });
+  const [isSyncing, setIsSyncing] = useState(false);
+
+  // Синхронизация цен с Sanity
+  const syncPrices = useCallback(async () => {
+    setCart((currentCart) => {
+      if (currentCart.items.length === 0) return currentCart;
+
+      // Запускаем асинхронную синхронизацию
+      (async () => {
+        if (isSyncing) return;
+        setIsSyncing(true);
+
+        try {
+          // Получаем ID всех товаров в корзине
+          const productIds = [...new Set(currentCart.items.map(item => item.id))];
+
+          // Запрашиваем актуальные цены из Sanity
+          const products = await sanityClient.fetch(
+            `*[_type == "product" && _id in $ids]{ _id, price }`,
+            { ids: productIds }
+          );
+
+          // Создаем мапу ID -> цена
+          const priceMap = new Map(products.map((p: any) => [p._id, p.price]));
+
+          // Обновляем цены в корзине
+          setCart((prev) => {
+            let hasChanges = false;
+            const updatedItems = prev.items.map((item) => {
+              const newPrice = priceMap.get(item.id);
+              if (newPrice !== undefined && newPrice !== item.price) {
+                hasChanges = true;
+                return { ...item, price: newPrice };
+              }
+              return item;
+            });
+
+            // Если цены не изменились, не обновляем state
+            if (!hasChanges) return prev;
+
+            // Пересчитываем total
+            const total = updatedItems.reduce(
+              (sum, i) => sum + i.price * i.quantity,
+              0
+            );
+
+            return {
+              ...prev,
+              items: updatedItems,
+              total,
+            };
+          });
+        } catch (error) {
+          console.error('Error syncing cart prices:', error);
+        } finally {
+          setIsSyncing(false);
+        }
+      })();
+
+      return currentCart;
+    });
+  }, [isSyncing]);
 
   // Load cart from localStorage on mount
   useEffect(() => {
@@ -35,7 +98,16 @@ export function useCart() {
       itemCount: 0,
     });
     setCart(savedCart);
-  }, []);
+
+    // Если есть товары, запускаем синхронизацию цен
+    if (savedCart.items.length > 0) {
+      // Небольшая задержка, чтобы state успел обновиться
+      setTimeout(() => {
+        syncPrices();
+      }, 100);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Запускаем только один раз при монтировании
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
@@ -131,5 +203,6 @@ export function useCart() {
     removeItem,
     updateQuantity,
     clearCart,
+    syncPrices,
   };
 }
