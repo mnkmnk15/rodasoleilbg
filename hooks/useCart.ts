@@ -31,64 +31,67 @@ export function useCart() {
 
   // Синхронизация цен с Sanity
   const syncPrices = useCallback(async () => {
-    setCart((currentCart) => {
-      if (currentCart.items.length === 0) return currentCart;
+    if (isSyncing) return;
 
-      // Запускаем асинхронную синхронизацию
-      (async () => {
-        if (isSyncing) return;
-        setIsSyncing(true);
+    setIsSyncing(true);
+    try {
+      // Получаем текущее состояние корзины
+      const currentCart = cart;
+      if (currentCart.items.length === 0) {
+        setIsSyncing(false);
+        return;
+      }
 
-        try {
-          // Получаем ID всех товаров в корзине
-          const productIds = [...new Set(currentCart.items.map(item => item.id))];
+      // Получаем ID всех товаров в корзине
+      const productIds = [...new Set(currentCart.items.map(item => item.id))];
 
-          // Запрашиваем актуальные цены из Sanity
-          const products = await sanityClient.fetch(
-            `*[_type == "product" && _id in $ids]{ _id, price }`,
-            { ids: productIds }
-          );
+      // Запрашиваем актуальные цены из Sanity
+      const products = await sanityClient.fetch(
+        `*[_type == "product" && _id in $ids]{ _id, price }`,
+        { ids: productIds }
+      );
 
-          // Создаем мапу ID -> цена
-          const priceMap = new Map(products.map((p: any) => [p._id, p.price]));
+      // Создаем мапу ID -> цена
+      const priceMap = new Map(products.map((p: any) => [p._id, p.price]));
 
-          // Обновляем цены в корзине
-          setCart((prev) => {
-            let hasChanges = false;
-            const updatedItems = prev.items.map((item) => {
-              const newPrice = priceMap.get(item.id);
-              if (newPrice !== undefined && newPrice !== item.price) {
-                hasChanges = true;
-                return { ...item, price: newPrice };
-              }
-              return item;
-            });
+      // Обновляем цены в корзине
+      setCart((prev) => {
+        let hasChanges = false;
+        const updatedItems = prev.items.map((item) => {
+          const newPrice = priceMap.get(item.id);
+          if (newPrice !== undefined && newPrice !== item.price) {
+            hasChanges = true;
+            console.log(`Price updated for ${item.name}: ${item.price} → ${newPrice}`);
+            return { ...item, price: newPrice };
+          }
+          return item;
+        });
 
-            // Если цены не изменились, не обновляем state
-            if (!hasChanges) return prev;
-
-            // Пересчитываем total
-            const total = updatedItems.reduce(
-              (sum, i) => sum + i.price * i.quantity,
-              0
-            );
-
-            return {
-              ...prev,
-              items: updatedItems,
-              total,
-            };
-          });
-        } catch (error) {
-          console.error('Error syncing cart prices:', error);
-        } finally {
-          setIsSyncing(false);
+        // Если цены не изменились, не обновляем state
+        if (!hasChanges) {
+          console.log('No price changes detected');
+          return prev;
         }
-      })();
 
-      return currentCart;
-    });
-  }, [isSyncing]);
+        // Пересчитываем total
+        const total = updatedItems.reduce(
+          (sum, i) => sum + i.price * i.quantity,
+          0
+        );
+
+        console.log('Cart prices synced, new total:', total);
+        return {
+          ...prev,
+          items: updatedItems,
+          total,
+        };
+      });
+    } catch (error) {
+      console.error('Error syncing cart prices:', error);
+    } finally {
+      setIsSyncing(false);
+    }
+  }, [cart, isSyncing]);
 
   // Load cart from localStorage on mount
   useEffect(() => {
