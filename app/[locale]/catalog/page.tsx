@@ -117,7 +117,7 @@ export default function ShopPage() {
       <section
         className="relative w-full pt-24 pb-20 md:pt-28 md:pb-24 lg:pt-32 lg:pb-32 bg-cover bg-center"
         style={{
-          backgroundImage: 'url(/images/catalogPage/backgroundHero.jpg)',
+          backgroundImage: 'url(/images/catalogPage/backgroundHero.webp)',
         }}
       >
         {/* Dark Overlay */}
