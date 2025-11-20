@@ -10,7 +10,17 @@ export interface SanityProduct {
   slug: {
     current: string;
   };
-  description: {
+  shortDescription?: {
+    bg: string;
+    ru: string;
+    en: string;
+  };
+  fullDescription?: {
+    bg: string;
+    ru: string;
+    en: string;
+  };
+  description?: { // Legacy field
     bg: string;
     ru: string;
     en: string;

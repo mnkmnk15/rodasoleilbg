@@ -10,6 +10,8 @@ export async function getAllProducts() {
     _id,
     name,
     slug,
+    shortDescription,
+    fullDescription,
     description,
     "images": images[].asset->url,
     price,
@@ -54,6 +56,8 @@ export async function getProductBySlug(slug: string) {
     _id,
     name,
     slug,
+    shortDescription,
+    fullDescription,
     description,
     "images": images[].asset->url,
     price,
@@ -130,6 +134,12 @@ export async function searchProducts(searchTerm: string) {
     name.bg match $searchTerm ||
     name.ru match $searchTerm ||
     name.en match $searchTerm ||
+    shortDescription.bg match $searchTerm ||
+    shortDescription.ru match $searchTerm ||
+    shortDescription.en match $searchTerm ||
+    fullDescription.bg match $searchTerm ||
+    fullDescription.ru match $searchTerm ||
+    fullDescription.en match $searchTerm ||
     description.bg match $searchTerm ||
     description.ru match $searchTerm ||
     description.en match $searchTerm

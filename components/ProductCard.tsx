@@ -77,24 +77,33 @@ export default function ProductCard({ product }: ProductCardProps) {
         }}
       >
         <div className="relative aspect-[3/4] overflow-hidden bg-neutral-100 rounded-lg">
-          {/* Badges */}
-          <div className="absolute top-3 left-3 z-10 flex flex-col gap-2">
-            {product.newArrival && (
-              <span className="px-3 py-1 bg-black text-white text-xs font-medium uppercase tracking-wider">
-                New
+          {/* Top Badges */}
+          <div className="absolute top-2 left-2 md:top-3 md:left-3 z-10 flex flex-col gap-1.5 md:gap-2">
+            {product.bestseller && (
+              <span className="px-2 py-0.5 md:px-3 md:py-1 bg-black text-white text-[10px] md:text-xs font-medium uppercase tracking-tight md:tracking-wider">
+                {locale === 'bg' ? 'Бестселър' : locale === 'ru' ? 'Бестселлер' : 'Bestseller'}
               </span>
             )}
-            {isOnSale && (
-              <span className="px-3 py-1 bg-red-600 text-white text-xs font-medium uppercase tracking-wider">
-                -{discount}%
+            {product.newArrival && !product.bestseller && (
+              <span className="px-2.5 py-0.5 md:px-3 md:py-1 bg-black text-white text-[11px] md:text-xs font-medium uppercase tracking-wider">
+                {locale === 'bg' ? 'Ново' : locale === 'ru' ? 'Новое' : 'New'}
               </span>
             )}
             {!product.inStock && (
-              <span className="px-3 py-1 bg-gray-400 text-white text-xs font-medium uppercase tracking-wider">
+              <span className="px-2 py-0.5 md:px-3 md:py-1 bg-gray-400 text-white text-[9px] md:text-xs font-medium uppercase tracking-tight md:tracking-wider">
                 {locale === 'bg' ? 'Изчерпано' : locale === 'ru' ? 'Нет в наличии' : 'Out of Stock'}
               </span>
             )}
           </div>
+
+          {/* Bottom Badge - Sale */}
+          {isOnSale && (
+            <div className="absolute bottom-2 left-2 md:bottom-3 md:left-3 z-10">
+              <span className="px-3 py-1 md:px-3 md:py-1 bg-red-600 text-white text-xs md:text-xs font-medium uppercase tracking-wider">
+                -{discount}%
+              </span>
+            </div>
+          )}
 
           {/* Quick Actions - только на десктопе */}
           {!isMobile && (

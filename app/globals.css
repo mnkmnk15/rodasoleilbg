@@ -295,3 +295,27 @@ video::-moz-media-controls {
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
 }
+
+/* Catalog hero background positioning - показываем головы моделей на десктопе */
+.catalog-hero-bg {
+  background-position: center center;
+  background-size: cover;
+}
+
+@media (min-width: 768px) {
+  .catalog-hero-bg {
+    background-position: center top;
+  }
+}
+
+@media (min-width: 1024px) {
+  .catalog-hero-bg {
+    background-position: 50% -80px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .catalog-hero-bg {
+    background-position: 50% -90px;
+  }
+}

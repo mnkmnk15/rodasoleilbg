@@ -98,7 +98,7 @@ function ProductCard({ product, index }: ProductCardProps) {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute top-5 left-5 px-3 py-1.5 text-[11px] font-medium uppercase tracking-[0.15em]"
+            className="absolute top-3 left-3 md:top-5 md:left-5 px-2.5 py-1 md:px-3 md:py-1.5 text-[11px] md:text-[11px] font-medium uppercase tracking-[0.15em]"
             style={{
               background: 'rgba(255, 255, 255, 0.95)',
               color: '#1a1a1a',
@@ -116,11 +116,11 @@ function ProductCard({ product, index }: ProductCardProps) {
           <motion.div
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="absolute bottom-2 left-2 md:bottom-auto md:top-3 md:left-3 px-3 py-1.5 text-[10px] md:text-xs font-medium uppercase tracking-[0.12em] z-20 rounded-sm"
+            className="absolute top-3 left-3 md:top-5 md:left-5 px-2 py-0.5 md:px-3 md:py-1.5 text-[10px] md:text-[12px] font-medium uppercase z-20"
             style={{
               background: '#1a1a1a',
               color: '#ffffff',
-              letterSpacing: '0.12em'
+              letterSpacing: '0.05em'
             }}
           >
             {t('bestseller')}
@@ -203,9 +203,9 @@ function ProductCard({ product, index }: ProductCardProps) {
         >
           {product.name[locale] || product.name.en}
         </h3>
-        {product.description && (
-          <p className="text-sm sm:text-[15px] md:text-base font-normal text-[#666666] font-raleway">
-            {product.description[locale] || product.description.en}
+        {(product.shortDescription || product.description) && (
+          <p className="text-sm sm:text-[15px] md:text-base font-normal text-[#666666] font-raleway line-clamp-2">
+            {product.shortDescription?.[locale] || product.shortDescription?.en || product.description?.[locale] || product.description?.en}
           </p>
         )}
         <div className="flex items-center gap-2 pt-0.5 md:pt-1">

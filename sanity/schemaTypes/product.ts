@@ -27,14 +27,53 @@ export default defineType({
       validation: (Rule) => Rule.required(),
     }),
     defineField({
-      name: 'description',
-      title: 'Description',
+      name: 'shortDescription',
+      title: 'Short Description',
       type: 'object',
+      description: 'Brief description for product cards (1-2 sentences)',
+      fields: [
+        {
+          name: 'bg',
+          title: 'Bulgarian',
+          type: 'string',
+          validation: (Rule) => Rule.max(150)
+        },
+        {
+          name: 'ru',
+          title: 'Russian',
+          type: 'string',
+          validation: (Rule) => Rule.max(150)
+        },
+        {
+          name: 'en',
+          title: 'English',
+          type: 'string',
+          validation: (Rule) => Rule.max(150)
+        },
+      ],
+    }),
+    defineField({
+      name: 'fullDescription',
+      title: 'Full Description',
+      type: 'object',
+      description: 'Detailed description for product page',
       fields: [
         { name: 'bg', title: 'Bulgarian', type: 'text' },
         { name: 'ru', title: 'Russian', type: 'text' },
         { name: 'en', title: 'English', type: 'text' },
       ],
+    }),
+    defineField({
+      name: 'description',
+      title: 'Description (Legacy)',
+      type: 'object',
+      description: 'Legacy field - use Short Description and Full Description instead',
+      fields: [
+        { name: 'bg', title: 'Bulgarian', type: 'text' },
+        { name: 'ru', title: 'Russian', type: 'text' },
+        { name: 'en', title: 'English', type: 'text' },
+      ],
+      hidden: true,
     }),
     defineField({
       name: 'images',

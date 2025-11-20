@@ -115,7 +115,7 @@ export default function ShopPage() {
 
       {/* Hero Section with Background */}
       <section
-        className="relative w-full pt-24 pb-20 md:pt-28 md:pb-24 lg:pt-32 lg:pb-32 bg-cover bg-center"
+        className="relative w-full pt-24 pb-20 md:pt-28 md:pb-24 lg:pt-32 lg:pb-32 bg-cover catalog-hero-bg"
         style={{
           backgroundImage: 'url(/images/catalogPage/backgroundHero.webp)',
         }}

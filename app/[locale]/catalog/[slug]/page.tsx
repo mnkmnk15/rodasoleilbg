@@ -103,7 +103,7 @@ export default function ProductPage() {
   }
 
   const productName = product.name[locale];
-  const productDescription = product.description[locale];
+  const productDescription = product.fullDescription?.[locale] || product.fullDescription?.en || product.description?.[locale] || product.description?.en;
   const isOnSale = product.compareAtPrice && product.compareAtPrice > product.price;
   const discount = isOnSale && product.compareAtPrice
     ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
