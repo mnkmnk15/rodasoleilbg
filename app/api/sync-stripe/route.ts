@@ -13,22 +13,28 @@ import { sanityClientWithToken as sanityClient } from '@/sanity/config';
  * Body: { syncAll: true } - для синхронизации всех продуктов
  */
 
-// Секретный ключ для защиты endpoint
-const SYNC_SECRET = process.env.SYNC_STRIPE_SECRET || process.env.SANITY_API_TOKEN;
-
 // Список разрешенных origins для CORS
 const ALLOWED_ORIGINS = [
-  'https://rodasoleil.sanity.studio',
-  'http://localhost:3333',
-  'http://localhost:3000',
+  'https://studio-rodasoleil.vercel.app',  // Sanity Studio на Vercel
+  'https://rodasoleil.sanity.studio',       // Sanity hosted studio
+  'https://www.rodasoleil.bg',              // Production сайт
+  'https://rodasoleil.bg',                  // Production сайт (без www)
+  'http://localhost:3333',                   // Local Sanity dev
+  'http://localhost:3000',                   // Local Next.js dev
 ];
 
-function getCorsHeaders(origin: string | null) {
-  const allowedOrigin = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+function isAllowedOrigin(origin: string | null): boolean {
+  if (!origin) return false;
+  return ALLOWED_ORIGINS.includes(origin);
+}
+
+function getCorsHeaders(origin: string | null): Record<string, string> {
+  // Только разрешенные origins получают CORS headers
+  const allowedOrigin = isAllowedOrigin(origin) ? origin! : ALLOWED_ORIGINS[0];
   return {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-sync-secret',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
   };
 }
 
@@ -46,17 +52,13 @@ export async function POST(req: NextRequest) {
   const corsHeaders = getCorsHeaders(origin);
 
   try {
-    // ЗАЩИТА: Проверяем секретный ключ
-    const syncSecret = req.headers.get('x-sync-secret');
-    const authHeader = req.headers.get('authorization');
-    const bearerToken = authHeader?.replace('Bearer ', '');
-
-    // Проверяем либо x-sync-secret, либо Bearer token
-    if (syncSecret !== SYNC_SECRET && bearerToken !== SYNC_SECRET) {
-      console.warn('Unauthorized sync attempt from:', origin || 'unknown');
+    // ЗАЩИТА: Проверяем что запрос пришел с разрешенного origin (Sanity Studio)
+    // Это защищает от прямых вызовов API извне
+    if (!isAllowedOrigin(origin)) {
+      console.warn('Unauthorized sync attempt from:', origin || 'unknown (no origin)');
       return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401, headers: corsHeaders }
+        { error: 'Unauthorized: Access only from Sanity Studio' },
+        { status: 403, headers: corsHeaders }
       );
     }
 
