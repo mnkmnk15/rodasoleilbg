@@ -6,6 +6,8 @@ import { Cormorant_Garamond, Raleway, Playfair_Display, Montserrat } from 'next/
 import { CartProvider } from '@/contexts/CartContext';
 import { WishlistProvider } from '@/contexts/WishlistContext';
 import StructuredData from '@/components/StructuredData';
+import { Analytics } from '@vercel/analytics/next';
+import { SpeedInsights } from '@vercel/speed-insights/next';
 import '../globals.css';
 
 const cormorant = Cormorant_Garamond({
@@ -70,6 +72,8 @@ export default async function LocaleLayout({
             </WishlistProvider>
           </CartProvider>
         </NextIntlClientProvider>
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

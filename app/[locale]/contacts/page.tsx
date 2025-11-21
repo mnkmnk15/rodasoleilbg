@@ -228,7 +228,7 @@ export default function ContactsPage() {
               }}
             >
               <img
-                src="/images/category-women.jpg"
+                src="/images/category-women.webp"
                 alt="Roda Soleil Swimwear"
                 className="w-full h-full object-cover"
               />

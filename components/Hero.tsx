@@ -102,7 +102,6 @@ export default function Hero() {
             playsInline
             preload="auto"
             className="w-full h-full object-cover"
-            poster="/images/hero-poster.jpg"
             style={{
               filter: 'brightness(0.7)',
               transform: 'translateZ(0)'
@@ -310,7 +309,6 @@ export default function Hero() {
           playsInline
           preload="auto"
           className="absolute inset-0 w-full h-full object-cover"
-          poster="/images/hero-poster.jpg"
           style={{
             filter: 'brightness(0.75)',
             pointerEvents: 'none'

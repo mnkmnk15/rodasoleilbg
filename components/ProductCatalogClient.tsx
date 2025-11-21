@@ -9,6 +9,7 @@ import { SanityProduct } from '@/types/sanity';
 import { urlFor } from '@/sanity/config';
 import { useCart } from '@/contexts/CartContext';
 import Link from 'next/link';
+import Image from 'next/image';
 
 interface ProductCatalogClientProps {
   products: SanityProduct[];
@@ -37,7 +38,7 @@ function ProductCard({ product, index }: ProductCardProps) {
   }, []);
 
   // Get product images
-  const frontImage = product.images && product.images[0] ? product.images[0] : '/images/placeholder.jpg';
+  const frontImage = product.images && product.images[0] ? product.images[0] : '/images/placeholder.webp';
   const backImage = product.images && product.images[1] ? product.images[1] : frontImage;
 
   const handleAddToCart = (e: React.MouseEvent) => {
@@ -74,23 +75,25 @@ function ProductCard({ product, index }: ProductCardProps) {
         }}
       >
         {/* Front Image */}
-        <motion.img
+        <Image
           src={frontImage}
           alt={product.name[locale] || product.name.en}
-          className="w-full h-full object-cover absolute inset-0"
-          initial={{ opacity: 1 }}
-          animate={{ opacity: isHovered ? 0 : 1 }}
-          transition={{ duration: 0.5, ease: 'easeInOut' }}
+          fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+          className="object-cover absolute inset-0 transition-opacity duration-500 ease-in-out"
+          style={{ opacity: isHovered ? 0 : 1 }}
+          priority={false}
         />
 
         {/* Back Image */}
-        <motion.img
+        <Image
           src={backImage}
           alt={`${product.name[locale] || product.name.en} - back`}
-          className="w-full h-full object-cover absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isHovered ? 1 : 0 }}
-          transition={{ duration: 0.5, ease: 'easeInOut' }}
+          fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+          className="object-cover absolute inset-0 transition-opacity duration-500 ease-in-out"
+          style={{ opacity: isHovered ? 1 : 0 }}
+          loading="lazy"
         />
 
         {/* New Badge */}

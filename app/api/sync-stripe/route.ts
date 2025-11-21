@@ -4,34 +4,69 @@ import { sanityClientWithToken as sanityClient } from '@/sanity/config';
 
 /**
  * API endpoint для синхронизации продуктов из Sanity со Stripe
+ * ЗАЩИЩЕН секретным ключом - доступ только из Sanity Studio
  *
  * Использование:
  * POST /api/sync-stripe
+ * Headers: { "x-sync-secret": "YOUR_SYNC_SECRET" }
  * Body: { productId: "product-id" } - для синхронизации конкретного продукта
  * Body: { syncAll: true } - для синхронизации всех продуктов
  */
 
-// CORS headers
+// Секретный ключ для защиты endpoint
+const SYNC_SECRET = process.env.SYNC_STRIPE_SECRET || process.env.SANITY_API_TOKEN;
+
+// Список разрешенных origins для CORS
+const ALLOWED_ORIGINS = [
+  'https://rodasoleil.sanity.studio',
+  'http://localhost:3333',
+  'http://localhost:3000',
+];
+
+function getCorsHeaders(origin: string | null) {
+  const allowedOrigin = origin && ALLOWED_ORIGINS.includes(origin) ? origin : ALLOWED_ORIGINS[0];
+  return {
+    'Access-Control-Allow-Origin': allowedOrigin,
+    'Access-Control-Allow-Methods': 'POST, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, x-sync-secret',
+  };
+}
+
+// CORS preflight
 export async function OPTIONS(req: NextRequest) {
+  const origin = req.headers.get('origin');
   return new NextResponse(null, {
     status: 200,
-    headers: {
-      'Access-Control-Allow-Origin': '*',
-      'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-    },
+    headers: getCorsHeaders(origin),
   });
 }
 
 export async function POST(req: NextRequest) {
+  const origin = req.headers.get('origin');
+  const corsHeaders = getCorsHeaders(origin);
+
   try {
+    // ЗАЩИТА: Проверяем секретный ключ
+    const syncSecret = req.headers.get('x-sync-secret');
+    const authHeader = req.headers.get('authorization');
+    const bearerToken = authHeader?.replace('Bearer ', '');
+
+    // Проверяем либо x-sync-secret, либо Bearer token
+    if (syncSecret !== SYNC_SECRET && bearerToken !== SYNC_SECRET) {
+      console.warn('Unauthorized sync attempt from:', origin || 'unknown');
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401, headers: corsHeaders }
+      );
+    }
+
     const body = await req.json();
     const { productId, syncAll } = body;
 
     if (!productId && !syncAll) {
       return NextResponse.json(
         { error: 'Either productId or syncAll must be provided' },
-        { status: 400 }
+        { status: 400, headers: corsHeaders }
       );
     }
 
@@ -118,26 +153,13 @@ export async function POST(req: NextRequest) {
         successful: results.filter((r) => r.success).length,
         failed: results.filter((r) => !r.success).length,
       },
-      {
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        },
-      }
+      { headers: corsHeaders }
     );
   } catch (error: any) {
     console.error('Sync error:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to sync products' },
-      {
-        status: 500,
-        headers: {
-          'Access-Control-Allow-Origin': '*',
-          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-        },
-      }
+      { status: 500, headers: corsHeaders }
     );
   }
 }

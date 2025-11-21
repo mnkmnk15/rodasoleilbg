@@ -212,7 +212,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                             className="object-cover"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
-                              target.src = '/images/placeholder.jpg';
+                              target.src = '/images/placeholder.webp';
                             }}
                           />
                         ) : (

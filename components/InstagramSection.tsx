@@ -8,10 +8,10 @@ import { useState } from 'react';
 import Image from 'next/image';
 
 const instagramImages = [
-  '/images/inst/inst1.jpg',
-  '/images/inst/inst2.jpg',
-  '/images/inst/inst3.jpg',
-  '/images/inst/inst4.jpg'
+  '/images/inst/inst1.webp',
+  '/images/inst/inst2.webp',
+  '/images/inst/inst3.webp',
+  '/images/inst/inst4.webp'
 ];
 
 export default function InstagramSection() {

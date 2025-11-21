@@ -18,19 +18,19 @@ export default function DualImageSection() {
   const categories = [
     {
       key: 'women',
-      image: '/images/category-women.jpg',
+      image: '/images/category-women.webp',
       href: `/${locale}/catalog?category=women`,
       objectPosition: 'center center'
     },
     {
       key: 'men',
-      image: '/images/category-men.jpg',
+      image: '/images/category-men.webp',
       href: `/${locale}/catalog?category=men`,
       objectPosition: 'center 5%'
     },
     {
       key: 'kids',
-      image: '/images/category-kids.jpg',
+      image: '/images/category-kids.webp',
       href: `/${locale}/catalog?category=kids`,
       objectPosition: 'center 0%'
     }

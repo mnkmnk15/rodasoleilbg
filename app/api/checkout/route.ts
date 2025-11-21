@@ -1,125 +1,152 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createCheckoutSession } from '@/lib/stripe';
 import { sanityClient } from '@/sanity/config';
-import { sendTelegramNotification, formatOrderMessage } from '@/lib/telegram';
-import { CheckoutFormData, DELIVERY_PRICES } from '@/types/checkout';
+import { sendTelegramNotification } from '@/lib/telegram';
+import { DELIVERY_PRICES } from '@/types/checkout';
+import { validateCartItems, validateCheckoutForm } from '@/lib/validation';
+import { checkRateLimit, getRequestIdentifier, RATE_LIMIT_CONFIGS, createRateLimitResponse } from '@/lib/rate-limit';
 
 export async function POST(req: NextRequest) {
+  // Rate limiting protection against abuse
+  const identifier = getRequestIdentifier(req);
+  const rateLimit = checkRateLimit(`checkout:${identifier}`, RATE_LIMIT_CONFIGS.checkout);
+
+  if (!rateLimit.allowed) {
+    console.warn(`[Checkout] Rate limit exceeded for: ${identifier}`);
+    return createRateLimitResponse(rateLimit.resetTime);
+  }
+
   try {
     const body = await req.json();
-    const { items, formData, locale } = body as {
-      items: any[];
-      formData?: CheckoutFormData;
-      locale?: string;
-    };
+    const { items, formData, locale } = body;
 
-    if (!items || !Array.isArray(items) || items.length === 0) {
+    // Validate cart items
+    const validatedItems = validateCartItems(items);
+    if (!validatedItems) {
       return NextResponse.json(
-        { error: 'Invalid items array' },
+        { error: 'Invalid items: must be a non-empty array with valid quantities (1-99)' },
         { status: 400 }
       );
     }
 
-    if (!formData) {
+    // Validate form data
+    const formValidation = validateCheckoutForm(formData);
+    if (!formValidation.valid || !formValidation.sanitizedData) {
       return NextResponse.json(
-        { error: 'Missing checkout form data' },
+        { error: `Validation failed: ${formValidation.errors.join(', ')}` },
         { status: 400 }
       );
     }
+
+    const sanitizedFormData = formValidation.sanitizedData;
 
     // Получаем информацию о продуктах из Sanity
-    const productIds = items.map((item: any) => item.id);
+    const productIds = validatedItems.map((item) => item.id);
     const products = await sanityClient.fetch(
       `*[_id in $ids]{ _id, name, price, stripeProductId, stripePriceId }`,
       { ids: productIds }
     );
 
-    // Вычисляем итоговую сумму
-    const itemsTotal = items.reduce((sum: number, item: any) => {
+    // Проверяем, что все продукты найдены
+    if (products.length !== productIds.length) {
+      return NextResponse.json(
+        { error: 'One or more products not found' },
+        { status: 400 }
+      );
+    }
+
+    // Вычисляем итоговую сумму используя цены из БД (не от клиента!)
+    const itemsTotal = validatedItems.reduce((sum: number, item) => {
       const product = products.find((p: any) => p._id === item.id);
       return sum + (product?.price || 0) * item.quantity;
     }, 0);
 
     const deliveryPrice =
-      DELIVERY_PRICES[formData.deliveryMethod as keyof typeof DELIVERY_PRICES];
+      DELIVERY_PRICES[sanitizedFormData.deliveryMethod as keyof typeof DELIVERY_PRICES];
     const grandTotal = itemsTotal + deliveryPrice;
 
     // Создаём метаданные с полной информацией о заказе
     const metadata = {
       // Личные данные
-      customerFirstName: formData.firstName,
-      customerLastName: formData.lastName,
-      customerEmail: formData.email,
-      customerPhone: formData.phone,
+      customerFirstName: sanitizedFormData.firstName,
+      customerLastName: sanitizedFormData.lastName,
+      customerEmail: sanitizedFormData.email,
+      customerPhone: sanitizedFormData.phone,
 
       // Способ оплаты
-      paymentMethod: formData.paymentMethod,
+      paymentMethod: sanitizedFormData.paymentMethod,
 
       // Доставка
-      deliveryMethod: formData.deliveryMethod,
+      deliveryMethod: sanitizedFormData.deliveryMethod,
       deliveryPrice: deliveryPrice.toString(),
 
       // Данные доставки
-      ...(formData.deliveryMethod === 'econt_office'
+      ...(sanitizedFormData.deliveryMethod === 'econt_office'
         ? {
-            econtOfficeId: formData.econtOfficeId?.toString() || '',
-            econtOfficeCode: formData.econtOfficeCode || '',
-            econtOfficeName: formData.econtOfficeName || '',
+            econtOfficeId: sanitizedFormData.econtOfficeId?.toString() || '',
+            econtOfficeCode: sanitizedFormData.econtOfficeCode || '',
+            econtOfficeName: sanitizedFormData.econtOfficeName || '',
           }
         : {
-            city: formData.city || '',
-            postalCode: formData.postalCode || '',
-            address: formData.address || '',
+            city: sanitizedFormData.city || '',
+            postalCode: sanitizedFormData.postalCode || '',
+            address: sanitizedFormData.address || '',
           }),
 
       // Примечания
-      notes: formData.notes || '',
+      notes: sanitizedFormData.notes || '',
 
-      // Товары
+      // Товары (используем данные из БД для названий и цен)
       orderItems: JSON.stringify(
-        items.map((item: any) => ({
-          id: item.id,
-          name: item.name,
-          quantity: item.quantity,
-          size: item.size,
-          color: item.color,
-          price: item.price,
-        }))
+        validatedItems.map((item) => {
+          const product = products.find((p: any) => p._id === item.id);
+          return {
+            id: item.id,
+            name: product?.name?.en || product?.name?.bg || item.name || 'Unknown',
+            quantity: item.quantity,
+            size: item.size,
+            color: item.color,
+            price: product?.price || 0,
+          };
+        })
       ),
     };
 
     // Если оплата наложенным платежом
-    if (formData.paymentMethod === 'cash_on_delivery') {
+    if (sanitizedFormData.paymentMethod === 'cash_on_delivery') {
       // Отправляем уведомление в Telegram
       const telegramMessage = formatOrderMessageWithDelivery({
-        customerName: `${formData.firstName} ${formData.lastName}`,
-        customerEmail: formData.email,
-        customerPhone: formData.phone,
+        customerName: `${sanitizedFormData.firstName} ${sanitizedFormData.lastName}`,
+        customerEmail: sanitizedFormData.email,
+        customerPhone: sanitizedFormData.phone,
         amount: grandTotal * 100, // в центах для совместимости
         currency: 'EUR',
-        items: items.map((item: any) => ({
-          name: item.name,
-          quantity: item.quantity,
-          size: item.size,
-          color: item.color,
-        })),
+        items: validatedItems.map((item) => {
+          const product = products.find((p: any) => p._id === item.id);
+          return {
+            name: product?.name?.en || product?.name?.bg || item.name || 'Unknown',
+            quantity: item.quantity,
+            size: item.size,
+            color: item.color,
+          };
+        }),
         paymentMethod: 'Наложен платеж',
-        deliveryMethod: formData.deliveryMethod,
+        deliveryMethod: sanitizedFormData.deliveryMethod,
         deliveryPrice,
         deliveryDetails:
-          formData.deliveryMethod === 'econt_office'
+          sanitizedFormData.deliveryMethod === 'econt_office'
             ? {
                 type: 'office',
-                officeName: formData.econtOfficeName,
-                city: formData.city,
+                officeName: sanitizedFormData.econtOfficeName,
+                city: sanitizedFormData.city,
               }
             : {
                 type: 'address',
-                city: formData.city,
-                postalCode: formData.postalCode,
-                address: formData.address,
+                city: sanitizedFormData.city,
+                postalCode: sanitizedFormData.postalCode,
+                address: sanitizedFormData.address,
               },
-        notes: formData.notes,
+        notes: sanitizedFormData.notes,
       });
 
       await sendTelegramNotification(telegramMessage);
@@ -131,7 +158,7 @@ export async function POST(req: NextRequest) {
     }
 
     // Если оплата картой - создаём Stripe сессию
-    const lineItems = items.map((item: any) => {
+    const lineItems = validatedItems.map((item) => {
       const product = products.find((p: any) => p._id === item.id);
 
       if (!product) {
@@ -140,7 +167,7 @@ export async function POST(req: NextRequest) {
 
       if (!product.stripePriceId) {
         throw new Error(
-          `Product ${product.name.en || product.name.bg} is not synced with Stripe`
+          `Product ${product.name?.en || product.name?.bg || item.id} is not synced with Stripe`
         );
       }
 

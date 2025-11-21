@@ -7,6 +7,7 @@ import { ShoppingCart, Heart } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import Link from 'next/link';
+import Image from 'next/image';
 import { getAllProducts } from '@/sanity/queries';
 import { SanityProduct } from '@/types/sanity';
 import { Loader2 } from 'lucide-react';
@@ -30,8 +31,8 @@ const mockProducts = [
     name: { bg: 'Brasil', ru: 'Brasil', en: 'Brasil' },
     description: { bg: 'Еднокомпонентен бански', ru: 'Слитный купальник', en: 'One-piece Swimsuit' },
     price: 219,
-    imageFront: '/images/catalogmodels/brasilfront.jpg',
-    imageBack: '/images/catalogmodels/brasilback.jpg',
+    imageFront: '/images/catalogmodels/brasilfront.webp',
+    imageBack: '/images/catalogmodels/brasilback.webp',
     bestseller: false,
     isNew: true
   },
@@ -42,7 +43,7 @@ const mockProducts = [
     description: { bg: 'Еднокомпонентен бански', ru: 'Слитный купальник', en: 'One-piece Swimsuit' },
     price: 219,
     imageFront: '/images/catalogmodels/meowfront.webp',
-    imageBack: '/images/catalogmodels/meowback.jpg',
+    imageBack: '/images/catalogmodels/meowback.webp',
     bestseller: true,
     isNew: false
   },
@@ -64,7 +65,7 @@ const mockProducts = [
     description: { bg: 'Еднокомпонентен бански с цип', ru: 'Слитный купальник с молнией', en: 'One-piece Zipper Swimsuit' },
     price: 259,
     imageFront: '/images/catalogmodels/PeacockMayurafront.webp',
-    imageBack: '/images/catalogmodels/PeacockMayuraback.jpg',
+    imageBack: '/images/catalogmodels/PeacockMayuraback.webp',
     bestseller: true,
     isNew: true
   },
@@ -162,23 +163,25 @@ function ProductCard({ product, index }: ProductCardProps) {
         }}
       >
         {/* Front Image */}
-        <motion.img
+        <Image
           src={product.images[0]}
           alt={product.name[locale]}
-          className="w-full h-full object-cover absolute inset-0"
-          initial={{ opacity: 1 }}
-          animate={{ opacity: isHovered ? 0 : 1 }}
-          transition={{ duration: 0.5, ease: 'easeInOut' }}
+          fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+          className="object-cover absolute inset-0 transition-opacity duration-500 ease-in-out"
+          style={{ opacity: isHovered ? 0 : 1 }}
+          priority={false}
         />
 
         {/* Back Image */}
-        <motion.img
+        <Image
           src={product.images[1] || product.images[0]}
           alt={`${product.name[locale]} - back`}
-          className="w-full h-full object-cover absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: isHovered ? 1 : 0 }}
-          transition={{ duration: 0.5, ease: 'easeInOut' }}
+          fill
+          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+          className="object-cover absolute inset-0 transition-opacity duration-500 ease-in-out"
+          style={{ opacity: isHovered ? 1 : 0 }}
+          loading="lazy"
         />
 
         {/* Minimal Badges */}

@@ -146,7 +146,7 @@ export default function ProductCard({ product }: ProductCardProps) {
               className="relative w-full h-full"
             >
               <Image
-                src={product.images[currentImageIndex] || '/placeholder-product.jpg'}
+                src={product.images[currentImageIndex] || '/images/placeholder.webp'}
                 alt={productName}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
