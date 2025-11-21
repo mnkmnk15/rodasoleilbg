@@ -86,10 +86,17 @@ export default function CheckoutSuccessPage() {
             {t('continueShopping') || 'Продолжить покупки'}
           </Link>
 
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 mb-2">
             {t('contactSupport') ||
               'По вопросам о заказе свяжитесь с нашей службой поддержки'}
           </p>
+
+          <Link
+            href={`/${locale}/contacts`}
+            className="inline-flex items-center justify-center w-full py-2.5 border border-neutral-300 text-neutral-700 rounded-lg font-medium hover:bg-neutral-50 transition-colors text-center"
+          >
+            {locale === 'bg' ? 'Нашите контакти' : locale === 'ru' ? 'Наши контакты' : 'Our Contacts'}
+          </Link>
         </div>
       </div>
     </div>

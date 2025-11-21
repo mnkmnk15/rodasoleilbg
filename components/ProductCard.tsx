@@ -13,9 +13,10 @@ import { formatPrice } from '@/sanity/config';
 
 interface ProductCardProps {
   product: SanityProduct;
+  priority?: boolean;
 }
 
-export default function ProductCard({ product }: ProductCardProps) {
+export default function ProductCard({ product, priority = false }: ProductCardProps) {
   const locale = useLocale() as 'bg' | 'ru' | 'en';
   const { addItem } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
@@ -150,7 +151,9 @@ export default function ProductCard({ product }: ProductCardProps) {
                 alt={productName}
                 fill
                 className="object-cover transition-transform duration-500 group-hover:scale-105"
-                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
+                priority={priority && currentImageIndex === 0}
+                loading={priority ? undefined : 'lazy'}
               />
             </motion.div>
           </AnimatePresence>

@@ -212,7 +212,7 @@ vercel --prod
 
 ## Лицензия
 
-© 2024 RoDaSoleil Bulgaria. Все права защищены.
+© 2025 RoDaSoleil Bulgaria. Все права защищены.
 
 ## Контакты
 
