@@ -15,11 +15,8 @@ Disallow: /*.json$
 Allow: /_next/static/
 Allow: /_next/image/
 
-# Карта сайта
+# Карта сайта (единый sitemap с hreflang альтернативами)
 Sitemap: https://rodasoleil.bg/sitemap.xml
-Sitemap: https://rodasoleil.bg/sitemap-bg.xml
-Sitemap: https://rodasoleil.bg/sitemap-ru.xml
-Sitemap: https://rodasoleil.bg/sitemap-en.xml
 
 # Специфические настройки для Google
 User-agent: Googlebot

@@ -47,18 +47,7 @@
 - 📱 **PWA готовность** (manifest, theme-color)
 - ⚡ **Static Generation** для быстрой загрузки
 
-## Быстрый Старт
 
-### Установка
-
-```bash
-# Клонируйте репозиторий
-git clone <repository-url>
-cd rodasoleil-shop
-
-# Установите зависимости
-npm install
-```
 
 ### Настройка переменных окружения
 
