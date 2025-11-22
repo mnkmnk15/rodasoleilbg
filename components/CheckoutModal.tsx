@@ -305,6 +305,7 @@ export default function CheckoutModal({
         return;
       }
     }
+    // Для самовывоза в Бургасе валидация не нужна
 
     setDeliveryError('');
     onSubmit(formData);
@@ -540,11 +541,32 @@ export default function CheckoutModal({
                               </span>
                             </div>
                           </label>
+
+                          <label className="flex items-center gap-3 p-3 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-neutral-900 transition-colors has-[:checked]:border-neutral-900 has-[:checked]:bg-gray-50">
+                            <input
+                              type="radio"
+                              name="deliveryMethod"
+                              checked={formData.deliveryMethod === 'pickup_burgas'}
+                              onChange={() => handleDeliveryMethodChange('pickup_burgas')}
+                              className="w-4 h-4 accent-neutral-900"
+                            />
+                            <div className="flex-1">
+                              <div className="flex items-center justify-between">
+                                <span className="text-sm font-medium">{t('pickupBurgas')}</span>
+                                <span className="text-sm font-semibold text-green-600">
+                                  {t('pickupBurgasDescription').split(' - ')[0]}
+                                </span>
+                              </div>
+                              <p className="text-xs text-gray-500 mt-1">
+                                {t('pickupBurgasDescription').split(' - ')[1]}
+                              </p>
+                            </div>
+                          </label>
                         </div>
                       </div>
 
                       {/* Выбор офиса/адреса */}
-                      {formData.deliveryMethod === 'econt_office' ? (
+                      {formData.deliveryMethod === 'pickup_burgas' ? null : formData.deliveryMethod === 'econt_office' ? (
                         <div ref={officeDropdownRef} className="relative">
                           <label className="block text-sm font-medium text-gray-700 mb-2">
                             {t('selectOffice')}

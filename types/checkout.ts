@@ -1,7 +1,7 @@
 // Типы данных для формы оформления заказа
 
 export type PaymentMethod = 'card' | 'cash_on_delivery';
-export type DeliveryMethod = 'econt_office' | 'econt_address';
+export type DeliveryMethod = 'econt_office' | 'econt_address' | 'pickup_burgas';
 
 export interface EcontOffice {
   id: number;
@@ -77,4 +77,5 @@ export interface OrderData extends CheckoutFormData {
 export const DELIVERY_PRICES = {
   econt_office: 3.0, // EUR
   econt_address: 3.5, // EUR
+  pickup_burgas: 0, // Безплатно - самовивоз в Бургасе
 } as const;

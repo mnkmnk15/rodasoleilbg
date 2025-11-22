@@ -87,6 +87,10 @@ export async function POST(req: NextRequest) {
             econtOfficeCode: sanitizedFormData.econtOfficeCode || '',
             econtOfficeName: sanitizedFormData.econtOfficeName || '',
           }
+        : sanitizedFormData.deliveryMethod === 'pickup_burgas'
+        ? {
+            pickupLocation: 'Бургас',
+          }
         : {
             city: sanitizedFormData.city || '',
             postalCode: sanitizedFormData.postalCode || '',
@@ -139,6 +143,10 @@ export async function POST(req: NextRequest) {
                 type: 'office',
                 officeName: sanitizedFormData.econtOfficeName,
                 city: sanitizedFormData.city,
+              }
+            : sanitizedFormData.deliveryMethod === 'pickup_burgas'
+            ? {
+                type: 'pickup',
               }
             : {
                 type: 'address',
@@ -239,6 +247,9 @@ function formatOrderMessageWithDelivery(orderData: {
     message += `Тип: До офис/автомат Еконт\n`;
     message += `Офис: ${deliveryDetails.officeName}\n`;
     message += `Град: ${deliveryDetails.city}\n`;
+  } else if (deliveryMethod === 'pickup_burgas') {
+    message += `Тип: Самовземане в Бургас\n`;
+    message += `⚠️ Моля, свържете се с клиента за уточняване на място и време!\n`;
   } else {
     message += `Тип: До адрес\n`;
     message += `Град: ${deliveryDetails.city}\n`;

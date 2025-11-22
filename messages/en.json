@@ -103,20 +103,20 @@
     "title": "Shipping & Returns",
     "subtitle": "Convenient shipping options and flexible return policy",
     "freeBulgaria": {
-      "title": "Free Shipping in Bulgaria",
-      "description": "We offer free delivery of smart swimwear to any location in Bulgaria. Get your order quickly and conveniently without any extra charges."
+      "title": "Delivery in Bulgaria",
+      "description": "We deliver smart swimwear to Econt office (€3) or to your address (€3.50). Free pickup in Burgas!"
     },
     "tryOn": {
       "title": "Try-On Option",
       "description": "We deliver your smart swimsuit with the option to try it on, allowing you to choose from several models and sizes to find the one you like best (or even purchase more than one)."
     },
     "returns": {
-      "title": "Easy Returns Within 7 Days",
-      "description": "If you're not satisfied with your purchase, you can return the swimsuit within 7 days of receiving it. Your satisfaction is our priority."
+      "title": "Easy Returns Within 14 Days",
+      "description": "If you're not satisfied with your purchase, you can return the swimsuit within 14 days of receiving it according to Consumer Protection Law. Your satisfaction is our priority."
     },
     "details": {
       "title": "Delivery Details",
-      "description": "If you're confident in the size and model, you can opt for standard delivery through a transport company. In this case, you can return the swimsuit on your own within 7 days of receiving it if it doesn't meet your expectations."
+      "description": "If you're confident in the size and model, you can opt for standard delivery through Econt. In this case, you can return the swimsuit on your own within 14 days of receiving it if it doesn't meet your expectations."
     }
   },
   "faq": {
@@ -190,6 +190,8 @@
     "deliveryMethod": "Delivery Method",
     "econtOffice": "To Econt office/locker",
     "toAddress": "To address",
+    "pickupBurgas": "Pickup in Burgas",
+    "pickupBurgasDescription": "Free - we will contact you to arrange the pickup location and time",
     "selectOffice": "Select office or locker:",
     "selectCity": "Select city:",
     "searchOffice": "Search by office, city or code (min 2 characters)...",
