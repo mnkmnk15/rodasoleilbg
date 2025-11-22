@@ -110,7 +110,7 @@ export function validateCheckoutForm(data: unknown): ValidationResult {
 
   // Validate delivery method
   const deliveryMethod = form.deliveryMethod as string;
-  if (!['econt_office', 'econt_address'].includes(deliveryMethod)) {
+  if (!['econt_office', 'econt_address', 'pickup_burgas'].includes(deliveryMethod)) {
     errors.push('Invalid delivery method');
   }
 
@@ -124,6 +124,7 @@ export function validateCheckoutForm(data: unknown): ValidationResult {
       errors.push('City and address are required for address delivery');
     }
   }
+  // pickup_burgas не требует дополнительной валидации
 
   if (errors.length > 0) {
     return { valid: false, errors };
