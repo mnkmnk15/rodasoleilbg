@@ -27,6 +27,7 @@ export async function getAllProducts() {
     gender,
     productType,
     sizes,
+    kidsSizes,
     colors,
     features
   }`;
@@ -81,6 +82,7 @@ export async function getProductBySlug(slug: string) {
     gender,
     productType,
     sizes,
+    kidsSizes,
     colors,
     features
   }`;

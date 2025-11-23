@@ -34,7 +34,8 @@ export interface SanityProduct {
   category?: SanityCategory; // Legacy field, now optional
   gender: 'women' | 'mens' | 'kids'; // New required field
   productType: 'swimwear' | 'beachwear' | 'pants-skirts' | 'robes-tunics' | 't-shirts-shorts' | 'sleeveless' | 'long-sleeve' | 'zippers' | 'accessories' | 'other'; // New required field
-  sizes?: string[];
+  sizes?: string[]; // For adults (XS, S, M, L, XL, XXL)
+  kidsSizes?: string[]; // For kids (height-based: 104, 110, 116, 122, 128, 134, 140, 146, 152)
   colors?: {
     name: string;
     hex: string;

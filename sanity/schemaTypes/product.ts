@@ -163,7 +163,7 @@ export default defineType({
     }),
     defineField({
       name: 'sizes',
-      title: 'Available Sizes',
+      title: 'Available Sizes (Adults)',
       type: 'array',
       of: [{ type: 'string' }],
       options: {
@@ -176,6 +176,29 @@ export default defineType({
           { title: 'XXL', value: 'xxl' },
         ],
       },
+      hidden: ({ document }) => document?.gender === 'kids',
+      description: 'For women and men products',
+    }),
+    defineField({
+      name: 'kidsSizes',
+      title: 'Available Sizes (Kids)',
+      type: 'array',
+      of: [{ type: 'string' }],
+      options: {
+        list: [
+          { title: '104 см', value: '104' },
+          { title: '110 см', value: '110' },
+          { title: '116 см', value: '116' },
+          { title: '122 см', value: '122' },
+          { title: '128 см', value: '128' },
+          { title: '134 см', value: '134' },
+          { title: '140 см', value: '140' },
+          { title: '146 см', value: '146' },
+          { title: '152 см', value: '152' },
+        ],
+      },
+      hidden: ({ document }) => document?.gender !== 'kids',
+      description: 'Height-based sizes for kids products (in cm)',
     }),
     defineField({
       name: 'colors',

@@ -6,7 +6,7 @@ import { useLocale } from 'next-intl';
 import { motion } from 'framer-motion';
 import Image from 'next/image';
 import Link from 'next/link';
-import { Heart, ShoppingBag, Minus, Plus, Check, Truck, ShieldCheck, RefreshCw } from 'lucide-react';
+import { Heart, ShoppingBag, Minus, Plus, Check, Truck, ShieldCheck, RefreshCw, Ruler, X } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
@@ -29,6 +29,7 @@ export default function ProductClient() {
   const [selectedColor, setSelectedColor] = useState<string | null>(null);
   const [quantity, setQuantity] = useState(1);
   const [isAddedToCart, setIsAddedToCart] = useState(false);
+  const [isSizeGuideOpen, setIsSizeGuideOpen] = useState(false);
 
   const { addItem } = useCart();
   const { toggleWishlist, isInWishlist } = useWishlist();
@@ -40,9 +41,12 @@ export default function ProductClient() {
         const productData = await getProductBySlug(slug);
         setProduct(productData);
 
-        // Set default selections
-        if (productData?.sizes && productData.sizes.length > 0) {
-          setSelectedSize(productData.sizes[0]);
+        // Set default selections - check for kids sizes first, then adult sizes
+        const availableSizes = productData?.gender === 'kids'
+          ? productData?.kidsSizes
+          : productData?.sizes;
+        if (availableSizes && availableSizes.length > 0) {
+          setSelectedSize(availableSizes[0]);
         }
         if (productData?.colors && productData.colors.length > 0) {
           setSelectedColor(productData.colors[0].name);
@@ -137,7 +141,7 @@ export default function ProductClient() {
       <Header forceWhite={true} />
 
       {/* Breadcrumb */}
-      <div className="max-w-[1400px] mx-auto px-4 py-6">
+      <div className="max-w-[1400px] mx-auto px-4 py-6 lg:pt-28">
         <div className="flex items-center gap-2 text-sm text-neutral-600">
           <Link href={`/${locale}`} className="hover:text-neutral-900">
             {locale === 'bg' ? 'Начало' : locale === 'ru' ? 'Главная' : 'Home'}
@@ -171,7 +175,7 @@ export default function ProductClient() {
                 src={product.images[selectedImage]}
                 alt={productName}
                 fill
-                className="object-cover"
+                className="object-contain"
                 priority
                 sizes="(max-width: 1024px) 100vw, 50vw"
               />
@@ -208,7 +212,7 @@ export default function ProductClient() {
                       src={image}
                       alt={`${productName} ${index + 1}`}
                       fill
-                      className="object-cover"
+                      className="object-contain"
                       sizes="120px"
                     />
                   </button>
@@ -278,29 +282,47 @@ export default function ProductClient() {
               </div>
             )}
 
-            {/* Size Selection */}
-            {product.sizes && product.sizes.length > 0 && (
-              <div className="space-y-3">
-                <label className="text-sm font-semibold uppercase tracking-wider text-neutral-900">
-                  {locale === 'bg' ? 'Размер' : locale === 'ru' ? 'Размер' : 'Size'}
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {product.sizes.map((size) => (
+            {/* Size Selection - handles both adult and kids sizes */}
+            {(() => {
+              const isKids = product.gender === 'kids';
+              const availableSizes = isKids ? product.kidsSizes : product.sizes;
+
+              if (!availableSizes || availableSizes.length === 0) return null;
+
+              return (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <label className="text-sm font-semibold uppercase tracking-wider text-neutral-900">
+                      {isKids
+                        ? (locale === 'bg' ? 'Ръст' : locale === 'ru' ? 'Рост' : 'Height')
+                        : (locale === 'bg' ? 'Размер' : locale === 'ru' ? 'Размер' : 'Size')}
+                    </label>
                     <button
-                      key={size}
-                      onClick={() => setSelectedSize(size)}
-                      className={`px-5 py-2.5 rounded-md border-2 font-medium uppercase text-sm transition-all ${
-                        selectedSize === size
-                          ? 'border-neutral-900 bg-neutral-900 text-white'
-                          : 'border-neutral-200 hover:border-neutral-400'
-                      }`}
+                      onClick={() => setIsSizeGuideOpen(true)}
+                      className="flex items-center gap-1.5 text-sm text-neutral-600 hover:text-neutral-900 transition-colors"
                     >
-                      {size.toUpperCase()}
+                      <Ruler className="w-4 h-4" />
+                      {locale === 'bg' ? 'Размерна таблица' : locale === 'ru' ? 'Таблица размеров' : 'Size Guide'}
                     </button>
-                  ))}
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {availableSizes.map((size) => (
+                      <button
+                        key={size}
+                        onClick={() => setSelectedSize(size)}
+                        className={`px-5 py-2.5 rounded-md border-2 font-medium text-sm transition-all ${
+                          selectedSize === size
+                            ? 'border-neutral-900 bg-neutral-900 text-white'
+                            : 'border-neutral-200 hover:border-neutral-400'
+                        }`}
+                      >
+                        {isKids ? `${size} см` : size.toUpperCase()}
+                      </button>
+                    ))}
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+            })()}
 
             {/* Quantity */}
             <div className="space-y-3">
@@ -420,6 +442,14 @@ export default function ProductClient() {
                 </ul>
               </div>
             )}
+
+            {/* Materials */}
+            <div className="pt-6 border-t border-neutral-200">
+              <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-900 mb-3">
+                {locale === 'bg' ? 'Материали' : locale === 'ru' ? 'Материалы' : 'Materials'}
+              </h3>
+              <p className="text-neutral-600">72% Polyester, 28% Elastane</p>
+            </div>
           </div>
         </div>
 
@@ -439,6 +469,208 @@ export default function ProductClient() {
       </section>
 
       <Footer />
+
+      {/* Size Guide Modal */}
+      {isSizeGuideOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+          <div
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setIsSizeGuideOpen(false)}
+          />
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.95 }}
+            className="relative bg-white rounded-xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          >
+            <div className="sticky top-0 bg-white px-6 py-4 border-b border-neutral-200 flex items-center justify-between">
+              <h2 className="text-xl font-semibold text-neutral-900">
+                {locale === 'bg' ? 'Размерна таблица' : locale === 'ru' ? 'Таблица размеров' : 'Size Guide'}
+              </h2>
+              <button
+                onClick={() => setIsSizeGuideOpen(false)}
+                className="p-2 hover:bg-neutral-100 rounded-full transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            <div className="p-6 space-y-8">
+              {/* Women's Sizes */}
+              <div>
+                <h3 className="text-lg font-semibold text-[#d06634] mb-4 uppercase tracking-wider">
+                  {locale === 'bg' ? 'Дамско облекло' : locale === 'ru' ? 'Женская одежда' : "Women's Clothing"}
+                </h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-neutral-100">
+                        <th className="px-3 py-2 text-left font-medium text-neutral-700 border border-neutral-200"></th>
+                        <th className="px-3 py-2 text-center font-medium text-neutral-700 border border-neutral-200">XS</th>
+                        <th className="px-3 py-2 text-center font-medium text-neutral-700 border border-neutral-200">S</th>
+                        <th className="px-3 py-2 text-center font-medium text-neutral-700 border border-neutral-200">M</th>
+                        <th className="px-3 py-2 text-center font-medium text-neutral-700 border border-neutral-200">L</th>
+                        <th className="px-3 py-2 text-center font-medium text-neutral-700 border border-neutral-200">XL</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="px-3 py-2 font-medium text-neutral-700 border border-neutral-200">
+                          {locale === 'bg' ? 'гръдна обиколка' : locale === 'ru' ? 'обхват груди' : 'bust'}
+                        </td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">76-80</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">84-88</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">92-96</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">100-104</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">110-116</td>
+                      </tr>
+                      <tr>
+                        <td className="px-3 py-2 font-medium text-neutral-700 border border-neutral-200">
+                          {locale === 'bg' ? 'обиколка талия' : locale === 'ru' ? 'обхват талии' : 'waist'}
+                        </td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">60-64</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">68-72</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">76-80</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">84-88</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">96-100</td>
+                      </tr>
+                      <tr>
+                        <td className="px-3 py-2 font-medium text-neutral-700 border border-neutral-200">
+                          {locale === 'bg' ? 'обиколка ханш' : locale === 'ru' ? 'обхват бёдер' : 'hips'}
+                        </td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">84-88</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">92-96</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">100-104</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">108-112</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">117-122</td>
+                      </tr>
+                      <tr>
+                        <td className="px-3 py-2 font-medium text-neutral-700 border border-neutral-200">
+                          {locale === 'bg' ? 'диагонал' : locale === 'ru' ? 'диагональ' : 'diagonal'}
+                        </td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">140-145</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">145-150</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">155-160</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">165-170</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">175-180</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Men's Sizes */}
+              <div>
+                <h3 className="text-lg font-semibold text-[#d06634] mb-4 uppercase tracking-wider">
+                  {locale === 'bg' ? 'Мъжко облекло' : locale === 'ru' ? 'Мужская одежда' : "Men's Clothing"}
+                </h3>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-neutral-100">
+                        <th className="px-3 py-2 text-left font-medium text-neutral-700 border border-neutral-200"></th>
+                        <th className="px-3 py-2 text-center font-medium text-neutral-700 border border-neutral-200">XS</th>
+                        <th className="px-3 py-2 text-center font-medium text-neutral-700 border border-neutral-200">S</th>
+                        <th className="px-3 py-2 text-center font-medium text-neutral-700 border border-neutral-200">M</th>
+                        <th className="px-3 py-2 text-center font-medium text-neutral-700 border border-neutral-200">L</th>
+                        <th className="px-3 py-2 text-center font-medium text-neutral-700 border border-neutral-200">XL</th>
+                        <th className="px-3 py-2 text-center font-medium text-neutral-700 border border-neutral-200">2XL</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="px-3 py-2 font-medium text-neutral-700 border border-neutral-200">
+                          {locale === 'bg' ? 'гръдна обиколка' : locale === 'ru' ? 'обхват груди' : 'chest'}
+                        </td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">80-84</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">88-92</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">96-100</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">104-108</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">112-116</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">120-124</td>
+                      </tr>
+                      <tr>
+                        <td className="px-3 py-2 font-medium text-neutral-700 border border-neutral-200">
+                          {locale === 'bg' ? 'обиколка талия' : locale === 'ru' ? 'обхват талии' : 'waist'}
+                        </td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">80-83</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">84-86</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">90-93</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">96-100</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">110-114</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">118-122</td>
+                      </tr>
+                      <tr>
+                        <td className="px-3 py-2 font-medium text-neutral-700 border border-neutral-200">
+                          {locale === 'bg' ? 'обиколка ханш' : locale === 'ru' ? 'обхват бёдер' : 'hips'}
+                        </td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">80-84</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">88-90</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">94-98</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">102-106</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">110-114</td>
+                        <td className="px-3 py-2 text-center text-neutral-600 border border-neutral-200">118-122</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              {/* Kids' Sizes */}
+              <div>
+                <h3 className="text-lg font-semibold text-[#d06634] mb-4 uppercase tracking-wider">
+                  {locale === 'bg' ? 'Детска размерна сетка' : locale === 'ru' ? 'Детская размерная сетка' : "Kids' Size Chart"}
+                </h3>
+                <p className="text-sm text-neutral-600 mb-3">
+                  {locale === 'bg'
+                    ? 'Детските размери са базирани на ръста на детето в сантиметри'
+                    : locale === 'ru'
+                    ? 'Детские размеры основаны на росте ребенка в сантиметрах'
+                    : 'Kids sizes are based on child height in centimeters'}
+                </p>
+                <div className="overflow-x-auto">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="bg-neutral-100">
+                        <th className="px-2 py-2 text-center font-medium text-neutral-700 border border-neutral-200">104см</th>
+                        <th className="px-2 py-2 text-center font-medium text-neutral-700 border border-neutral-200">110см</th>
+                        <th className="px-2 py-2 text-center font-medium text-neutral-700 border border-neutral-200">116см</th>
+                        <th className="px-2 py-2 text-center font-medium text-neutral-700 border border-neutral-200">122см</th>
+                        <th className="px-2 py-2 text-center font-medium text-neutral-700 border border-neutral-200">128см</th>
+                        <th className="px-2 py-2 text-center font-medium text-neutral-700 border border-neutral-200">134см</th>
+                        <th className="px-2 py-2 text-center font-medium text-neutral-700 border border-neutral-200">140см</th>
+                        <th className="px-2 py-2 text-center font-medium text-neutral-700 border border-neutral-200">146см</th>
+                        <th className="px-2 py-2 text-center font-medium text-neutral-700 border border-neutral-200">152см</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td className="px-2 py-2 text-center text-neutral-600 border border-neutral-200 text-xs">3-4 {locale === 'bg' ? 'г.' : locale === 'ru' ? 'г.' : 'y'}</td>
+                        <td className="px-2 py-2 text-center text-neutral-600 border border-neutral-200 text-xs">4-5 {locale === 'bg' ? 'г.' : locale === 'ru' ? 'г.' : 'y'}</td>
+                        <td className="px-2 py-2 text-center text-neutral-600 border border-neutral-200 text-xs">5-6 {locale === 'bg' ? 'г.' : locale === 'ru' ? 'г.' : 'y'}</td>
+                        <td className="px-2 py-2 text-center text-neutral-600 border border-neutral-200 text-xs">6-7 {locale === 'bg' ? 'г.' : locale === 'ru' ? 'г.' : 'y'}</td>
+                        <td className="px-2 py-2 text-center text-neutral-600 border border-neutral-200 text-xs">7-8 {locale === 'bg' ? 'г.' : locale === 'ru' ? 'г.' : 'y'}</td>
+                        <td className="px-2 py-2 text-center text-neutral-600 border border-neutral-200 text-xs">8-9 {locale === 'bg' ? 'г.' : locale === 'ru' ? 'г.' : 'y'}</td>
+                        <td className="px-2 py-2 text-center text-neutral-600 border border-neutral-200 text-xs">9-10 {locale === 'bg' ? 'г.' : locale === 'ru' ? 'г.' : 'y'}</td>
+                        <td className="px-2 py-2 text-center text-neutral-600 border border-neutral-200 text-xs">10-11 {locale === 'bg' ? 'г.' : locale === 'ru' ? 'г.' : 'y'}</td>
+                        <td className="px-2 py-2 text-center text-neutral-600 border border-neutral-200 text-xs">11-12 {locale === 'bg' ? 'г.' : locale === 'ru' ? 'г.' : 'y'}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <p className="text-xs text-neutral-500 text-center">
+                {locale === 'bg'
+                  ? 'Всички измервания са в сантиметри (см)'
+                  : locale === 'ru'
+                  ? 'Все измерения указаны в сантиметрах (см)'
+                  : 'All measurements are in centimeters (cm)'}
+              </p>
+            </div>
+          </motion.div>
+        </div>
+      )}
     </main>
   );
 }
