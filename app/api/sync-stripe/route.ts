@@ -134,11 +134,19 @@ export async function POST(req: NextRequest) {
           });
 
           // Обновляем продукт в Sanity с новыми ID из Stripe
+          // Добавляем _key для каждого элемента массива (требование Sanity)
+          const kidsSizePricesWithKeys = stripeData.kidsSizePrices.map((sp) => ({
+            _key: sp.size, // Используем размер как уникальный ключ
+            size: sp.size,
+            price: sp.price,
+            stripePriceId: sp.stripePriceId,
+          }));
+
           await sanityClient
             .patch(product._id)
             .set({
               stripeProductId: stripeData.stripeProductId,
-              kidsSizePrices: stripeData.kidsSizePrices,
+              kidsSizePrices: kidsSizePricesWithKeys,
             })
             .commit();
 
