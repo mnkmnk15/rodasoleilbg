@@ -20,6 +20,13 @@ function getStripe(): Stripe {
 
 export const stripe = getStripe;
 
+// Интерфейс для детских размеров с ценами
+export interface KidsSizePrice {
+  size: string;
+  price: number;
+  stripePriceId?: string;
+}
+
 // Функция для создания или обновления продукта в Stripe
 export async function syncProductToStripe(product: {
   id: string;
@@ -126,6 +133,128 @@ export async function syncProductToStripe(product: {
     };
   } catch (error) {
     console.error('Error syncing product to Stripe:', error);
+    throw error;
+  }
+}
+
+// Функция для синхронизации детского товара с множественными ценами по размерам
+export async function syncKidsProductToStripe(product: {
+  id: string;
+  name: string;
+  description?: string;
+  images?: string[];
+  stripeProductId?: string;
+  kidsSizePrices: KidsSizePrice[];
+}) {
+  try {
+    const stripeClient = stripe();
+    let stripeProduct: Stripe.Product;
+
+    // Если у продукта уже есть Stripe Product ID, обновляем его
+    if (product.stripeProductId) {
+      stripeProduct = await stripeClient.products.update(product.stripeProductId, {
+        name: product.name,
+        description: product.description,
+        images: product.images?.slice(0, 8),
+        metadata: {
+          sanityId: product.id,
+          isKidsProduct: 'true',
+        },
+      });
+    } else {
+      // Создаём новый продукт в Stripe
+      stripeProduct = await stripeClient.products.create({
+        name: product.name,
+        description: product.description,
+        images: product.images?.slice(0, 8),
+        metadata: {
+          sanityId: product.id,
+          isKidsProduct: 'true',
+        },
+      });
+    }
+
+    // Синхронизируем цены для каждого размера
+    const updatedSizePrices: KidsSizePrice[] = [];
+
+    for (const sizePrice of product.kidsSizePrices) {
+      let stripePriceId = sizePrice.stripePriceId;
+      const newAmount = Math.round(sizePrice.price * 100);
+
+      if (!stripePriceId) {
+        // Создаём новую цену для размера
+        const price = await stripeClient.prices.create({
+          product: stripeProduct.id,
+          unit_amount: newAmount,
+          currency: 'eur',
+          metadata: {
+            sanityId: product.id,
+            size: sizePrice.size,
+          },
+          nickname: `${product.name} - ${sizePrice.size} см`,
+        });
+        stripePriceId = price.id;
+      } else {
+        // Проверяем, изменилась ли цена
+        try {
+          const existingPrice = await stripeClient.prices.retrieve(stripePriceId);
+
+          if (existingPrice.unit_amount !== newAmount) {
+            // Деактивируем старую цену
+            await stripeClient.prices.update(stripePriceId, { active: false });
+
+            // Создаём новую цену
+            const price = await stripeClient.prices.create({
+              product: stripeProduct.id,
+              unit_amount: newAmount,
+              currency: 'eur',
+              metadata: {
+                sanityId: product.id,
+                size: sizePrice.size,
+              },
+              nickname: `${product.name} - ${sizePrice.size} см`,
+            });
+            stripePriceId = price.id;
+          }
+        } catch (error) {
+          // Если старая цена не найдена, создаём новую
+          const price = await stripeClient.prices.create({
+            product: stripeProduct.id,
+            unit_amount: newAmount,
+            currency: 'eur',
+            metadata: {
+              sanityId: product.id,
+              size: sizePrice.size,
+            },
+            nickname: `${product.name} - ${sizePrice.size} см`,
+          });
+          stripePriceId = price.id;
+        }
+      }
+
+      updatedSizePrices.push({
+        size: sizePrice.size,
+        price: sizePrice.price,
+        stripePriceId,
+      });
+    }
+
+    // Устанавливаем первую цену как default (минимальную)
+    if (updatedSizePrices.length > 0) {
+      const minPriceItem = updatedSizePrices.reduce((min, curr) =>
+        curr.price < min.price ? curr : min
+      );
+      await stripeClient.products.update(stripeProduct.id, {
+        default_price: minPriceItem.stripePriceId,
+      });
+    }
+
+    return {
+      stripeProductId: stripeProduct.id,
+      kidsSizePrices: updatedSizePrices,
+    };
+  } catch (error) {
+    console.error('Error syncing kids product to Stripe:', error);
     throw error;
   }
 }

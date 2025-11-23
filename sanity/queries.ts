@@ -28,6 +28,7 @@ export async function getAllProducts() {
     productType,
     sizes,
     kidsSizes,
+    kidsSizePrices,
     colors,
     features
   }`;
@@ -83,6 +84,7 @@ export async function getProductBySlug(slug: string) {
     productType,
     sizes,
     kidsSizes,
+    kidsSizePrices,
     colors,
     features
   }`;
@@ -179,7 +181,8 @@ export async function getProductsByGender(gender: 'women' | 'mens' | 'kids') {
     inStock,
     bestseller,
     gender,
-    productType
+    productType,
+    kidsSizePrices
   }`;
 
   return await sanityClient.fetch(query, { gender });

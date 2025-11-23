@@ -6,6 +6,26 @@ import { DELIVERY_PRICES } from '@/types/checkout';
 import { validateCartItems, validateCheckoutForm } from '@/lib/validation';
 import { checkRateLimit, getRequestIdentifier, RATE_LIMIT_CONFIGS, createRateLimitResponse } from '@/lib/rate-limit';
 
+// Хелпер для получения цены и stripePriceId на основе размера для детских товаров
+function getKidsPriceData(product: any, size: string | undefined): { price: number; stripePriceId: string | null } {
+  // Если это детский товар с kidsSizePrices
+  if (product.gender === 'kids' && product.kidsSizePrices && product.kidsSizePrices.length > 0 && size) {
+    const sizePrice = product.kidsSizePrices.find((sp: any) => sp.size === size);
+    if (sizePrice) {
+      return {
+        price: sizePrice.price,
+        stripePriceId: sizePrice.stripePriceId || null,
+      };
+    }
+  }
+
+  // Fallback на базовую цену
+  return {
+    price: product.price,
+    stripePriceId: product.stripePriceId || null,
+  };
+}
+
 export async function POST(req: NextRequest) {
   // Rate limiting protection against abuse
   const identifier = getRequestIdentifier(req);
@@ -40,10 +60,10 @@ export async function POST(req: NextRequest) {
 
     const sanitizedFormData = formValidation.sanitizedData;
 
-    // Получаем информацию о продуктах из Sanity
+    // Получаем информацию о продуктах из Sanity (включая данные для детских товаров)
     const productIds = validatedItems.map((item) => item.id);
     const products = await sanityClient.fetch(
-      `*[_id in $ids]{ _id, name, price, stripeProductId, stripePriceId }`,
+      `*[_id in $ids]{ _id, name, price, stripeProductId, stripePriceId, gender, kidsSizePrices }`,
       { ids: productIds }
     );
 
@@ -56,9 +76,13 @@ export async function POST(req: NextRequest) {
     }
 
     // Вычисляем итоговую сумму используя цены из БД (не от клиента!)
+    // Для детских товаров используем цену на основе размера
     const itemsTotal = validatedItems.reduce((sum: number, item) => {
       const product = products.find((p: any) => p._id === item.id);
-      return sum + (product?.price || 0) * item.quantity;
+      if (!product) return sum;
+
+      const priceData = getKidsPriceData(product, item.size);
+      return sum + priceData.price * item.quantity;
     }, 0);
 
     const deliveryPrice =
@@ -104,13 +128,14 @@ export async function POST(req: NextRequest) {
       orderItems: JSON.stringify(
         validatedItems.map((item) => {
           const product = products.find((p: any) => p._id === item.id);
+          const priceData = product ? getKidsPriceData(product, item.size) : { price: 0 };
           return {
             id: item.id,
             name: product?.name?.en || product?.name?.bg || item.name || 'Unknown',
             quantity: item.quantity,
             size: item.size,
             color: item.color,
-            price: product?.price || 0,
+            price: priceData.price,
           };
         })
       ),
@@ -173,14 +198,17 @@ export async function POST(req: NextRequest) {
         throw new Error(`Product not found: ${item.id}`);
       }
 
-      if (!product.stripePriceId) {
+      // Получаем правильный stripePriceId на основе размера для детских товаров
+      const priceData = getKidsPriceData(product, item.size);
+
+      if (!priceData.stripePriceId) {
         throw new Error(
-          `Product ${product.name?.en || product.name?.bg || item.id} is not synced with Stripe`
+          `Product ${product.name?.en || product.name?.bg || item.id} (size: ${item.size || 'default'}) is not synced with Stripe`
         );
       }
 
       return {
-        priceId: product.stripePriceId,
+        priceId: priceData.stripePriceId,
         quantity: item.quantity,
       };
     });

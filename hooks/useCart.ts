@@ -56,20 +56,34 @@ export function useCart() {
       // Получаем ID всех товаров в корзине
       const productIds = [...new Set(savedCart.items.map(item => item.id))];
 
-      // Запрашиваем актуальные цены из Sanity
+      // Запрашиваем актуальные цены из Sanity (включая данные для детских товаров)
       const products = await sanityClient.fetch(
-        `*[_type == "product" && _id in $ids]{ _id, price }`,
+        `*[_type == "product" && _id in $ids]{ _id, price, gender, kidsSizePrices }`,
         { ids: productIds }
       );
 
-      // Создаем мапу ID -> цена
-      const priceMap = new Map(products.map((p: any) => [p._id, p.price]));
+      // Функция для получения правильной цены на основе размера для детских товаров
+      const getPriceForItem = (product: any, size: string | undefined): number => {
+        if (product.gender === 'kids' && product.kidsSizePrices && product.kidsSizePrices.length > 0 && size) {
+          const sizePrice = product.kidsSizePrices.find((sp: any) => sp.size === size);
+          if (sizePrice) {
+            return sizePrice.price;
+          }
+        }
+        return product.price;
+      };
+
+      // Создаем мапу ID -> product
+      const productMap = new Map(products.map((p: any) => [p._id, p]));
 
       // Обновляем цены в корзине
       let hasChanges = false;
       const updatedItems = savedCart.items.map((item): CartItem => {
-        const newPrice = priceMap.get(item.id);
-        if (newPrice !== undefined && typeof newPrice === 'number' && newPrice !== item.price) {
+        const product = productMap.get(item.id);
+        if (!product) return item;
+
+        const newPrice = getPriceForItem(product, item.size);
+        if (typeof newPrice === 'number' && newPrice !== item.price) {
           hasChanges = true;
           return { ...item, price: newPrice };
         }

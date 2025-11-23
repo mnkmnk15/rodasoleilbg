@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { syncProductToStripe } from '@/lib/stripe';
+import { syncProductToStripe, syncKidsProductToStripe, KidsSizePrice } from '@/lib/stripe';
 import { sanityClientWithToken as sanityClient } from '@/sanity/config';
 
 /**
@@ -75,14 +75,14 @@ export async function POST(req: NextRequest) {
     let products = [];
 
     if (syncAll) {
-      // Получаем все продукты из Sanity
+      // Получаем все продукты из Sanity (включая данные для детских товаров)
       products = await sanityClient.fetch(
-        `*[_type == "product"]{ _id, name, description, price, images, stripeProductId, stripePriceId }`
+        `*[_type == "product"]{ _id, name, description, price, images, stripeProductId, stripePriceId, gender, kidsSizePrices }`
       );
     } else {
       // Получаем конкретный продукт
       const product = await sanityClient.fetch(
-        `*[_type == "product" && _id == $id][0]{ _id, name, description, price, images, stripeProductId, stripePriceId }`,
+        `*[_type == "product" && _id == $id][0]{ _id, name, description, price, images, stripeProductId, stripePriceId, gender, kidsSizePrices }`,
         { id: productId }
       );
 
@@ -100,43 +100,87 @@ export async function POST(req: NextRequest) {
 
     for (const product of products) {
       try {
-        // Подготавливаем данные для Stripe
-        const productData = {
-          id: product._id,
-          name: product.name.en || product.name.bg || product.name.ru,
-          price: product.price,
-          description:
-            product.description?.en ||
-            product.description?.bg ||
-            product.description?.ru,
-          images: product.images?.map((img: any) => {
-            // Преобразуем Sanity image в URL
-            const sanityImgUrl = `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${process.env.NEXT_PUBLIC_SANITY_DATASET}/${img.asset._ref.replace('image-', '').replace('-jpg', '.jpg').replace('-png', '.png').replace('-webp', '.webp')}`;
-            return sanityImgUrl;
-          }),
-          stripeProductId: product.stripeProductId,
-          stripePriceId: product.stripePriceId,
-        };
+        const productName = product.name.en || product.name.bg || product.name.ru;
 
-        // Синхронизируем с Stripe
-        const stripeData = await syncProductToStripe(productData);
+        // Преобразуем Sanity images в URLs
+        const images = product.images?.map((img: any) => {
+          const sanityImgUrl = `https://cdn.sanity.io/images/${process.env.NEXT_PUBLIC_SANITY_PROJECT_ID}/${process.env.NEXT_PUBLIC_SANITY_DATASET}/${img.asset._ref.replace('image-', '').replace('-jpg', '.jpg').replace('-png', '.png').replace('-webp', '.webp')}`;
+          return sanityImgUrl;
+        });
 
-        // Обновляем продукт в Sanity с новыми ID из Stripe
-        await sanityClient
-          .patch(product._id)
-          .set({
+        const description =
+          product.description?.en ||
+          product.description?.bg ||
+          product.description?.ru;
+
+        // Проверяем, является ли это детским товаром с kidsSizePrices
+        const isKidsProduct = product.gender === 'kids' && product.kidsSizePrices && product.kidsSizePrices.length > 0;
+
+        if (isKidsProduct) {
+          // Синхронизируем детский товар с множественными ценами
+          const kidsSizePrices: KidsSizePrice[] = product.kidsSizePrices.map((sp: any) => ({
+            size: sp.size,
+            price: sp.price,
+            stripePriceId: sp.stripePriceId,
+          }));
+
+          const stripeData = await syncKidsProductToStripe({
+            id: product._id,
+            name: productName,
+            description,
+            images,
+            stripeProductId: product.stripeProductId,
+            kidsSizePrices,
+          });
+
+          // Обновляем продукт в Sanity с новыми ID из Stripe
+          await sanityClient
+            .patch(product._id)
+            .set({
+              stripeProductId: stripeData.stripeProductId,
+              kidsSizePrices: stripeData.kidsSizePrices,
+            })
+            .commit();
+
+          results.push({
+            productId: product._id,
+            productName,
+            success: true,
+            stripeProductId: stripeData.stripeProductId,
+            kidsSizePrices: stripeData.kidsSizePrices,
+            isKidsProduct: true,
+          });
+        } else {
+          // Стандартная синхронизация для взрослых товаров
+          const productData = {
+            id: product._id,
+            name: productName,
+            price: product.price,
+            description,
+            images,
+            stripeProductId: product.stripeProductId,
+            stripePriceId: product.stripePriceId,
+          };
+
+          const stripeData = await syncProductToStripe(productData);
+
+          // Обновляем продукт в Sanity с новыми ID из Stripe
+          await sanityClient
+            .patch(product._id)
+            .set({
+              stripeProductId: stripeData.stripeProductId,
+              stripePriceId: stripeData.stripePriceId,
+            })
+            .commit();
+
+          results.push({
+            productId: product._id,
+            productName,
+            success: true,
             stripeProductId: stripeData.stripeProductId,
             stripePriceId: stripeData.stripePriceId,
-          })
-          .commit();
-
-        results.push({
-          productId: product._id,
-          productName: productData.name,
-          success: true,
-          stripeProductId: stripeData.stripeProductId,
-          stripePriceId: stripeData.stripePriceId,
-        });
+          });
+        }
       } catch (error: any) {
         results.push({
           productId: product._id,

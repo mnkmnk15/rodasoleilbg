@@ -42,10 +42,19 @@ export default function ProductClient() {
         setProduct(productData);
 
         // Set default selections - check for kids sizes first, then adult sizes
-        const availableSizes = productData?.gender === 'kids'
-          ? productData?.kidsSizes
-          : productData?.sizes;
-        if (availableSizes && availableSizes.length > 0) {
+        let availableSizes: string[] = [];
+        if (productData?.gender === 'kids') {
+          // Для детских товаров приоритет у kidsSizePrices
+          if (productData?.kidsSizePrices && productData.kidsSizePrices.length > 0) {
+            availableSizes = productData.kidsSizePrices.map((sp: { size: string }) => sp.size);
+          } else if (productData?.kidsSizes) {
+            availableSizes = productData.kidsSizes;
+          }
+        } else {
+          availableSizes = productData?.sizes || [];
+        }
+
+        if (availableSizes.length > 0) {
           setSelectedSize(availableSizes[0]);
         }
         if (productData?.colors && productData.colors.length > 0) {
@@ -108,9 +117,22 @@ export default function ProductClient() {
 
   const productName = product.name[locale];
   const productDescription = product.fullDescription?.[locale] || product.fullDescription?.en || product.description?.[locale] || product.description?.en;
-  const isOnSale = product.compareAtPrice && product.compareAtPrice > product.price;
+
+  // Вычисляем текущую цену на основе выбранного размера для детских товаров
+  const getCurrentPrice = (): number => {
+    if (product.gender === 'kids' && product.kidsSizePrices && product.kidsSizePrices.length > 0 && selectedSize) {
+      const sizePrice = product.kidsSizePrices.find(sp => sp.size === selectedSize);
+      if (sizePrice) {
+        return sizePrice.price;
+      }
+    }
+    return product.price;
+  };
+
+  const currentPrice = getCurrentPrice();
+  const isOnSale = product.compareAtPrice && product.compareAtPrice > currentPrice;
   const discount = isOnSale && product.compareAtPrice
-    ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
+    ? Math.round(((product.compareAtPrice - currentPrice) / product.compareAtPrice) * 100)
     : 0;
   const inWishlist = isInWishlist(product._id);
 
@@ -118,7 +140,7 @@ export default function ProductClient() {
     addItem({
       id: product._id,
       name: productName,
-      price: product.price,
+      price: currentPrice, // Используем текущую цену на основе выбранного размера
       image: product.images[0],
       size: selectedSize || undefined,
       color: selectedColor || undefined,
@@ -238,7 +260,7 @@ export default function ProductClient() {
             {/* Price */}
             <div className="flex items-baseline gap-3">
               <span className="text-3xl font-bold text-neutral-900">
-                {formatPrice(product.price)}
+                {formatPrice(currentPrice)}
               </span>
               {isOnSale && (
                 <span className="text-xl text-neutral-400 line-through">
@@ -285,9 +307,23 @@ export default function ProductClient() {
             {/* Size Selection - handles both adult and kids sizes */}
             {(() => {
               const isKids = product.gender === 'kids';
-              const availableSizes = isKids ? product.kidsSizes : product.sizes;
 
-              if (!availableSizes || availableSizes.length === 0) return null;
+              // Для детских товаров используем kidsSizePrices (с ценами) или fallback на kidsSizes
+              let availableSizes: string[] = [];
+              let sizePriceMap: Record<string, number> = {};
+
+              if (isKids) {
+                if (product.kidsSizePrices && product.kidsSizePrices.length > 0) {
+                  availableSizes = product.kidsSizePrices.map(sp => sp.size);
+                  sizePriceMap = Object.fromEntries(product.kidsSizePrices.map(sp => [sp.size, sp.price]));
+                } else if (product.kidsSizes) {
+                  availableSizes = product.kidsSizes;
+                }
+              } else {
+                availableSizes = product.sizes || [];
+              }
+
+              if (availableSizes.length === 0) return null;
 
               return (
                 <div className="space-y-3">
@@ -306,19 +342,27 @@ export default function ProductClient() {
                     </button>
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    {availableSizes.map((size) => (
-                      <button
-                        key={size}
-                        onClick={() => setSelectedSize(size)}
-                        className={`px-5 py-2.5 rounded-md border-2 font-medium text-sm transition-all ${
-                          selectedSize === size
-                            ? 'border-neutral-900 bg-neutral-900 text-white'
-                            : 'border-neutral-200 hover:border-neutral-400'
-                        }`}
-                      >
-                        {isKids ? `${size} см` : size.toUpperCase()}
-                      </button>
-                    ))}
+                    {availableSizes.map((size) => {
+                      const sizePrice = sizePriceMap[size];
+                      return (
+                        <button
+                          key={size}
+                          onClick={() => setSelectedSize(size)}
+                          className={`px-5 py-2.5 rounded-md border-2 font-medium text-sm transition-all ${
+                            selectedSize === size
+                              ? 'border-neutral-900 bg-neutral-900 text-white'
+                              : 'border-neutral-200 hover:border-neutral-400'
+                          }`}
+                        >
+                          {isKids ? `${size} см` : size.toUpperCase()}
+                          {isKids && sizePrice && (
+                            <span className="ml-1 text-xs opacity-75">
+                              ({formatPrice(sizePrice)})
+                            </span>
+                          )}
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               );
