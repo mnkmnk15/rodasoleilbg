@@ -146,6 +146,10 @@ export function validateCheckoutForm(data: unknown): ValidationResult {
     postalCode: typeof form.postalCode === 'string' ? sanitizeString(form.postalCode) : undefined,
     address: typeof form.address === 'string' ? sanitizeString(form.address) : undefined,
     notes: typeof form.notes === 'string' ? sanitizeString(form.notes) : undefined,
+    promoCode: typeof form.promoCode === 'string' && form.promoCode.trim() !== ''
+      ? form.promoCode.trim().toUpperCase()
+      : undefined,
+    honeypot: typeof form.honeypot === 'string' ? form.honeypot : undefined,
   };
 
   return { valid: true, errors: [], sanitizedData };

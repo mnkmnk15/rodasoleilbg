@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { constructWebhookEvent } from '@/lib/stripe';
 import { sendTelegramNotification, formatOrderMessage } from '@/lib/telegram';
+import { createOrder, type OrderData } from '@/lib/sanity-orders';
 import Stripe from 'stripe';
 
 export async function POST(req: NextRequest) {
@@ -122,6 +123,15 @@ export async function POST(req: NextRequest) {
           message += `\n<b>📝 БЕЛЕЖКИ:</b>\n${session.metadata.notes}\n`;
         }
 
+        // Промокод и скидка
+        if (session.metadata?.promoCode && session.metadata?.discount) {
+          const discount = parseFloat(session.metadata.discount);
+          if (discount > 0) {
+            message += `\n<b>🎁 ПРОМОКОД:</b> ${session.metadata.promoCode}\n`;
+            message += `Отстъпка: -€${discount.toFixed(2)}\n`;
+          }
+        }
+
         // Сумма заказа
         const total = (amount / 100).toFixed(2);
         message += `\n<b>💰 ОБЩА СУМА: €${total}</b>\n`;
@@ -131,6 +141,52 @@ export async function POST(req: NextRequest) {
         console.log('📤 Sending Telegram notification...');
         await sendTelegramNotification(message);
         console.log('✅ Telegram notification sent successfully');
+
+        // Сохранение заказа в Sanity (НЕ блокируем webhook при ошибках)
+        try {
+          const orderData: OrderData = {
+            customerInfo: {
+              firstName: session.metadata?.customerFirstName || '',
+              lastName: session.metadata?.customerLastName || '',
+              email: customerEmail || '',
+              phone: customerPhone || '',
+            },
+            paymentMethod: 'card',
+            paymentStatus: 'paid',
+            stripeSessionId: session.id,
+            deliveryMethod: session.metadata?.deliveryMethod || '',
+            deliveryDetails: {
+              econtOfficeId: session.metadata?.econtOfficeId ? Number(session.metadata.econtOfficeId) : undefined,
+              econtOfficeCode: session.metadata?.econtOfficeCode,
+              econtOfficeName: session.metadata?.econtOfficeName,
+              city: session.metadata?.city,
+              postalCode: session.metadata?.postalCode,
+              address: session.metadata?.address,
+            },
+            deliveryPrice: deliveryPrice ? parseFloat(deliveryPrice) : 0,
+            items: items.map((item: any) => ({
+              productId: item.id || '',
+              productName: item.name,
+              price: item.price || 0,
+              quantity: item.quantity,
+              size: item.size,
+              color: item.color,
+            })),
+            // Subtotal = total - delivery + discount (восстанавливаем промежуточную сумму без учёта доставки и скидок)
+            subtotal: amount / 100 - (deliveryPrice ? parseFloat(deliveryPrice) : 0) + (session.metadata?.discount ? parseFloat(session.metadata.discount) : 0),
+            discount: session.metadata?.discount ? parseFloat(session.metadata.discount) : 0,
+            total: amount / 100,
+            promoCode: session.metadata?.promoCode,
+            customerNotes: session.metadata?.notes,
+          };
+
+          const sanityOrderId = await createOrder(orderData);
+          if (sanityOrderId) {
+            console.log('✅ Order saved to Sanity:', sanityOrderId);
+          }
+        } catch (err) {
+          console.error('[Webhook] Sanity order creation failed (non-critical):', err);
+        }
 
         console.log('✅ Order processed successfully:', session.id);
         break;

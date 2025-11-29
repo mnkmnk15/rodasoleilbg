@@ -210,6 +210,27 @@
     "showingFirst100": "Showing first 100 results. Refine your search for more.",
     "postalCode": "Postal code",
     "invalidEmail": "Invalid email address",
-    "invalidPhone": "Invalid phone number (use 0888123456 or +359888123456)"
+    "invalidPhone": "Invalid phone number (use 0888123456 or +359888123456)",
+    "promoCode": "Promo Code",
+    "enterPromoCode": "Enter promo code",
+    "apply": "Apply",
+    "checking": "Checking...",
+    "remove": "Remove",
+    "promoApplied": "Promo code applied",
+    "discount": "Discount",
+    "free": "Free",
+    "freeShippingApplied": "Free shipping",
+    "promoCodeRequired": "Please enter a promo code",
+    "promoErrors": {
+      "PROMO_INVALID_CODE": "Invalid promo code",
+      "PROMO_NOT_FOUND": "Promo code not found",
+      "PROMO_INACTIVE": "Promo code is inactive",
+      "PROMO_NOT_YET_VALID": "Promo code is not yet valid",
+      "PROMO_EXPIRED": "Promo code has expired",
+      "PROMO_LIMIT_REACHED": "Promo code limit reached",
+      "PROMO_INVALID_CART": "Invalid cart",
+      "PROMO_SERVER_ERROR": "Error validating promo code",
+      "PROMO_INVALID": "Invalid promo code"
+    }
   }
 }

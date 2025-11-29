@@ -5,6 +5,9 @@ import { sendTelegramNotification } from '@/lib/telegram';
 import { DELIVERY_PRICES } from '@/types/checkout';
 import { validateCartItems, validateCheckoutForm } from '@/lib/validation';
 import { checkRateLimit, getRequestIdentifier, RATE_LIMIT_CONFIGS, createRateLimitResponse } from '@/lib/rate-limit';
+import { createOrder, type OrderData } from '@/lib/sanity-orders';
+import { incrementPromoCodeUsage } from '../validate-promo/route';
+import { checkCODRateLimit } from '@/lib/rate-limit-kv';
 
 // Хелпер для получения цены и stripePriceId на основе размера для детских товаров
 function getKidsPriceData(product: any, size: string | undefined): { price: number; stripePriceId: string | null } {
@@ -60,6 +63,15 @@ export async function POST(req: NextRequest) {
 
     const sanitizedFormData = formValidation.sanitizedData;
 
+    // Honeypot защита от ботов
+    if (formData.honeypot && formData.honeypot.trim() !== '') {
+      console.warn('[Checkout] Honeypot triggered - likely a bot');
+      return NextResponse.json(
+        { error: 'Invalid request' },
+        { status: 400 }
+      );
+    }
+
     // Получаем информацию о продуктах из Sanity (включая данные для детских товаров)
     const productIds = validatedItems.map((item) => item.id);
     const products = await sanityClient.fetch(
@@ -85,9 +97,55 @@ export async function POST(req: NextRequest) {
       return sum + priceData.price * item.quantity;
     }, 0);
 
-    const deliveryPrice =
+    let deliveryPrice =
       DELIVERY_PRICES[sanitizedFormData.deliveryMethod as keyof typeof DELIVERY_PRICES];
-    const grandTotal = itemsTotal + deliveryPrice;
+
+    // Применение промокода
+    let discount = 0;
+    let promoCodeApplied: string | undefined;
+
+    if (sanitizedFormData.promoCode) {
+      try {
+        const promoCode = await sanityClient.fetch(
+          `*[_type == "promoCode" && code == $code && active == true][0]`,
+          { code: sanitizedFormData.promoCode.toUpperCase().trim() }
+        );
+
+        if (promoCode) {
+          // Проверка срока действия и лимитов (повторная проверка на серверной стороне)
+          const now = new Date();
+          const validFrom = promoCode.validFrom ? new Date(promoCode.validFrom) : null;
+          const validUntil = promoCode.validUntil ? new Date(promoCode.validUntil) : null;
+          const limitReached = promoCode.usageLimit && promoCode.usageCount >= promoCode.usageLimit;
+
+          const isValid = (!validFrom || validFrom <= now) &&
+                          (!validUntil || validUntil >= now) &&
+                          !limitReached;
+
+          if (isValid) {
+            if (promoCode.discountType === 'percentage') {
+              discount = (itemsTotal * promoCode.discountValue) / 100;
+              discount = Math.min(discount, itemsTotal); // Скидка не больше стоимости корзины
+            } else if (promoCode.discountType === 'fixed') {
+              discount = Math.min(promoCode.discountValue, itemsTotal);
+            } else if (promoCode.discountType === 'free_shipping') {
+              discount = deliveryPrice; // Сохраняем стоимость доставки как скидку для отображения
+              deliveryPrice = 0;
+            }
+
+            discount = Math.round(discount * 100) / 100;
+            promoCodeApplied = sanitizedFormData.promoCode.toUpperCase().trim();
+
+            // Увеличиваем счетчик использований
+            await incrementPromoCodeUsage(promoCodeApplied);
+          }
+        }
+      } catch (error) {
+        console.error('[Checkout] Promo code validation error:', error);
+      }
+    }
+
+    const grandTotal = itemsTotal - discount + deliveryPrice;
 
     // Создаём метаданные с полной информацией о заказе
     const metadata = {
@@ -124,6 +182,12 @@ export async function POST(req: NextRequest) {
       // Примечания
       notes: sanitizedFormData.notes || '',
 
+      // Промокод и скидка
+      ...(promoCodeApplied ? {
+        promoCode: promoCodeApplied,
+        discount: discount.toString(),
+      } : {}),
+
       // Товары (используем данные из БД для названий и цен)
       orderItems: JSON.stringify(
         validatedItems.map((item) => {
@@ -143,6 +207,20 @@ export async function POST(req: NextRequest) {
 
     // Если оплата наложенным платежом
     if (sanitizedFormData.paymentMethod === 'cash_on_delivery') {
+      // Дополнительная проверка rate limit для COD (3 заказа в час)
+      const codRateLimit = await checkCODRateLimit(identifier);
+      if (!codRateLimit.allowed) {
+        console.warn(`[Checkout] COD rate limit exceeded for: ${identifier}`);
+        return NextResponse.json(
+          {
+            error: 'Превишен лимит заявок. Моля, опитайте отново след известно време.',
+            rateLimitExceeded: true,
+            resetTime: codRateLimit.resetTime
+          },
+          { status: 429 }
+        );
+      }
+
       // Отправляем уведомление в Telegram
       const telegramMessage = formatOrderMessageWithDelivery({
         customerName: `${sanitizedFormData.firstName} ${sanitizedFormData.lastName}`,
@@ -180,13 +258,62 @@ export async function POST(req: NextRequest) {
                 address: sanitizedFormData.address,
               },
         notes: sanitizedFormData.notes,
+        discount,
+        promoCode: promoCodeApplied,
       });
 
       await sendTelegramNotification(telegramMessage);
 
+      // Сохранение заказа в Sanity (НЕ блокируем checkout при ошибках)
+      let sanityOrderId = null;
+      try {
+        const orderData: OrderData = {
+          customerInfo: {
+            firstName: sanitizedFormData.firstName,
+            lastName: sanitizedFormData.lastName,
+            email: sanitizedFormData.email,
+            phone: sanitizedFormData.phone,
+          },
+          paymentMethod: 'cash_on_delivery',
+          paymentStatus: 'pending',
+          deliveryMethod: sanitizedFormData.deliveryMethod,
+          deliveryDetails: {
+            econtOfficeId: sanitizedFormData.econtOfficeId,
+            econtOfficeCode: sanitizedFormData.econtOfficeCode,
+            econtOfficeName: sanitizedFormData.econtOfficeName,
+            city: sanitizedFormData.city,
+            cityId: sanitizedFormData.cityId,
+            postalCode: sanitizedFormData.postalCode,
+            address: sanitizedFormData.address,
+          },
+          deliveryPrice,
+          items: validatedItems.map((item) => {
+            const product = products.find((p: any) => p._id === item.id);
+            const priceData = getKidsPriceData(product, item.size);
+            return {
+              productId: item.id,
+              productName: product?.name?.bg || product?.name?.en || 'Unknown',
+              price: priceData.price,
+              quantity: item.quantity,
+              size: item.size,
+              color: item.color,
+            };
+          }),
+          subtotal: itemsTotal,
+          discount,
+          total: grandTotal,
+          promoCode: promoCodeApplied,
+          customerNotes: sanitizedFormData.notes,
+        };
+
+        sanityOrderId = await createOrder(orderData);
+      } catch (err) {
+        console.error('[Checkout] Sanity order creation failed (non-critical):', err);
+      }
+
       return NextResponse.json({
         success: true,
-        orderId: `COD-${Date.now()}`,
+        orderId: sanityOrderId || `COD-${Date.now()}`,
       });
     }
 
@@ -213,7 +340,7 @@ export async function POST(req: NextRequest) {
       };
     });
 
-    const session = await createCheckoutSession(lineItems, metadata, deliveryPrice, locale || 'bg');
+    const session = await createCheckoutSession(lineItems, metadata, deliveryPrice, locale || 'bg', discount);
 
     return NextResponse.json({ sessionId: session.id, url: session.url });
   } catch (error: any) {
@@ -243,6 +370,8 @@ function formatOrderMessageWithDelivery(orderData: {
   deliveryPrice: number;
   deliveryDetails: any;
   notes?: string;
+  discount?: number;
+  promoCode?: string;
 }) {
   const {
     customerName,
@@ -255,6 +384,8 @@ function formatOrderMessageWithDelivery(orderData: {
     deliveryPrice,
     deliveryDetails,
     notes,
+    discount,
+    promoCode,
   } = orderData;
 
   let message = `<b>НОВА ПОРЪЧКА</b>\n\n`;
@@ -298,6 +429,12 @@ function formatOrderMessageWithDelivery(orderData: {
   // Примечания
   if (notes) {
     message += `\n<b>📝 БЕЛЕЖКИ:</b>\n${notes}\n`;
+  }
+
+  // Промокод и скидка
+  if (promoCode && discount && discount > 0) {
+    message += `\n<b>🎁 ПРОМОКОД:</b> ${promoCode}\n`;
+    message += `Отстъпка: -€${discount.toFixed(2)}\n`;
   }
 
   // Сумма заказа

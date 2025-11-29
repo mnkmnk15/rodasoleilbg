@@ -56,6 +56,12 @@ export interface CheckoutFormData {
 
   // Примечания к заказу
   notes?: string;
+
+  // Промокод
+  promoCode?: string;
+
+  // Honeypot (защита от ботов)
+  honeypot?: string;
 }
 
 export interface OrderData extends CheckoutFormData {

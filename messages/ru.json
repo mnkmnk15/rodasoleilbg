@@ -210,6 +210,27 @@
     "showingFirst100": "Показаны первые 100 результатов. Уточните поиск для большего количества.",
     "postalCode": "Почтовый индекс",
     "invalidEmail": "Неверный адрес email",
-    "invalidPhone": "Неверный номер телефона (используйте 0888123456 или +359888123456)"
+    "invalidPhone": "Неверный номер телефона (используйте 0888123456 или +359888123456)",
+    "promoCode": "Промокод",
+    "enterPromoCode": "Введите промокод",
+    "apply": "Применить",
+    "checking": "Проверка...",
+    "remove": "Удалить",
+    "promoApplied": "Промокод применён",
+    "discount": "Скидка",
+    "free": "Бесплатно",
+    "freeShippingApplied": "Бесплатная доставка",
+    "promoCodeRequired": "Пожалуйста, введите промокод",
+    "promoErrors": {
+      "PROMO_INVALID_CODE": "Неверный промокод",
+      "PROMO_NOT_FOUND": "Промокод не найден",
+      "PROMO_INACTIVE": "Промокод неактивен",
+      "PROMO_NOT_YET_VALID": "Промокод ещё не действителен",
+      "PROMO_EXPIRED": "Промокод истёк",
+      "PROMO_LIMIT_REACHED": "Промокод исчерпан",
+      "PROMO_INVALID_CART": "Неверная корзина",
+      "PROMO_SERVER_ERROR": "Ошибка при проверке промокода",
+      "PROMO_INVALID": "Неверный промокод"
+    }
   }
 }

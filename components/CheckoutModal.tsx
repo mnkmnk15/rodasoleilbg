@@ -55,12 +55,25 @@ export default function CheckoutModal({
     paymentMethod: 'cash_on_delivery',
     deliveryMethod: 'econt_office',
     notes: '',
+    honeypot: '', // Скрытое поле для защиты от ботов
   });
 
   // Валидация
   const [emailError, setEmailError] = useState('');
   const [phoneError, setPhoneError] = useState('');
   const [deliveryError, setDeliveryError] = useState('');
+
+  // Промокод
+  const [promoCode, setPromoCode] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
+  const [promoError, setPromoError] = useState('');
+  const [appliedPromo, setAppliedPromo] = useState<{
+    code: string;
+    type: string;
+    value: number;
+    appliedAmount: number;
+    freeShipping: boolean;
+  } | null>(null);
 
   // Данные для селектов
   const [cities, setCities] = useState<EcontCity[]>([]);
@@ -276,10 +289,61 @@ export default function CheckoutModal({
     setDeliveryError('');
   };
 
+  const validatePromoCode = async () => {
+    if (!promoCode.trim()) {
+      setPromoError(t('promoCodeRequired'));
+      return;
+    }
+
+    setPromoLoading(true);
+    setPromoError('');
+
+    try {
+      const deliveryPrice =
+        DELIVERY_PRICES[formData.deliveryMethod as keyof typeof DELIVERY_PRICES];
+
+      const response = await fetch('/api/validate-promo', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          code: promoCode.toUpperCase().trim(),
+          cartTotal,
+          deliveryPrice,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.valid && data.discount) {
+        setAppliedPromo({
+          code: promoCode.toUpperCase().trim(),
+          ...data.discount,
+        });
+        setPromoCode('');
+        setPromoError('');
+      } else {
+        setPromoError(t(`promoErrors.${data.error}`) || t('promoErrors.PROMO_INVALID'));
+      }
+    } catch (error) {
+      console.error('Promo validation error:', error);
+      setPromoError(t('promoErrors.PROMO_SERVER_ERROR'));
+    } finally {
+      setPromoLoading(false);
+    }
+  };
+
+  const removePromoCode = () => {
+    setAppliedPromo(null);
+    setPromoCode('');
+    setPromoError('');
+  };
+
   const calculateTotal = () => {
     const deliveryPrice =
       DELIVERY_PRICES[formData.deliveryMethod as keyof typeof DELIVERY_PRICES];
-    return cartTotal + deliveryPrice;
+    const discount = appliedPromo?.appliedAmount || 0;
+    const finalDeliveryPrice = appliedPromo?.freeShipping ? 0 : deliveryPrice;
+    return cartTotal - discount + finalDeliveryPrice;
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -308,7 +372,14 @@ export default function CheckoutModal({
     // Для самовывоза в Бургасе валидация не нужна
 
     setDeliveryError('');
-    onSubmit(formData);
+
+    // Добавляем промокод к данным формы
+    const submitData = {
+      ...formData,
+      promoCode: appliedPromo?.code,
+    };
+
+    onSubmit(submitData);
   };
 
   const formatPrice = (price: number) => {
@@ -422,9 +493,20 @@ export default function CheckoutModal({
                         <span className="text-gray-600">{t('subtotal')}:</span>
                         <span className="font-medium">{formatPrice(cartTotal)}</span>
                       </div>
+                      {appliedPromo && appliedPromo.appliedAmount > 0 && !appliedPromo.freeShipping && (
+                        <div className="flex justify-between text-sm text-green-600">
+                          <span>{t('discount')} ({appliedPromo.code}):</span>
+                          <span className="font-medium">-{formatPrice(appliedPromo.appliedAmount)}</span>
+                        </div>
+                      )}
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">{t('delivery')}:</span>
-                        <span className="font-medium">{formatPrice(deliveryPrice)}</span>
+                        <span className={`font-medium ${appliedPromo?.freeShipping ? 'text-green-600 line-through' : ''}`}>
+                          {formatPrice(deliveryPrice)}
+                          {appliedPromo?.freeShipping && (
+                            <span className="ml-2 text-green-600 no-underline">{t('free')}</span>
+                          )}
+                        </span>
                       </div>
                       <div className="flex justify-between text-lg font-bold pt-2 border-t border-gray-300">
                         <span>{t('total')}:</span>
@@ -743,6 +825,69 @@ export default function CheckoutModal({
                         </div>
                       )}
 
+                      {/* Промокод */}
+                      <div>
+                        <h3 className="text-base font-semibold mb-3">{t('promoCode')}</h3>
+                        {appliedPromo ? (
+                          <div className="flex items-center justify-between p-4 bg-green-50 border-2 border-green-500 rounded-lg">
+                            <div>
+                              <p className="text-sm font-bold text-green-800">
+                                ✓ {t('promoApplied')}: {appliedPromo.code}
+                              </p>
+                              <p className="text-xs text-green-700 mt-1">
+                                {appliedPromo.freeShipping
+                                  ? t('freeShippingApplied')
+                                  : appliedPromo.type === 'percentage'
+                                  ? `${t('discount')} ${appliedPromo.value}%`
+                                  : `${t('discount')} €${appliedPromo.value}`}
+                              </p>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={removePromoCode}
+                              className="text-sm text-red-600 hover:text-red-800 font-medium"
+                            >
+                              {t('remove')}
+                            </button>
+                          </div>
+                        ) : (
+                          <div>
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                value={promoCode}
+                                onChange={(e) => {
+                                  setPromoCode(e.target.value.toUpperCase());
+                                  setPromoError('');
+                                }}
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    validatePromoCode();
+                                  }
+                                }}
+                                placeholder={t('enterPromoCode')}
+                                className={`flex-1 px-4 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 focus:ring-neutral-900 focus:border-transparent ${
+                                  promoError ? 'border-red-500' : 'border-gray-300'
+                                }`}
+                                disabled={promoLoading}
+                              />
+                              <button
+                                type="button"
+                                onClick={validatePromoCode}
+                                disabled={promoLoading || !promoCode.trim()}
+                                className="px-6 py-2.5 bg-neutral-900 text-white text-sm font-medium rounded-lg hover:bg-neutral-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                              >
+                                {promoLoading ? t('checking') : t('apply')}
+                              </button>
+                            </div>
+                            {promoError && (
+                              <p className="text-xs text-red-600 mt-2">{promoError}</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
                       {/* Начин на плащане */}
                       <div>
                         <h3 className="text-base font-semibold mb-3">{t('paymentMethod')}</h3>
@@ -784,6 +929,18 @@ export default function CheckoutModal({
                           placeholder={t('notesPlaceholder')}
                         />
                       </div>
+
+                      {/* Honeypot (скрытое поле для защиты от ботов) */}
+                      <input
+                        type="text"
+                        name="honeypot"
+                        value={formData.honeypot || ''}
+                        onChange={handleInputChange}
+                        style={{ display: 'none' }}
+                        tabIndex={-1}
+                        autoComplete="off"
+                        aria-hidden="true"
+                      />
 
                       {/* Submit Button */}
                       <button

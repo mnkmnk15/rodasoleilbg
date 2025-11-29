@@ -267,7 +267,8 @@ export async function createCheckoutSession(
   }>,
   metadata?: Record<string, string>,
   deliveryPrice?: number,
-  locale: string = 'bg'
+  locale: string = 'bg',
+  discount?: number
 ) {
   try {
     const stripeClient = stripe();
@@ -293,7 +294,8 @@ export async function createCheckoutSession(
       } as any);
     }
 
-    const session = await stripeClient.checkout.sessions.create({
+    // Создаём конфигурацию сессии
+    const sessionConfig: any = {
       payment_method_types: ['card'],
       line_items: lineItems,
       mode: 'payment',
@@ -308,7 +310,23 @@ export async function createCheckoutSession(
         enabled: true,
       },
       locale: 'auto',
-    });
+    };
+
+    // Если есть скидка, создаём одноразовый купон
+    if (discount && discount > 0) {
+      const coupon = await stripeClient.coupons.create({
+        amount_off: Math.round(discount * 100), // Скидка в центах
+        currency: 'eur',
+        duration: 'once',
+        name: `Промокод скидка €${discount.toFixed(2)}`,
+      });
+
+      sessionConfig.discounts = [{
+        coupon: coupon.id,
+      }];
+    }
+
+    const session = await stripeClient.checkout.sessions.create(sessionConfig);
 
     return session;
   } catch (error) {
