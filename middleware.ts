@@ -80,6 +80,7 @@ export default function middleware(request: NextRequest) {
     "font-src 'self' https://fonts.gstatic.com",
     "connect-src 'self' https://api.stripe.com https://*.sanity.io https://*.vercel-insights.com",
     "frame-src 'self' https://js.stripe.com",
+    "media-src 'self' https://cdn.jsdelivr.net",
     "object-src 'none'",
     "base-uri 'self'",
     "form-action 'self'",

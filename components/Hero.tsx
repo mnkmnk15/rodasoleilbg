@@ -109,7 +109,7 @@ export default function Hero() {
             onError={() => setVideoError(true)}
             onLoadedData={() => setVideoError(false)}
           >
-            <source src="/videos/rodasoleilbghero.mp4" type="video/mp4" />
+            <source src="https://cdn.jsdelivr.net/gh/mnkmnk15/rsoleilvideo@latest/hero-background.mp4" type="video/mp4" />
           </video>
         </motion.div>
 
@@ -320,7 +320,7 @@ export default function Hero() {
           disableRemotePlayback
           webkit-playsinline="true"
         >
-          <source src="/videos/rodasoleilbghero.mp4" type="video/mp4" />
+          <source src="https://cdn.jsdelivr.net/gh/mnkmnk15/rsoleilvideo@latest/hero-background.mp4" type="video/mp4" />
         </video>
 
         {/* Mobile Content - накладывается поверх видео */}
