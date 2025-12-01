@@ -38,7 +38,7 @@ async function getProductForMetadata(slug: string) {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale, slug } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rodasoleil.bg';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.rodasoleil.bg';
 
   const product = await getProductForMetadata(slug);
 
@@ -131,7 +131,7 @@ async function getProductStructuredData(slug: string, locale: string) {
 
   if (!product) return null;
 
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rodasoleil.bg';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.rodasoleil.bg';
   const productName = product.name[locale] || product.name.bg;
   const productDescription = product.shortDescription?.[locale] || product.description?.[locale] || '';
   const productImage = product.images?.[0] || `${baseUrl}/images/category-women.webp`;

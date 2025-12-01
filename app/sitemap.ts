@@ -24,7 +24,7 @@ async function getAllProductSlugs(): Promise<{ slug: string; updatedAt: string }
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rodasoleil.bg';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.rodasoleil.bg';
   const locales = ['bg', 'ru', 'en'];
 
   // Основные страницы
@@ -58,20 +58,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     });
   });
 
-  // Добавляем корневую страницу с редиректом на болгарский
-  entries.push({
-    url: baseUrl,
-    lastModified: new Date(),
-    changeFrequency: 'daily',
-    priority: 1.0,
-    alternates: {
-      languages: {
-        bg: `${baseUrl}/bg`,
-        ru: `${baseUrl}/ru`,
-        en: `${baseUrl}/en`,
-      },
-    },
-  });
+  // Корневой URL не добавляем, так как он делает редирект
 
   // Получаем все товары из Sanity и добавляем их в sitemap
   const products = await getAllProductSlugs();

@@ -8,7 +8,7 @@ type Props = {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { locale } = await params;
-  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://rodasoleil.bg';
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.rodasoleil.bg';
 
   const titles: Record<string, string> = {
     bg: 'Каталог Бански | Дамски, Мъжки и Детски Бански България | RoDaSoleil',

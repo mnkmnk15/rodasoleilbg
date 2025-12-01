@@ -17,7 +17,35 @@ const intlMiddleware = createMiddleware({
 });
 
 export default function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
+  const { pathname, search } = request.nextUrl;
+  const hostname = request.headers.get('host') || '';
+
+  // Редирект с non-www на www (только для продакшна)
+  if (
+    (hostname === 'rodasoleil.bg' || hostname.startsWith('rodasoleil.bg:')) &&
+    !hostname.startsWith('www.')
+  ) {
+    const url = request.nextUrl.clone();
+    url.host = 'www.rodasoleil.bg';
+    return NextResponse.redirect(url, 301);
+  }
+
+  // Редирект с HTTP на HTTPS (только для продакшна)
+  if (
+    request.headers.get('x-forwarded-proto') === 'http' &&
+    hostname.includes('rodasoleil.bg')
+  ) {
+    const url = request.nextUrl.clone();
+    url.protocol = 'https:';
+    return NextResponse.redirect(url, 301);
+  }
+
+  // Блокировка страниц с параметрами поиска (кроме корзины и каталога)
+  if (search && !pathname.includes('/catalog') && !pathname.includes('/checkout')) {
+    const url = request.nextUrl.clone();
+    url.search = '';
+    return NextResponse.redirect(url, 301);
+  }
 
   // Разрешенные origins для CORS (только ваш домен и Sanity Studio)
   const allowedOrigins = [
@@ -63,6 +91,11 @@ export default function middleware(request: NextRequest) {
 
   // Для всех остальных путей используем intl middleware и добавляем security headers
   const response = intlMiddleware(request);
+
+  // Для корневого пути (без языка) добавляем noindex
+  if (pathname === '/') {
+    response.headers.set('X-Robots-Tag', 'noindex, follow');
+  }
 
   // Security headers для всех страниц
   response.headers.set('X-Content-Type-Options', 'nosniff');
