@@ -19,12 +19,15 @@ const intlMiddleware = createMiddleware({
 export default function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
-  // Разрешенные origins для CORS (только ваш домен)
+  // Разрешенные origins для CORS (только ваш домен и Sanity Studio)
   const allowedOrigins = [
     process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
+    process.env.SANITY_STUDIO_URL || 'http://localhost:3333',
   ];
   const origin = request.headers.get('origin') || '';
-  const isAllowedOrigin = allowedOrigins.some(allowed => origin.startsWith(allowed));
+  const isAllowedOrigin = allowedOrigins.some(allowed =>
+    allowed && origin && (origin === allowed || origin.startsWith(allowed))
+  );
 
   // Добавляем CORS заголовки для API routes
   if (pathname.startsWith('/api/')) {

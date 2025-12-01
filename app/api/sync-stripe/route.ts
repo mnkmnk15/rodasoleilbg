@@ -4,11 +4,10 @@ import { sanityClientWithToken as sanityClient } from '@/sanity/config';
 
 /**
  * API endpoint для синхронизации продуктов из Sanity со Stripe
- * ЗАЩИЩЕН секретным ключом - доступ только из Sanity Studio
+ * ЗАЩИЩЕН проверкой origin - доступ только из Sanity Studio
  *
  * Использование:
  * POST /api/sync-stripe
- * Headers: { "x-sync-secret": "YOUR_SYNC_SECRET" }
  * Body: { productId: "product-id" } - для синхронизации конкретного продукта
  * Body: { syncAll: true } - для синхронизации всех продуктов
  */
@@ -35,6 +34,7 @@ function getCorsHeaders(origin: string | null): Record<string, string> {
     'Access-Control-Allow-Origin': allowedOrigin,
     'Access-Control-Allow-Methods': 'POST, OPTIONS',
     'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Credentials': 'true',
   };
 }
 
