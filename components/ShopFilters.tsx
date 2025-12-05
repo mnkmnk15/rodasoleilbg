@@ -14,6 +14,8 @@ interface ShopFiltersProps {
   onGenderChange: (genderSlug: string | null) => void;
   selectedProductType: string | null;
   onProductTypeChange: (typeSlug: string | null) => void;
+  selectedSizes: string[];
+  onSizesChange: (sizes: string[]) => void;
   sortBy: string;
   onSortChange: (sort: string) => void;
   showSaleOnly: boolean;
@@ -43,6 +45,29 @@ const PRODUCT_TYPES = [
   { slug: 'other', labelBg: 'Други', labelRu: 'Другие', labelEn: 'Other' },
 ];
 
+// Размеры для взрослых (lowercase как в Sanity)
+const ADULT_SIZES = [
+  { value: 'xs', label: 'XS' },
+  { value: 's', label: 'S' },
+  { value: 'm', label: 'M' },
+  { value: 'l', label: 'L' },
+  { value: 'xl', label: 'XL' },
+  { value: 'xxl', label: 'XXL' },
+];
+
+// Размеры для детей (по росту в см)
+const KIDS_SIZES = [
+  { value: '104', label: '104' },
+  { value: '110', label: '110' },
+  { value: '116', label: '116' },
+  { value: '122', label: '122' },
+  { value: '128', label: '128' },
+  { value: '134', label: '134' },
+  { value: '140', label: '140' },
+  { value: '146', label: '146' },
+  { value: '152', label: '152' },
+];
+
 export default function ShopFilters({
   categories,
   selectedCategory,
@@ -51,6 +76,8 @@ export default function ShopFilters({
   onGenderChange,
   selectedProductType,
   onProductTypeChange,
+  selectedSizes,
+  onSizesChange,
   sortBy,
   onSortChange,
   showSaleOnly,
@@ -62,6 +89,19 @@ export default function ShopFilters({
   const [isMobileFiltersOpen, setIsMobileFiltersOpen] = useState(false);
   const [isGenderExpanded, setIsGenderExpanded] = useState(true);
   const [isTypesExpanded, setIsTypesExpanded] = useState(true);
+  const [isSizesExpanded, setIsSizesExpanded] = useState(true);
+
+  // Определяем, какие размеры показывать в зависимости от выбранной категории
+  const availableSizes = selectedGender === 'kids' ? KIDS_SIZES : ADULT_SIZES;
+
+  // Функция для переключения размера
+  const toggleSize = (size: string) => {
+    if (selectedSizes.includes(size)) {
+      onSizesChange(selectedSizes.filter(s => s !== size));
+    } else {
+      onSizesChange([...selectedSizes, size]);
+    }
+  };
 
   const getCategoryLabel = (cat: typeof GENDER_CATEGORIES[0] | typeof PRODUCT_TYPES[0]) => {
     if (locale === 'bg') return cat.labelBg;
@@ -72,6 +112,7 @@ export default function ShopFilters({
   const activeFiltersCount =
     (selectedGender ? 1 : 0) +
     (selectedProductType ? 1 : 0) +
+    selectedSizes.length +
     (showSaleOnly ? 1 : 0) +
     (showInStockOnly ? 1 : 0);
 
@@ -193,6 +234,48 @@ export default function ShopFilters({
           </AnimatePresence>
         </div>
 
+        {/* Sizes Filter */}
+        <div className="border-b border-neutral-200 pb-6">
+          <button
+            onClick={() => setIsSizesExpanded(!isSizesExpanded)}
+            className="flex items-center justify-between w-full mb-4"
+          >
+            <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-900">
+              {locale === 'bg' ? 'Размер' : locale === 'ru' ? 'Размер' : 'Size'}
+            </h3>
+            <ChevronDown
+              className={`w-4 h-4 transition-transform ${
+                isSizesExpanded ? 'rotate-180' : ''
+              }`}
+            />
+          </button>
+
+          <AnimatePresence>
+            {isSizesExpanded && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="grid grid-cols-3 gap-2 overflow-hidden"
+              >
+                {availableSizes.map((size) => (
+                  <button
+                    key={size.value}
+                    onClick={() => toggleSize(size.value)}
+                    className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      selectedSizes.includes(size.value)
+                        ? 'bg-neutral-900 text-white'
+                        : 'text-neutral-600 hover:bg-neutral-100 border border-neutral-300'
+                    }`}
+                  >
+                    {size.label}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
+
         {/* Additional Filters */}
         <div className="space-y-3">
           <label className="flex items-center gap-3 cursor-pointer group">
@@ -301,6 +384,28 @@ export default function ShopFilters({
                           }`}
                         >
                           {getCategoryLabel(type)}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Sizes Filter */}
+                  <div className="border-b border-neutral-200 pb-6">
+                    <h3 className="text-sm font-semibold uppercase tracking-wider text-neutral-900 mb-4">
+                      {locale === 'bg' ? 'Размер' : locale === 'ru' ? 'Размер' : 'Size'}
+                    </h3>
+                    <div className="grid grid-cols-3 gap-2">
+                      {availableSizes.map((size) => (
+                        <button
+                          key={size.value}
+                          onClick={() => toggleSize(size.value)}
+                          className={`px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                            selectedSizes.includes(size.value)
+                              ? 'bg-neutral-900 text-white'
+                              : 'text-neutral-600 hover:bg-neutral-100 border border-neutral-300'
+                          }`}
+                        >
+                          {size.label}
                         </button>
                       ))}
                     </div>

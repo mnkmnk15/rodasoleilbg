@@ -24,6 +24,7 @@ export default function CatalogClient() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedGender, setSelectedGender] = useState<string | null>(null);
   const [selectedProductType, setSelectedProductType] = useState<string | null>(null);
+  const [selectedSizes, setSelectedSizes] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState('newest');
   const [showSaleOnly, setShowSaleOnly] = useState(false);
   const [showInStockOnly, setShowInStockOnly] = useState(false);
@@ -79,6 +80,28 @@ export default function CatalogClient() {
       );
     }
 
+    // Apply size filter (множественный выбор)
+    if (selectedSizes.length > 0) {
+      filtered = filtered.filter((product) => {
+        // Проверяем, есть ли хотя бы один выбранный размер в товаре
+        return selectedSizes.some(selectedSize => {
+          // Проверяем размеры для взрослых
+          if (product.sizes && product.sizes.includes(selectedSize)) {
+            return true;
+          }
+          // Проверяем размеры для детей (старый формат)
+          if (product.kidsSizes && product.kidsSizes.includes(selectedSize)) {
+            return true;
+          }
+          // Проверяем размеры для детей (новый формат с ценами)
+          if (product.kidsSizePrices && product.kidsSizePrices.some(sp => sp.size === selectedSize)) {
+            return true;
+          }
+          return false;
+        });
+      });
+    }
+
     // Apply sale filter
     if (showSaleOnly) {
       filtered = filtered.filter(
@@ -107,7 +130,7 @@ export default function CatalogClient() {
     });
 
     return filtered;
-  }, [products, selectedCategory, selectedGender, selectedProductType, showSaleOnly, showInStockOnly, sortBy, locale]);
+  }, [products, selectedCategory, selectedGender, selectedProductType, selectedSizes, showSaleOnly, showInStockOnly, sortBy, locale]);
 
   return (
     <main className="min-h-screen bg-white">
@@ -149,7 +172,7 @@ export default function CatalogClient() {
         <div className="flex flex-col lg:flex-row gap-8 lg:gap-12">
           {/* Filters Sidebar */}
           <aside className="lg:w-64 lg:flex-shrink-0">
-            <div className="lg:sticky lg:top-28">
+            <div className="lg:sticky lg:top-28 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto lg:pr-2">
               <ShopFilters
                 categories={categories}
                 selectedCategory={selectedCategory}
@@ -158,6 +181,8 @@ export default function CatalogClient() {
                 onGenderChange={setSelectedGender}
                 selectedProductType={selectedProductType}
                 onProductTypeChange={setSelectedProductType}
+                selectedSizes={selectedSizes}
+                onSizesChange={setSelectedSizes}
                 sortBy={sortBy}
                 onSortChange={setSortBy}
                 showSaleOnly={showSaleOnly}
