@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { constructWebhookEvent } from '@/lib/stripe';
 import { sendTelegramNotification, formatOrderMessage } from '@/lib/telegram';
 import { createOrder, type OrderData } from '@/lib/sanity-orders';
+import { sendOrderConfirmationEmail } from '@/lib/email';
 import Stripe from 'stripe';
 
 export async function POST(req: NextRequest) {
@@ -40,6 +41,12 @@ export async function POST(req: NextRequest) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session;
 
+        // ВАЖНО: Проверяем что платёж действительно успешен
+        if (session.payment_status !== 'paid') {
+          console.warn('⚠️ Checkout session completed but payment not paid:', session.payment_status);
+          return NextResponse.json({ received: true, skipped: 'payment_not_paid' });
+        }
+
         // Получаем детали заказа
         const customerEmail = session.customer_details?.email ?? session.metadata?.customerEmail ?? undefined;
         const customerName = session.customer_details?.name
@@ -52,10 +59,13 @@ export async function POST(req: NextRequest) {
 
         // Парсим информацию о товарах из метаданных
         let items: Array<{
+          id?: string;
           name: string;
           quantity: number;
+          price?: number;
           size?: string;
           color?: string;
+          image?: string;
         }> = [];
 
         if (session.metadata?.orderItems) {
@@ -142,7 +152,8 @@ export async function POST(req: NextRequest) {
         await sendTelegramNotification(message);
         console.log('✅ Telegram notification sent successfully');
 
-        // Сохранение заказа в Sanity (НЕ блокируем webhook при ошибках)
+        // Сохранение заказа в Sanity СНАЧАЛА (чтобы получить orderId для email)
+        let orderId: string | null = null;
         try {
           const orderData: OrderData = {
             customerInfo: {
@@ -180,12 +191,55 @@ export async function POST(req: NextRequest) {
             customerNotes: session.metadata?.notes,
           };
 
-          const sanityOrderId = await createOrder(orderData);
-          if (sanityOrderId) {
-            console.log('✅ Order saved to Sanity:', sanityOrderId);
+          orderId = await createOrder(orderData);
+          if (orderId) {
+            console.log('✅ Order saved to Sanity:', orderId);
           }
         } catch (err) {
           console.error('[Webhook] Sanity order creation failed (non-critical):', err);
+        }
+
+        // Отправляем email клиенту (используем orderId из Sanity или fallback на session.id)
+        console.log('📧 Sending email confirmation...');
+        try {
+          const emailSent = await sendOrderConfirmationEmail({
+            customerEmail: customerEmail || '',
+            customerName: customerName || '',
+            customerPhone: customerPhone || '',
+            items: items.map(item => ({
+              name: item.name,
+              quantity: item.quantity,
+              price: item.price || 0,
+              size: item.size,
+              color: item.color,
+              image: item.image,
+            })),
+            paymentMethod: 'card',
+            deliveryMethod: session.metadata?.deliveryMethod || '',
+            deliveryDetails: {
+              econtOfficeId: session.metadata?.econtOfficeId ? Number(session.metadata.econtOfficeId) : undefined,
+              econtOfficeCode: session.metadata?.econtOfficeCode,
+              econtOfficeName: session.metadata?.econtOfficeName,
+              city: session.metadata?.city,
+              postalCode: session.metadata?.postalCode,
+              address: session.metadata?.address,
+            },
+            deliveryPrice: deliveryPrice ? parseFloat(deliveryPrice) : 0,
+            subtotal: amount / 100 - (deliveryPrice ? parseFloat(deliveryPrice) : 0) + (session.metadata?.discount ? parseFloat(session.metadata.discount) : 0),
+            discount: session.metadata?.discount ? parseFloat(session.metadata.discount) : 0,
+            total: amount / 100,
+            promoCode: session.metadata?.promoCode,
+            notes: session.metadata?.notes,
+            orderId: orderId || `TEMP-${session.id}`,
+          }, session.metadata?.locale || 'bg');
+
+          if (emailSent) {
+            console.log('✅ Email confirmation sent successfully');
+          } else {
+            console.warn('⚠️ Email sending failed, but order is processed');
+          }
+        } catch (emailError) {
+          console.error('❌ Email error (non-critical):', emailError);
         }
 
         console.log('✅ Order processed successfully:', session.id);

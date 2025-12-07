@@ -232,5 +232,31 @@
       "PROMO_SERVER_ERROR": "Грешка при проверка на промокода",
       "PROMO_INVALID": "Невалиден промокод"
     }
+  },
+  "email": {
+    "subject": "Благодарим за поръчката!",
+    "greeting": "Здравейте",
+    "thankYou": "Благодарим Ви за поръчката в RODASOLEIL",
+    "orderReceived": "Вашата поръчка е получена и се обработва.",
+    "viewOrderButton": "Виж статус на поръчката",
+    "orderDetails": "Детайли на поръчката",
+    "productName": "Продукт",
+    "quantity": "Количество",
+    "price": "Цена",
+    "size": "Размер",
+    "color": "Цвят",
+    "subtotal": "Междинна сума",
+    "discount": "Отстъпка",
+    "discountCode": "Промокод",
+    "shipping": "Доставка",
+    "total": "Обща сума",
+    "youSaved": "Спестихте",
+    "deliveryInfo": "Информация за доставка",
+    "deliveryMethod": "Начин на доставка",
+    "econtOffice": "До офис/автомат Еконт",
+    "econtAddress": "До адрес (Еконт)",
+    "pickup": "Самовземане - Бургас",
+    "customerInfo": "Вашите данни",
+    "notes": "Бележки"
   }
 }

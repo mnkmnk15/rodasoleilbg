@@ -232,5 +232,31 @@
       "PROMO_SERVER_ERROR": "Error validating promo code",
       "PROMO_INVALID": "Invalid promo code"
     }
+  },
+  "email": {
+    "subject": "Thank you for your order!",
+    "greeting": "Hello",
+    "thankYou": "Thank you for your order at RODASOLEIL",
+    "orderReceived": "Your order has been received and is being processed.",
+    "viewOrderButton": "View order status",
+    "orderDetails": "Order details",
+    "productName": "Product",
+    "quantity": "Quantity",
+    "price": "Price",
+    "size": "Size",
+    "color": "Color",
+    "subtotal": "Subtotal",
+    "discount": "Discount",
+    "discountCode": "Promo code",
+    "shipping": "Shipping",
+    "total": "Total",
+    "youSaved": "You saved",
+    "deliveryInfo": "Delivery information",
+    "deliveryMethod": "Delivery method",
+    "econtOffice": "To Econt office",
+    "econtAddress": "To address (Econt)",
+    "pickup": "Pickup - Burgas",
+    "customerInfo": "Your information",
+    "notes": "Notes"
   }
 }

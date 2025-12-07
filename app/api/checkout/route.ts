@@ -1,13 +1,27 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createCheckoutSession } from '@/lib/stripe';
-import { sanityClient } from '@/sanity/config';
+import { sanityClient, urlFor } from '@/sanity/config';
 import { sendTelegramNotification } from '@/lib/telegram';
+import { sendOrderConfirmationEmail } from '@/lib/email';
 import { DELIVERY_PRICES } from '@/types/checkout';
 import { validateCartItems, validateCheckoutForm } from '@/lib/validation';
 import { checkRateLimit, getRequestIdentifier, RATE_LIMIT_CONFIGS, createRateLimitResponse } from '@/lib/rate-limit';
 import { createOrder, type OrderData } from '@/lib/sanity-orders';
 import { incrementPromoCodeUsage } from '../validate-promo/route';
 import { checkCODRateLimit } from '@/lib/rate-limit-kv';
+
+// Хелпер для получения URL картинки товара
+function getProductImageUrl(product: any): string {
+  if (!product?.images || !product.images[0]) {
+    return '';
+  }
+  try {
+    return urlFor(product.images[0]).width(300).height(300).url();
+  } catch (error) {
+    console.error('Error generating image URL:', error);
+    return '';
+  }
+}
 
 // Хелпер для получения цены и stripePriceId на основе размера для детских товаров
 function getKidsPriceData(product: any, size: string | undefined): { price: number; stripePriceId: string | null } {
@@ -75,7 +89,7 @@ export async function POST(req: NextRequest) {
     // Получаем информацию о продуктах из Sanity (включая данные для детских товаров)
     const productIds = validatedItems.map((item) => item.id);
     const products = await sanityClient.fetch(
-      `*[_id in $ids]{ _id, name, price, stripeProductId, stripePriceId, gender, kidsSizePrices }`,
+      `*[_id in $ids]{ _id, name, price, stripeProductId, stripePriceId, gender, kidsSizePrices, images }`,
       { ids: productIds }
     );
 
@@ -200,6 +214,7 @@ export async function POST(req: NextRequest) {
             size: item.size,
             color: item.color,
             price: priceData.price,
+            image: product ? getProductImageUrl(product) : '',
           };
         })
       ),
@@ -264,7 +279,7 @@ export async function POST(req: NextRequest) {
 
       await sendTelegramNotification(telegramMessage);
 
-      // Сохранение заказа в Sanity (НЕ блокируем checkout при ошибках)
+      // Сохранение заказа в Sanity СНАЧАЛА (чтобы получить orderId для email)
       let sanityOrderId = null;
       try {
         const orderData: OrderData = {
@@ -309,6 +324,50 @@ export async function POST(req: NextRequest) {
         sanityOrderId = await createOrder(orderData);
       } catch (err) {
         console.error('[Checkout] Sanity order creation failed (non-critical):', err);
+      }
+
+      // Отправляем email клиенту (используем orderId из Sanity или fallback)
+      console.log('📧 Sending COD order email...');
+      try {
+        await sendOrderConfirmationEmail({
+          customerEmail: sanitizedFormData.email,
+          customerName: `${sanitizedFormData.firstName} ${sanitizedFormData.lastName}`,
+          customerPhone: sanitizedFormData.phone,
+          items: validatedItems.map((item) => {
+            const product = products.find((p: any) => p._id === item.id);
+            const priceData = getKidsPriceData(product, item.size);
+            return {
+              name: product?.name?.en || product?.name?.bg || item.name || 'Unknown',
+              quantity: item.quantity,
+              price: priceData.price,
+              size: item.size,
+              color: item.color,
+              image: product ? getProductImageUrl(product) : '',
+            };
+          }),
+          paymentMethod: 'cash_on_delivery',
+          deliveryMethod: sanitizedFormData.deliveryMethod,
+          deliveryDetails: {
+            econtOfficeId: sanitizedFormData.econtOfficeId,
+            econtOfficeCode: sanitizedFormData.econtOfficeCode,
+            econtOfficeName: sanitizedFormData.econtOfficeName,
+            city: sanitizedFormData.city,
+            cityId: sanitizedFormData.cityId,
+            postalCode: sanitizedFormData.postalCode,
+            address: sanitizedFormData.address,
+          },
+          deliveryPrice,
+          subtotal: itemsTotal,
+          discount,
+          total: grandTotal,
+          promoCode: promoCodeApplied,
+          notes: sanitizedFormData.notes,
+          orderId: sanityOrderId || `COD-${Date.now()}`,
+        }, locale || 'bg');
+
+        console.log('✅ COD email sent');
+      } catch (emailError) {
+        console.error('❌ COD email error (non-critical):', emailError);
       }
 
       return NextResponse.json({

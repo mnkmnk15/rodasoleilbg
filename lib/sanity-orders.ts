@@ -45,12 +45,12 @@ export async function createOrder(orderData: OrderData): Promise<string | null> 
       // Проверка дубликата (для Stripe webhooks - idempotency)
       if (orderData.stripeSessionId) {
         const existing = await sanityClientWithToken.fetch(
-          `*[_type == "order" && stripeSessionId == $sid][0]`,
+          `*[_type == "order" && stripeSessionId == $sid][0]{orderId}`,
           { sid: orderData.stripeSessionId }
         );
         if (existing) {
-          console.log(`[Sanity Order] Already exists: ${existing._id}`);
-          return existing._id;
+          console.log(`[Sanity Order] Already exists: ${existing.orderId}`);
+          return existing.orderId;
         }
       }
 
@@ -94,7 +94,7 @@ export async function createOrder(orderData: OrderData): Promise<string | null> 
 
       const result = await sanityClientWithToken.create(doc);
       console.log(`[Sanity Order] ✅ Created: ${result._id} (${orderId})`);
-      return result._id;
+      return orderId;
 
     } catch (error: any) {
       lastError = error;
