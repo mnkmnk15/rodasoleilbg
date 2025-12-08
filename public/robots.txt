@@ -10,6 +10,8 @@ Disallow: /api/
 Disallow: /_next/
 Disallow: /admin/
 Disallow: /*.json$
+Disallow: /checkout/success/
+Disallow: /checkout/cancel/
 
 # Разрешить доступ к статическим ресурсам
 Allow: /_next/static/

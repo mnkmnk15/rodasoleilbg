@@ -9,12 +9,12 @@ export default function StructuredData({ locale }: StructuredDataProps) {
   const organizationData = {
     '@context': 'https://schema.org',
     '@type': 'ClothingStore',
-    '@id': 'https://rodasoleil.bg/#organization',
+    '@id': 'https://www.rodasoleil.bg/#organization',
     name: 'RoDaSoleil Bulgaria',
     alternateName: 'Roda Soleil',
-    url: 'https://rodasoleil.bg',
-    logo: 'https://rodasoleil.bg/logo.png',
-    image: 'https://rodasoleil.bg/og-image.jpg',
+    url: 'https://www.rodasoleil.bg',
+    logo: 'https://www.rodasoleil.bg/logo.png',
+    image: 'https://www.rodasoleil.bg/og-image.jpg',
     description:
       locale === 'bg'
         ? 'Умни бански с tan-through технология за равномерен загар. Дамски, мъжки и детски бански. UV защита SPF 35+. Бърза доставка с Еконт в България.'
@@ -42,8 +42,8 @@ export default function StructuredData({ locale }: StructuredDataProps) {
   const websiteData = {
     '@context': 'https://schema.org',
     '@type': 'WebSite',
-    '@id': 'https://rodasoleil.bg/#website',
-    url: 'https://rodasoleil.bg',
+    '@id': 'https://www.rodasoleil.bg/#website',
+    url: 'https://www.rodasoleil.bg',
     name: 'RoDaSoleil Bulgaria',
     description:
       locale === 'bg'
@@ -52,14 +52,14 @@ export default function StructuredData({ locale }: StructuredDataProps) {
         ? 'Купить умные купальники с tan-through технологией в Болгарии. Женские, мужские и детские купальники с UV защитой SPF 35+.'
         : 'Buy smart swimwear with tan-through technology in Bulgaria. Women, men and kids swimwear with UV protection SPF 35+.',
     publisher: {
-      '@id': 'https://rodasoleil.bg/#organization',
+      '@id': 'https://www.rodasoleil.bg/#organization',
     },
     inLanguage: [locale],
     potentialAction: {
       '@type': 'SearchAction',
       target: {
         '@type': 'EntryPoint',
-        urlTemplate: `https://rodasoleil.bg/${locale}/catalog?search={search_term_string}`,
+        urlTemplate: `https://www.rodasoleil.bg/${locale}/catalog?search={search_term_string}`,
       },
       'query-input': 'required name=search_term_string',
     },
@@ -73,14 +73,14 @@ export default function StructuredData({ locale }: StructuredDataProps) {
       {
         '@type': 'ListItem',
         position: 1,
-        name: locale === 'bg' ? 'Начало' : 'Home',
-        item: `https://rodasoleil.bg/${locale}`,
+        name: locale === 'bg' ? 'Начало' : locale === 'ru' ? 'Главная' : 'Home',
+        item: `https://www.rodasoleil.bg/${locale}`,
       },
       {
         '@type': 'ListItem',
         position: 2,
-        name: locale === 'bg' ? 'Каталог' : 'Catalog',
-        item: `https://rodasoleil.bg/${locale}/catalog`,
+        name: locale === 'bg' ? 'Каталог' : locale === 'ru' ? 'Каталог' : 'Catalog',
+        item: `https://www.rodasoleil.bg/${locale}/catalog`,
       },
     ],
   };
@@ -89,7 +89,7 @@ export default function StructuredData({ locale }: StructuredDataProps) {
   const productCategoryData = {
     '@context': 'https://schema.org',
     '@type': 'CollectionPage',
-    '@id': `https://rodasoleil.bg/${locale}/catalog`,
+    '@id': `https://www.rodasoleil.bg/${locale}/catalog`,
     name: locale === 'bg' ? 'Каталог бански' : 'Swimwear Catalog',
     description:
       locale === 'bg'
@@ -97,9 +97,9 @@ export default function StructuredData({ locale }: StructuredDataProps) {
         : locale === 'ru'
         ? 'Умные купальники с tan-through технологией - пропускают солнце для равномерного загара. Женские, мужские и детские купальники.'
         : 'Smart swimwear with tan-through technology - let sun through for even tan. Women, men and kids swimwear.',
-    url: `https://rodasoleil.bg/${locale}/catalog`,
+    url: `https://www.rodasoleil.bg/${locale}/catalog`,
     isPartOf: {
-      '@id': 'https://rodasoleil.bg/#website',
+      '@id': 'https://www.rodasoleil.bg/#website',
     },
     about: {
       '@type': 'Thing',
@@ -112,9 +112,9 @@ export default function StructuredData({ locale }: StructuredDataProps) {
   const localBusinessData = {
     '@context': 'https://schema.org',
     '@type': 'Store',
-    '@id': 'https://rodasoleil.bg/#store',
+    '@id': 'https://www.rodasoleil.bg/#store',
     name: 'RoDaSoleil Bulgaria',
-    image: 'https://rodasoleil.bg/og-image.jpg',
+    image: 'https://www.rodasoleil.bg/og-image.jpg',
     description:
       locale === 'bg'
         ? 'Онлайн магазин за умни бански с tan-through технология в България. Дамски, мъжки и детски бански с UV защита.'
@@ -130,7 +130,7 @@ export default function StructuredData({ locale }: StructuredDataProps) {
       latitude: 42.5048,
       longitude: 27.4626,
     },
-    url: 'https://rodasoleil.bg',
+    url: 'https://www.rodasoleil.bg',
     telephone: '+359896235961',
     priceRange: '$$',
     openingHoursSpecification: {
