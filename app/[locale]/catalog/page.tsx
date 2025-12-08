@@ -1,5 +1,6 @@
 import { Metadata } from 'next';
 import { getLocale } from 'next-intl/server';
+import { Suspense } from 'react';
 import CatalogClient from './CatalogClient';
 
 type Props = {
@@ -71,5 +72,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default function CatalogPage() {
-  return <CatalogClient />;
+  return (
+    <Suspense fallback={<div className="min-h-screen flex items-center justify-center">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neutral-900"></div>
+    </div>}>
+      <CatalogClient />
+    </Suspense>
+  );
 }

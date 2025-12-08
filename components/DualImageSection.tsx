@@ -25,7 +25,7 @@ export default function DualImageSection() {
     {
       key: 'men',
       image: '/images/category-men.webp',
-      href: `/${locale}/catalog?category=men`,
+      href: `/${locale}/catalog?category=mens`,
       objectPosition: 'center 5%'
     },
     {

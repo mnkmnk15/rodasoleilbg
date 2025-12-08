@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useMemo } from 'react';
 import { useLocale, useTranslations } from 'next-intl';
+import { useSearchParams } from 'next/navigation';
 import { motion } from 'framer-motion';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
@@ -16,6 +17,7 @@ export default function CatalogClient() {
   const locale = useLocale() as 'bg' | 'ru' | 'en';
   const t = useTranslations('catalog');
   const { syncPrices } = useCart();
+  const searchParams = useSearchParams();
   const [products, setProducts] = useState<SanityProduct[]>([]);
   const [categories, setCategories] = useState<SanityCategory[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -33,6 +35,16 @@ export default function CatalogClient() {
   useEffect(() => {
     syncPrices();
   }, [syncPrices]);
+
+  // Читаем параметр category из URL и устанавливаем фильтр gender
+  useEffect(() => {
+    const categoryParam = searchParams.get('category');
+    if (categoryParam) {
+      // Конвертируем значение category в gender filter
+      // women -> women, men -> men, kids -> kids
+      setSelectedGender(categoryParam);
+    }
+  }, [searchParams]);
 
   // Fetch products and categories
   useEffect(() => {
