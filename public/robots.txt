@@ -1,5 +1,5 @@
 # Robots.txt для RoDaSoleil Bulgaria
-# https://rodasoleil.bg
+# https://www.rodasoleil.bg
 
 # Разрешить всем поисковым системам индексировать сайт
 User-agent: *
@@ -18,7 +18,7 @@ Allow: /_next/static/
 Allow: /_next/image/
 
 # Карта сайта (единый sitemap с hreflang альтернативами)
-Sitemap: https://rodasoleil.bg/sitemap.xml
+Sitemap: https://www.rodasoleil.bg/sitemap.xml
 
 # Специфические настройки для Google
 User-agent: Googlebot
