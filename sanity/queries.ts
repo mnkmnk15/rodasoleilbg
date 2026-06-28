@@ -35,7 +35,13 @@ export async function getAllProducts() {
 
   const products = await sanityClient.fetch(query);
 
-  return products;
+  // Sanity CDN resizes originals (some are 4K+) before Next.js optimization
+  return products.map((product: { images?: string[] }) => ({
+    ...product,
+    images: product.images?.map((url: string) =>
+      url ? `${url}?w=1200&q=80&auto=format` : url
+    ) || []
+  }));
 }
 
 // Get featured products (bestsellers)

@@ -22,7 +22,7 @@ const nextConfig: NextConfig = {
     ],
     formats: ['image/webp'],
     deviceSizes: [640, 1080, 1920],
-    imageSizes: [64, 128, 256],
+    imageSizes: [64, 128, 256, 384],
     minimumCacheTTL: 2592000,
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
