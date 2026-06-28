@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import { Metadata } from 'next';
 import { createClient } from '@sanity/client';
 import ProductClient from './ProductClient';

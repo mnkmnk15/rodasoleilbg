@@ -71,7 +71,7 @@ export default function DualImageSection() {
                     className="object-cover transition-all duration-700 ease-out group-hover:scale-105 group-hover:brightness-75"
                     sizes="(max-width: 1024px) 100vw, 33vw"
                     priority={index === 0}
-                    quality={90}
+                    quality={75}
                     style={{ objectPosition: category.objectPosition }}
                   />
 

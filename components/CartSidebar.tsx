@@ -209,6 +209,7 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                             src={typeof item.image === 'string' ? item.image : urlFor(item.image).url()}
                             alt={item.name}
                             fill
+                            sizes="80px"
                             className="object-cover"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;

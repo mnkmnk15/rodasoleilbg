@@ -35,13 +35,7 @@ export async function getAllProducts() {
 
   const products = await sanityClient.fetch(query);
 
-  // Оптимизируем URL изображений для каталога
-  return products.map((product: { images?: string[] }) => ({
-    ...product,
-    images: product.images?.map((url: string) =>
-      url ? `${url}?w=600&h=800&fit=crop&auto=format&q=75` : url
-    ) || []
-  }));
+  return products;
 }
 
 // Get featured products (bestsellers)

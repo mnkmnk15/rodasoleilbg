@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import { Metadata } from 'next';
 import { getLocale } from 'next-intl/server';
 import { Suspense } from 'react';

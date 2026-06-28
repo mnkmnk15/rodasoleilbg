@@ -249,6 +249,7 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                                 src={urlFor(product.image).url()}
                                 alt={product.name[locale] || product.name.bg}
                                 fill
+                                sizes="64px"
                                 className="object-cover"
                               />
                             )}

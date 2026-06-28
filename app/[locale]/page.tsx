@@ -1,3 +1,5 @@
+export const revalidate = 3600;
+
 import Header from '@/components/Header';
 import Hero from '@/components/Hero';
 import BeigeBanner from '@/components/BeigeBanner';
