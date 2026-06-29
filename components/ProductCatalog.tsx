@@ -7,7 +7,6 @@ import { ShoppingCart, Heart } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import Link from 'next/link';
-import Image from 'next/image';
 import { getAllProducts } from '@/sanity/queries';
 import { SanityProduct } from '@/types/sanity';
 import { Loader2 } from 'lucide-react';
@@ -163,25 +162,21 @@ function ProductCard({ product, index }: ProductCardProps) {
         }}
       >
         {/* Front Image */}
-        <Image
+        <img
           src={product.images[0]}
           alt={product.name[locale]}
-          fill
-          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-          className="object-cover absolute inset-0 transition-opacity duration-500 ease-in-out"
+          loading="lazy"
+          className="object-cover absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out"
           style={{ opacity: isHovered ? 0 : 1 }}
-          priority={false}
         />
 
         {/* Back Image */}
-        <Image
+        <img
           src={product.images[1] || product.images[0]}
           alt={`${product.name[locale]} - back`}
-          fill
-          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-          className="object-cover absolute inset-0 transition-opacity duration-500 ease-in-out"
-          style={{ opacity: isHovered ? 1 : 0 }}
           loading="lazy"
+          className="object-cover absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out"
+          style={{ opacity: isHovered ? 1 : 0 }}
         />
 
         {/* Minimal Badges */}

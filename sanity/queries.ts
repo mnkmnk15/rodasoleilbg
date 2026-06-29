@@ -98,18 +98,30 @@ export async function getProductsByCategory(categorySlug: string) {
     _id,
     name,
     slug,
-    "image": images[0].asset->url,
+    "images": images[].asset->url,
     price,
     compareAtPrice,
     inStock,
     bestseller,
+    gender,
+    productType,
+    sizes,
+    kidsSizes,
+    kidsSizePrices,
+    colors,
     category->{
       name,
       slug
     }
   }`;
 
-  return await sanityClient.fetch(query, { categorySlug });
+  const products = await sanityClient.fetch(query, { categorySlug });
+  return products.map((product: { images?: string[] }) => ({
+    ...product,
+    images: product.images?.map((url: string) =>
+      url ? `${url}?w=1200&q=80&auto=format` : url
+    ) || []
+  }));
 }
 
 // Get all categories

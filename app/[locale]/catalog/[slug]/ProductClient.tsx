@@ -4,14 +4,13 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import { useLocale } from 'next-intl';
 import { motion } from 'framer-motion';
-import Image from 'next/image';
 import Link from 'next/link';
 import { Heart, ShoppingBag, Minus, Plus, Check, Truck, ShieldCheck, RefreshCw, Ruler, X } from 'lucide-react';
 import Header from '@/components/Header';
 import Footer from '@/components/Footer';
 import ProductCard from '@/components/ProductCard';
 import { SanityProduct } from '@/types/sanity';
-import { getProductBySlug, getAllProducts } from '@/sanity/queries';
+import { getProductBySlug, getProductsByCategory } from '@/sanity/queries';
 import { useCart } from '@/contexts/CartContext';
 import { useWishlist } from '@/contexts/WishlistContext';
 import { formatPrice } from '@/sanity/config';
@@ -63,15 +62,10 @@ export default function ProductClient() {
 
         // Fetch related products
         if (productData?.category) {
-          const allProducts = await getAllProducts();
-          const related = allProducts
-            .filter(
-              (p: SanityProduct) =>
-                p.category?.slug.current === productData.category.slug.current &&
-                p._id !== productData._id
-            )
-            .slice(0, 4);
-          setRelatedProducts(related);
+          const related = await getProductsByCategory(productData.category.slug.current);
+          setRelatedProducts(
+            related.filter((p: SanityProduct) => p._id !== productData._id).slice(0, 4)
+          );
         }
       } catch (error) {
         console.error('Error fetching product:', error);
@@ -193,13 +187,11 @@ export default function ProductClient() {
               animate={{ opacity: 1 }}
               className="relative aspect-[3/4] bg-neutral-100 rounded-lg overflow-hidden"
             >
-              <Image
+              <img
                 src={product.images[selectedImage]}
                 alt={productName}
-                fill
-                className="object-contain"
-                priority
-                sizes="(max-width: 1024px) 100vw, 50vw"
+                loading="eager"
+                className="object-contain absolute inset-0 w-full h-full"
               />
 
               {/* Badges */}
@@ -230,12 +222,11 @@ export default function ProductClient() {
                         : 'border-transparent hover:border-neutral-300'
                     }`}
                   >
-                    <Image
+                    <img
                       src={image}
                       alt={`${productName} ${index + 1}`}
-                      fill
-                      className="object-contain"
-                      sizes="120px"
+                      loading="lazy"
+                      className="object-contain absolute inset-0 w-full h-full"
                     />
                   </button>
                 ))}

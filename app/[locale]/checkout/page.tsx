@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { useCart } from '@/contexts/CartContext';
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import Image from 'next/image';
 import { urlFor } from '@/sanity/config';
 import CheckoutModal from '@/components/CheckoutModal';
 import { CheckoutFormData } from '@/types/checkout';
@@ -112,15 +111,15 @@ export default function CheckoutPage({ params }: { params: { locale: string } })
                 {/* Product Image */}
                 <div className="relative w-20 h-20 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden">
                   {item.image ? (
-                    <Image
+                    <img
                       src={
                         typeof item.image === 'string'
                           ? item.image
                           : urlFor(item.image).url()
                       }
                       alt={item.name}
-                      fill
-                      className="object-cover"
+                      loading="lazy"
+                      className="object-cover absolute inset-0 w-full h-full"
                     />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center text-gray-400">

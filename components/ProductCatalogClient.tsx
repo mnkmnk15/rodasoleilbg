@@ -9,7 +9,6 @@ import { SanityProduct } from '@/types/sanity';
 import { urlFor } from '@/sanity/config';
 import { useCart } from '@/contexts/CartContext';
 import Link from 'next/link';
-import Image from 'next/image';
 
 interface ProductCatalogClientProps {
   products: SanityProduct[];
@@ -75,25 +74,21 @@ function ProductCard({ product, index }: ProductCardProps) {
         }}
       >
         {/* Front Image */}
-        <Image
+        <img
           src={frontImage}
           alt={product.name[locale] || product.name.en}
-          fill
-          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-          className="object-cover absolute inset-0 transition-opacity duration-500 ease-in-out"
+          loading="lazy"
+          className="object-cover absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out"
           style={{ opacity: isHovered ? 0 : 1 }}
-          priority={false}
         />
 
         {/* Back Image */}
-        <Image
+        <img
           src={backImage}
           alt={`${product.name[locale] || product.name.en} - back`}
-          fill
-          sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-          className="object-cover absolute inset-0 transition-opacity duration-500 ease-in-out"
-          style={{ opacity: isHovered ? 1 : 0 }}
           loading="lazy"
+          className="object-cover absolute inset-0 w-full h-full transition-opacity duration-500 ease-in-out"
+          style={{ opacity: isHovered ? 1 : 0 }}
         />
 
         {/* New Badge */}

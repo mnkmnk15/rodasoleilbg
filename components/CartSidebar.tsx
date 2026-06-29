@@ -5,7 +5,6 @@ import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useCart } from '@/contexts/CartContext';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import { useRouter } from '@/i18n/routing';
 import { urlFor } from '@/sanity/config';
 import CheckoutModal from './CheckoutModal';
@@ -205,12 +204,11 @@ export default function CartSidebar({ isOpen, onClose }: CartSidebarProps) {
                       {/* Product Image */}
                       <div className="relative w-20 h-20 flex-shrink-0 bg-gray-100 rounded-md overflow-hidden border border-gray-200">
                         {item.image ? (
-                          <Image
+                          <img
                             src={typeof item.image === 'string' ? item.image : urlFor(item.image).url()}
                             alt={item.name}
-                            fill
-                            sizes="80px"
-                            className="object-cover"
+                            loading="lazy"
+                            className="object-cover absolute inset-0 w-full h-full"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement;
                               target.src = '/images/placeholder.webp';

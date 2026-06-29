@@ -4,7 +4,6 @@ import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { createPortal } from 'react-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslations } from 'next-intl';
-import Image from 'next/image';
 import Link from 'next/link';
 import { searchProducts } from '@/sanity/queries';
 import { urlFor } from '@/sanity/config';
@@ -245,12 +244,11 @@ export default function SearchModal({ isOpen, onClose }: SearchModalProps) {
                           {/* Product Image */}
                           <div className="relative w-16 h-16 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
                             {product.image && (
-                              <Image
+                              <img
                                 src={urlFor(product.image).url()}
                                 alt={product.name[locale] || product.name.bg}
-                                fill
-                                sizes="64px"
-                                className="object-cover"
+                                loading="lazy"
+                                className="object-cover absolute inset-0 w-full h-full"
                               />
                             )}
                           </div>

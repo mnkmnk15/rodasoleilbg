@@ -447,15 +447,15 @@ export default function CheckoutModal({
                         >
                           <div className="relative w-16 h-16 flex-shrink-0 bg-gray-100 rounded overflow-hidden">
                             {item.image ? (
-                              <Image
+                              <img
                                 src={
                                   typeof item.image === 'string'
                                     ? item.image
                                     : urlFor(item.image).url()
                                 }
                                 alt={item.name}
-                                fill
-                                className="object-cover object-top"
+                                loading="lazy"
+                                className="object-cover object-top absolute inset-0 w-full h-full"
                               />
                             ) : (
                               <div className="w-full h-full flex items-center justify-center text-gray-400">

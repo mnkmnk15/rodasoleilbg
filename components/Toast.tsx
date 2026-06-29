@@ -2,7 +2,6 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { CheckCircle, X } from 'lucide-react';
-import Image from 'next/image';
 import { useEffect } from 'react';
 
 export interface ToastProps {
@@ -60,12 +59,11 @@ export default function Toast({
                 {/* Product Image */}
                 {productImage && (
                   <div className="relative w-16 h-16 bg-gray-100 rounded overflow-hidden flex-shrink-0">
-                    <Image
+                    <img
                       src={productImage}
                       alt={productName}
-                      fill
-                      className="object-cover"
-                      sizes="64px"
+                      loading="lazy"
+                      className="object-cover absolute inset-0 w-full h-full"
                     />
                   </div>
                 )}

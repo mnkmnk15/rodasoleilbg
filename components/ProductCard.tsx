@@ -3,7 +3,6 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Heart, ShoppingBag, Eye } from 'lucide-react';
-import Image from 'next/image';
 import Link from 'next/link';
 import { useLocale } from 'next-intl';
 import { SanityProduct } from '@/types/sanity';
@@ -146,14 +145,11 @@ export default function ProductCard({ product, priority = false }: ProductCardPr
               transition={{ duration: 0.3 }}
               className="relative w-full h-full"
             >
-              <Image
+              <img
                 src={product.images[currentImageIndex] || '/images/placeholder.webp'}
                 alt={productName}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-                sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                priority={priority && currentImageIndex === 0}
-                loading={priority ? undefined : 'lazy'}
+                loading={priority && currentImageIndex === 0 ? 'eager' : 'lazy'}
+                className="object-cover transition-transform duration-500 group-hover:scale-105 absolute inset-0 w-full h-full"
               />
             </motion.div>
           </AnimatePresence>
